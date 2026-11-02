@@ -1,0 +1,146 @@
+---
+import { site } from '../config/index.ts';
+import { footer, actions, nav } from '../content/home.ts';
+import Logo from './Logo.astro';
+
+const live = site.token.status === 'live' ? site.token : null;
+const external = [
+  live ? { href: live.tradeUrl, label: actions.trade } : null,
+  live ? { href: live.explorerUrl, label: actions.explorer } : null,
+  site.social.xUrl ? { href: site.social.xUrl, label: 'X' } : null,
+  site.social.communityUrl ? { href: site.social.communityUrl, label: 'Community' } : null,
+].filter((item): item is { href: string; label: string } => item !== null);
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <Logo href="#top" size={30} />
+        <p class="footer-tagline">{footer.tagline}</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <ul>
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+          <li><a href="#faq">FAQ</a></li>
+          {
+            external.map((item) => (
+              <li>
+                <a href={item.href} target="_blank" rel="noopener">
+                  {item.label}
+                  <span class="visually-hidden"> (opens in a new tab)</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="disclaimer">{footer.disclaimer}</p>
+      <div class="footer-meta">
+        <p>© {year} {site.brand.name}</p>
+        <a class="back-to-top" href="#top">
+          Back to top
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M6 10V2M2.5 5.5 6 2l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: 56px 32px;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 24px 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .footer-tagline {
+    margin-top: 8px;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .footer-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 8px;
+    color: var(--ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .footer-nav a:hover {
+    color: var(--interactive);
+    text-decoration: underline;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px 48px;
+    padding-top: 24px;
+  }
+
+  .disclaimer {
+    max-width: 62ch;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .footer-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 559px) {
+    .footer-nav ul {
+      margin-inline: -8px;
+    }
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import fontUrl from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
+import { site } from '../config/index.ts';
+import { seo } from '../content/home.ts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Force noindex regardless of launch state (e.g. the 404 page). */
+  noindex?: boolean;
+  /** Path of this page relative to the origin, for canonical URLs. */
+  path?: string;
+}
+
+const { title = seo.title, description = seo.description, noindex = false, path = '/' } = Astro.props;
+
+const indexable = site.indexable && !noindex;
+const canonical = indexable && site.canonicalOrigin ? `${site.canonicalOrigin}${path}` : null;
+
+// Absolute URLs for social previews: the verified origin, otherwise the URL
+// Vercel assigned to this very deployment. Nothing is guessed.
+const vercelHost =
+  process.env.VERCEL_ENV === 'production'
+    ? process.env.VERCEL_PROJECT_PRODUCTION_URL
+    : process.env.VERCEL_BRANCH_URL ?? process.env.VERCEL_URL;
+const shareOrigin = site.canonicalOrigin ?? (vercelHost ? `https://${vercelHost}` : null);
+const ogImage = shareOrigin ? `${shareOrigin}/media/og-frozen-usd.png` : null;
+const ogUrl = shareOrigin ? `${shareOrigin}${path}` : null;
+
+const fontFace = `@font-face{font-family:'Manrope';font-style:normal;font-display:swap;font-weight:200 800;src:url(${fontUrl}) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'Manrope Fallback';src:local('Arial'),local('Liberation Sans'),local('Helvetica');size-adjust:104.6%;ascent-override:101.9%;descent-override:28.7%;line-gap-override:0%}`;
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.replace('no-js', 'js');
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={indexable ? 'index, follow' : 'noindex, nofollow'} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+    <Fragment set:html={`<style>${fontFace}</style>`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.brand.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogUrl && <meta property="og:url" content={ogUrl} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    {ogImage && <meta property="og:image:alt" content="FROZEN USD — The dollar that trades frozen. Frozen. Still moving." />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

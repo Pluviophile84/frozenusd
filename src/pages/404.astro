@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Logo from '../components/Logo.astro';
+import { notFound, seo } from '../content/home.ts';
+import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
+---
+
+<BaseLayout title={`Page not found — ${seo.title}`} noindex path="/404">
+  <header class="nf-header">
+    <div class="container">
+      <Logo href="/" />
+    </div>
+  </header>
+  <main id="main" class="nf">
+    <div class="container nf-grid">
+      <div class="nf-copy">
+        <p class="eyebrow">Error 404</p>
+        <h1>{notFound.title}</h1>
+        <p class="lead">{notFound.body}</p>
+        <a class="btn" href="/">{notFound.action}</a>
+      </div>
+      <div class="nf-art" aria-hidden="true">
+        <svg viewBox="0 0 400 340" width="400" height="340" focusable="false">
+          <ellipse cx="120" cy="290" rx="96" ry="20" fill="none" stroke="#005570" stroke-opacity="0.35" stroke-dasharray="4 5"></ellipse>
+          <path d="M 150 250 Q 230 150 300 120" fill="none" stroke="#005570" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round"></path>
+          <Fragment set:html={iceShadowSvg('nf-shadow', 296, 300, 150)} />
+          <g transform="translate(224 34) scale(0.62)">
+            <Fragment set:html={iceBlockSvg('nf-ice', 'simple')} />
+          </g>
+        </svg>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .nf-header {
+    border-bottom: 1px solid var(--border);
+    padding-block: 12px;
+  }
+
+  .nf {
+    min-height: calc(100vh - 69px);
+    display: flex;
+    align-items: center;
+    padding-block: 64px;
+    background: linear-gradient(180deg, var(--white) 0%, var(--frost) 100%);
+  }
+
+  .nf-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 48px;
+  }
+
+  .nf h1 {
+    margin-top: 18px;
+    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 4.5rem);
+    max-width: 13ch;
+  }
+
+  .nf .lead {
+    margin-block: 22px 32px;
+    max-width: 30rem;
+  }
+
+  .nf-art svg {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 767px) {
+    .nf-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .nf-art {
+      max-width: 320px;
+    }
+  }
+</style>

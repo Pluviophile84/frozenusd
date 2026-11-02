@@ -1,0 +1,311 @@
+---
+/**
+ * Product demonstration: the same simplified frozen object at three stages.
+ * Stage art is decorative; every claim is in the HTML text beside it.
+ */
+import { product } from '../content/home.ts';
+import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
+import { emblemDisc } from '../lib/ice-block.ts';
+import { sentences } from '../lib/text.ts';
+
+const stageArt = [
+  { tag: 'Wallet A', lift: 0, pad: true, trail: false },
+  { tag: 'In transit', lift: 20, pad: false, trail: true },
+  { tag: 'Wallet B', lift: 0, pad: true, trail: false },
+];
+---
+
+<section class="section product" id="how-it-works" aria-labelledby="product-title">
+  <div class="container">
+    <header class="product-head">
+      <h2 id="product-title">{sentences(product.title).map((line) => <span class="line">{line} </span>)}</h2>
+    </header>
+
+    <ol class="stages">
+      {
+        product.stages.map((stage, index) => {
+          const art = stageArt[index]!;
+          const blockY = 196 - 22 - 150 - art.lift;
+          return (
+            <li class="stage">
+              <div class="stage-art" aria-hidden="true">
+                <svg viewBox="0 -24 320 264" width="320" height="264" focusable="false">
+                  {art.pad ? (
+                    <g>
+                      <path d="M 70 196 v 8 a 90 20 0 0 0 180 0 v -8" fill="#CFE8F4" stroke="#A3CDE0" />
+                      <ellipse cx="160" cy="196" rx="90" ry="20" fill="#FFFFFF" stroke="#A3CDE0" />
+                      <ellipse cx="160" cy="196" rx="64" ry="13" fill="none" stroke="#005570" stroke-opacity="0.32" stroke-dasharray="4 5" />
+                    </g>
+                  ) : (
+                    <path d="M 24 206 H 296" stroke="#005570" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round" />
+                  )}
+                  {art.trail && (
+                    <g stroke="#005570" stroke-linecap="round">
+                      <line x1="22" y1="96" x2="58" y2="96" stroke-opacity="0.18" stroke-width="2" />
+                      <line x1="10" y1="118" x2="62" y2="118" stroke-opacity="0.28" stroke-width="2" />
+                      <line x1="30" y1="140" x2="62" y2="140" stroke-opacity="0.18" stroke-width="2" />
+                    </g>
+                  )}
+                  <Fragment set:html={iceShadowSvg(`stage-shadow-${index}`, 160, 198, art.lift ? 150 : 178)} />
+                  <g transform={`translate(${160 - 121 * 0.75} ${blockY}) scale(0.75)`}>
+                    <Fragment set:html={iceBlockSvg(`stage-ice-${index}`, 'simple')} />
+                  </g>
+                </svg>
+                <span class="stage-tag">{art.tag}</span>
+              </div>
+              <div class="stage-copy">
+                <span class="stage-index">{String(index + 1).padStart(2, '0')}</span>
+                <h3>{stage.title}</h3>
+                <p>{stage.text}</p>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <div class="proof-row">
+      <p class="under">{product.under}</p>
+
+      <div class="proof" role="group" aria-labelledby="proof-label">
+        <dl class="proof-list">
+          {
+            product.proof.map((row) => (
+              <div>
+                <dt>{row.term}:</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="proof-foot">
+          <svg class="proof-seal" viewBox="0 0 1024 1024" width="28" height="28" aria-hidden="true" focusable="false">
+            <Fragment set:html={emblemDisc(512, 512, 512)} />
+          </svg>
+          <span class="label" id="proof-label">{product.proofLabel}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .product {
+    background: var(--frost);
+    border-block: 1px solid var(--border);
+  }
+
+
+
+  .stages {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: clamp(48px, 6vw, 80px) 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: stage;
+  }
+
+  /* The route that connects the three stages. */
+  .stages::before {
+    content: '';
+    position: absolute;
+    left: 16.66%;
+    right: 16.66%;
+    top: calc(var(--art-height) * 0.86);
+    border-top: 1.5px dashed rgb(0 85 112 / 0.3);
+  }
+
+  .stages {
+    --art-height: clamp(180px, 19vw, 250px);
+  }
+
+  .stage {
+    position: relative;
+    padding-inline: clamp(12px, 2vw, 32px);
+  }
+
+  .stage + .stage {
+    border-left: 1px solid var(--border);
+  }
+
+  .stage-art {
+    position: relative;
+    height: var(--art-height);
+    display: flex;
+    justify-content: center;
+  }
+
+  .stage-art svg {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .stage-tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .stage-copy {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+  }
+
+  .stage-index {
+    display: block;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--interactive);
+  }
+
+  .stage-copy h3 {
+    font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+    letter-spacing: -0.025em;
+  }
+
+  .stage-copy p {
+    margin-top: 8px;
+    color: var(--muted);
+    max-width: 26ch;
+  }
+
+  .proof-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: 32px 64px;
+    margin-top: clamp(56px, 7vw, 96px);
+    padding-top: clamp(40px, 5vw, 56px);
+    border-top: 1px solid var(--border-strong);
+  }
+
+  .under {
+    font-size: clamp(2rem, 1.4rem + 2.2vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  }
+
+  .product-head .line {
+    display: block;
+  }
+
+  .proof {
+    position: relative;
+    display: grid;
+    gap: 18px;
+    padding: 24px 26px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .proof-seal {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .proof-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .proof-list div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .proof-list dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .proof-list dd {
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .proof-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-strong);
+  }
+
+  @media (max-width: 899px) {
+    .stages {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      --art-height: 168px;
+    }
+
+    .stages::before {
+      display: none;
+    }
+
+    .stage {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+      align-items: center;
+      gap: 20px;
+      padding: 24px 0;
+    }
+
+    .stage + .stage {
+      border-left: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .stage-copy {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .proof-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .stage {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 12px;
+    }
+
+    .stages {
+      --art-height: 132px;
+    }
+
+    .proof {
+      padding: 20px;
+    }
+
+    .proof-list {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .proof-list div {
+      grid-template-columns: 7.5rem 1fr;
+      align-items: baseline;
+    }
+  }
+</style>

@@ -1,0 +1,152 @@
+---
+import { idea } from '../content/home.ts';
+import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
+---
+
+<section class="section idea" id="idea" aria-labelledby="idea-title">
+  <div class="container idea-grid">
+    <div class="idea-object" aria-hidden="true">
+      <svg viewBox="0 0 520 480" width="520" height="480" focusable="false">
+        <defs>
+          <linearGradient id="orbit-fade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#005570" stop-opacity="0.15"></stop>
+            <stop offset="0.5" stop-color="#005570" stop-opacity="0.6"></stop>
+            <stop offset="1" stop-color="#005570" stop-opacity="0.15"></stop>
+          </linearGradient>
+          <marker id="orbit-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="10" markerHeight="10" orient="auto">
+            <path d="M1 1 L7 5 L1 9" fill="none" stroke="#005570" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </marker>
+        </defs>
+        <!-- Circulation orbit: behind the block on top, in front at the bottom. -->
+        <path d="M 40 345 A 220 60 0 0 1 480 345" fill="none" stroke="url(#orbit-fade)" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
+        <Fragment set:html={iceShadowSvg('idea-shadow', 260, 392, 260)} />
+        <g transform="translate(127 136) scale(1.1)">
+          <Fragment set:html={iceBlockSvg('idea-ice', 'full')} />
+        </g>
+        <path d="M 480 345 A 220 60 0 0 1 40 345" fill="none" stroke="#005570" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
+        <path d="M 150 397 l -1 -0.3" fill="none" stroke="none" marker-end="url(#orbit-arrow)"></path>
+        <path d="M 430 307 l 1 0.6" fill="none" stroke="none" marker-end="url(#orbit-arrow)"></path>
+      </svg>
+    </div>
+
+    <div class="idea-copy">
+      <p class="eyebrow">{idea.eyebrow}</p>
+      <h2 id="idea-title">{idea.title}</h2>
+      <div class="idea-lead">
+        {idea.lead.map((line) => <p>{line}</p>)}
+      </div>
+
+      <ol class="progression">
+        {
+          idea.progression.map((line, index) => (
+            <li>
+              <span class="step-index" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span class="step-text">{line}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="idea-closing">{idea.closing}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .idea-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(40px, 6vw, 104px);
+  }
+
+  .idea-object {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--frost-deep) 0%, var(--frost) 62%, rgb(242 248 252 / 0) 100%);
+  }
+
+  .idea-object svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .idea-copy h2 {
+    margin-top: 18px;
+    max-width: 14ch;
+  }
+
+  .idea-lead {
+    display: grid;
+    gap: 12px;
+    margin-top: 28px;
+    max-width: 34rem;
+    font-size: var(--text-lead);
+    color: var(--muted);
+  }
+
+  .progression {
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--border);
+    max-width: 34rem;
+  }
+
+  .progression li {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: baseline;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .progression li:last-child .step-text {
+    font-weight: 800;
+  }
+
+  .step-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--interactive);
+  }
+
+  .idea-closing {
+    margin-top: 36px;
+    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .idea-closing::after {
+    content: '';
+    display: block;
+    width: 64px;
+    height: 4px;
+    margin-top: 18px;
+    border-radius: 2px;
+    background: var(--cyan);
+  }
+
+  @media (max-width: 899px) {
+    .idea-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .idea-object {
+      order: 2;
+      max-width: 440px;
+      width: 100%;
+      margin-inline: auto;
+    }
+  }
+</style>

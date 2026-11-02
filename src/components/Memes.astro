@@ -1,0 +1,235 @@
+---
+import { site } from '../config/index.ts';
+import { memes, actions } from '../content/home.ts';
+
+const social = [
+  site.social.xUrl ? { href: site.social.xUrl, label: actions.followX } : null,
+  site.social.communityUrl ? { href: site.social.communityUrl, label: actions.community } : null,
+].filter((item): item is { href: string; label: string } => item !== null);
+---
+
+<section class="section memes" id="memes" aria-labelledby="memes-title">
+  <div class="container">
+    <div class="memes-head">
+      <h2 id="memes-title">
+        {memes.title.map((line) => <span>{line}</span>)}
+      </h2>
+      <div class="memes-body">
+        {memes.body.map((line) => <p>{line}</p>)}
+      </div>
+    </div>
+
+    <ul class="posters">
+      {
+        memes.posters.map((poster) => (
+          <li class="poster">
+            <figure>
+              <img
+                src={`/media/posters/${poster.slug}.svg`}
+                width="1080"
+                height="1350"
+                loading="lazy"
+                decoding="async"
+                alt={`Poster: ${poster.line} FROZEN USD, $FRZUSD.`}
+              />
+              <figcaption>
+                <span class="poster-line">{poster.line}</span>
+                <span class="poster-actions">
+                  <a class="poster-download" href={`/media/posters/${poster.slug}.png`} download={`frozen-usd-${poster.slug}.png`}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                      <path d="M7 1v8M3.5 5.5 7 9l3.5-3.5M1.5 12.5h11" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    </svg>
+                    Download<span class="visually-hidden"> {poster.line} poster (PNG)</span>
+                  </a>
+                  <a class="poster-svg" href={`/media/posters/${poster.slug}.svg`} download={`frozen-usd-${poster.slug}.svg`}>
+                    SVG<span class="visually-hidden"> version of the {poster.line} poster</span>
+                  </a>
+                </span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="memes-foot">
+      <p class="memes-below">{memes.below}</p>
+      {
+        social.length > 0 && (
+          <div class="memes-social">
+            {social.map((item) => (
+              <a class="btn btn--secondary" href={item.href} target="_blank" rel="noopener">
+                {item.label}
+                <span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .memes {
+    background: var(--frost);
+    border-top: 1px solid var(--border);
+  }
+
+  .memes-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 32px 72px;
+    align-items: end;
+  }
+
+  .memes-head h2 span {
+    display: block;
+  }
+
+  .memes-head h2 span + span {
+    color: var(--interactive);
+  }
+
+  .memes-body {
+    display: grid;
+    gap: 10px;
+    font-size: var(--text-lead);
+    color: var(--muted);
+  }
+
+  .memes-body p:first-child {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .posters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 32px);
+    margin: clamp(48px, 6vw, 80px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .poster figure {
+    margin: 0;
+  }
+
+  .poster img {
+    width: 100%;
+    aspect-ratio: 1080 / 1350;
+    border-radius: var(--radius-panel);
+    box-shadow:
+      0 1px 2px rgb(7 24 39 / 0.06),
+      0 24px 48px -28px rgb(7 24 39 / 0.35);
+    background: var(--white);
+  }
+
+  .poster figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-strong);
+  }
+
+  .poster-line {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .poster-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .poster-download,
+  .poster-svg {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: var(--radius-control);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .poster-download {
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .poster-download:hover {
+    background: var(--interactive);
+    border-color: var(--interactive);
+    color: var(--white);
+  }
+
+  .poster-svg {
+    min-width: 44px;
+    justify-content: center;
+    color: var(--interactive);
+  }
+
+  .poster-svg:hover {
+    text-decoration: underline;
+  }
+
+  .memes-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: clamp(48px, 6vw, 80px);
+    padding-top: 32px;
+    border-top: 1px solid var(--border-strong);
+  }
+
+  .memes-below {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .memes-social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media (max-width: 899px) {
+    .memes-head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .poster figcaption {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .posters {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 440px;
+      gap: 40px;
+    }
+
+    .poster figcaption {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+</style>

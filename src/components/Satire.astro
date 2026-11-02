@@ -1,0 +1,173 @@
+---
+import { site } from '../config/index.ts';
+import { satire } from '../content/home.ts';
+
+// "Decentralized" stays white; the qualifier carries the cyan emphasis.
+const splitAt = satire.title.indexOf(' ');
+const lead = satire.title.slice(0, splitAt);
+const emphasis = satire.title.slice(splitAt + 1);
+---
+
+<section class="section satire on-ink" aria-labelledby="satire-title">
+  <div class="container">
+    <div class="satire-grid">
+      <h2 id="satire-title">{lead} <em>{emphasis}</em></h2>
+      <div class="satire-body">
+        <p class="satire-lines">
+          {satire.body.map((line) => <span>{line}</span>)}
+        </p>
+        <p class="satire-coda">{satire.coda}</p>
+      </div>
+    </div>
+
+    <p class="satire-closing">{satire.closing}</p>
+
+    {
+      site.features.datedNews && (
+        <aside class="note" aria-labelledby="note-title">
+          <p class="note-label">
+            <time datetime={satire.note.dateTime}>{satire.note.label}</time>
+          </p>
+          <div class="note-body">
+            <h3 id="note-title">{satire.note.title}</h3>
+            <p>{satire.note.text}</p>
+            <p class="note-aside">
+              {satire.note.aside.map((line) => <span>{line}</span>)}
+            </p>
+          </div>
+          <a class="note-link" href={satire.note.href} target="_blank" rel="noopener">
+            {satire.note.linkLabel}
+            <span class="visually-hidden"> (opens in a new tab)</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.5" />
+            </svg>
+          </a>
+        </aside>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .satire {
+    position: relative;
+    background:
+      radial-gradient(70% 60% at 100% 0%, rgb(121 218 255 / 0.1) 0%, rgb(121 218 255 / 0) 60%),
+      var(--ink);
+    color: var(--white);
+    overflow: hidden;
+  }
+
+  .satire h2 {
+    color: var(--white);
+    font-size: clamp(2.5rem, 1.5rem + 4.2vw, 5.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    max-width: 12ch;
+  }
+
+  .satire h2 em {
+    font-style: normal;
+    color: var(--cyan);
+  }
+
+  .satire-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 40px 72px;
+  }
+
+  .satire-lines {
+    display: grid;
+    gap: 4px;
+    font-size: var(--text-lead);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--white);
+  }
+
+  .satire-coda {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--ink-rule);
+    font-size: var(--text-body);
+    color: var(--on-ink-muted);
+    max-width: 34ch;
+  }
+
+  .satire-closing {
+    margin-top: clamp(64px, 9vw, 128px);
+    padding-top: clamp(28px, 3vw, 40px);
+    border-top: 1px solid var(--ink-rule);
+    font-size: clamp(2.75rem, 1rem + 7.6vw, 8.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+    color: var(--cyan);
+    text-wrap: balance;
+  }
+
+  .note {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr) auto;
+    gap: 16px 48px;
+    align-items: start;
+    margin-top: clamp(64px, 8vw, 112px);
+    padding: 28px 0 0;
+    border-top: 1px solid var(--ink-rule);
+  }
+
+  .note-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+    padding-top: 4px;
+  }
+
+  .note h3 {
+    color: var(--white);
+    font-size: 1.25rem;
+  }
+
+  .note-body p {
+    margin-top: 10px;
+    max-width: 60ch;
+    color: var(--on-ink-muted);
+    font-size: 1rem;
+  }
+
+  .note-aside {
+    display: grid;
+  }
+
+  .note-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--cyan);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+
+  .note-link:hover {
+    color: #a3e6ff;
+  }
+
+  @media (max-width: 899px) {
+    .satire-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .note {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .note-link {
+      white-space: normal;
+    }
+  }
+</style>

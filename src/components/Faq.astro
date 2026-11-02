@@ -1,0 +1,126 @@
+---
+import { faq } from '../content/home.ts';
+---
+
+<section class="section faq" id="faq" aria-labelledby="faq-title">
+  <div class="container faq-grid">
+    <h2 id="faq-title">Frequently asked questions</h2>
+    <div class="faq-list">
+      {
+        faq.map((item) => (
+          <details>
+            <summary>
+              <span class="q">{item.q}</span>
+              <span class="toggle" aria-hidden="true" />
+            </summary>
+            <div class="answer">
+              {item.a.map((line) => (
+                <p>{line}</p>
+              ))}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 40px clamp(48px, 7vw, 120px);
+    align-items: start;
+  }
+
+  .faq-grid h2 {
+    max-width: 12ch;
+  }
+
+  .faq-list {
+    border-top: 2px solid var(--ink);
+  }
+
+  details {
+    border-bottom: 1px solid var(--border);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 72px;
+    padding: 18px 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:hover .q {
+    color: var(--interactive);
+  }
+
+  summary:focus-visible {
+    outline-offset: 2px;
+  }
+
+  .toggle {
+    position: relative;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+  }
+
+  .toggle::before,
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 1.5px;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .toggle::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  details[open] .toggle {
+    background: var(--cyan);
+    border-color: var(--cyan);
+  }
+
+  details[open] .toggle::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  .answer {
+    display: grid;
+    gap: 6px;
+    padding: 0 56px 24px 0;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+
+  @media (max-width: 899px) {
+    .faq-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .answer {
+      padding-right: 0;
+    }
+  }
+</style>

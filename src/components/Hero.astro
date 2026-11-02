@@ -1,0 +1,229 @@
+---
+import { site } from '../config/index.ts';
+import { hero, actions, token as tokenCopy } from '../content/home.ts';
+import HeroArt from './HeroArt.astro';
+import AddressActions from './AddressActions.astro';
+
+const live = site.token.status === 'live' ? site.token : null;
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="hero-meta">
+        <p class="eyebrow">{hero.eyebrow}</p>
+        <p class="identity">{hero.identity}</p>
+      </div>
+
+      <h1 id="hero-title">{hero.title}</h1>
+
+      <p class="hero-support">
+        {hero.support.map((line) => <span>{line}</span>)}
+      </p>
+
+      <p class="hero-signature">{hero.signature}</p>
+
+      <div class="hero-actions">
+        {
+          live ? (
+            <>
+              <a class="btn" href={live.tradeUrl} target="_blank" rel="noopener">
+                {actions.buy}
+                <span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+              <a class="btn btn--secondary" href="#idea">
+                {actions.explore}
+              </a>
+            </>
+          ) : (
+            <>
+              <a class="btn" href="#idea">
+                {actions.explore}
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+              <a class="btn btn--secondary" href="#token">
+                {actions.tokenDetails}
+              </a>
+            </>
+          )
+        }
+      </div>
+
+      <div class="contract-strip">
+        <div class="contract-head">
+          <span class="label">Contract{live ? ` · ${live.networkLabel}` : ''}</span>
+          <span class:list={['status', { 'status--live': live }]}>{tokenCopy.statusLabels[site.token.status]}</span>
+        </div>
+        {
+          live ? (
+            <AddressActions token={live} id="hero-address" truncate />
+          ) : (
+            <p class="contract-pending">{hero.contractUnavailable}</p>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <HeroArt />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(28px, 5vw, 72px) clamp(72px, 8vw, 120px);
+    background:
+      radial-gradient(60% 70% at 85% 30%, rgb(121 218 255 / 0.16) 0%, rgb(121 218 255 / 0) 70%),
+      linear-gradient(180deg, var(--white) 0%, var(--frost) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
+    align-items: center;
+    gap: clamp(40px, 5vw, 80px);
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin-bottom: 26px;
+  }
+
+  .identity {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+  }
+
+  h1 {
+    max-width: 11ch;
+  }
+
+  .hero-support {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 28px;
+    font-size: var(--text-lead);
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+
+  .hero-support span + span::before {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 0.9em;
+    margin-right: 14px;
+    vertical-align: -0.1em;
+    background: var(--border-strong);
+  }
+
+  .hero-signature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    color: var(--interactive);
+  }
+
+  .hero-signature::before {
+    content: '';
+    width: 28px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--cyan);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .contract-strip {
+    margin-top: 36px;
+    max-width: 560px;
+    padding: 16px 18px;
+    background: rgb(255 255 255 / 0.8);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+  }
+
+  .contract-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .contract-pending {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  @media (max-width: 1023px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    h1 {
+      max-width: 12ch;
+    }
+
+    .hero-visual {
+      max-width: 680px;
+    }
+  }
+
+  @media (max-width: 559px) {
+    .hero-meta {
+      margin-bottom: 18px;
+    }
+
+    .hero-support {
+      margin-top: 20px;
+      column-gap: 0.32em;
+    }
+
+    .hero-support span {
+      white-space: nowrap;
+    }
+
+    .hero-support span + span::before {
+      display: none;
+    }
+
+    .hero-actions {
+      margin-top: 26px;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .contract-strip {
+      margin-top: 22px;
+      padding: 14px 16px;
+    }
+  }
+</style>

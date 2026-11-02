@@ -1,0 +1,43 @@
+---
+interface Props {
+  href?: string;
+  /** 'light' surfaces use the master emblem; 'dark' uses the reversed variant. */
+  tone?: 'light' | 'dark';
+  size?: number;
+}
+const { href = '/', tone = 'light', size = 34 } = Astro.props;
+const src = tone === 'dark' ? '/brand/frozen-usd-reversed.svg' : '/brand/frozen-usd-master.svg';
+---
+
+<a class:list={['logo', `logo--${tone}`]} href={href}>
+  <img src={src} width={size} height={size} alt="" />
+  <span class="logo-text">FROZEN USD</span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 44px;
+    color: var(--ink);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo:hover {
+    color: var(--ink);
+  }
+
+  .logo--dark,
+  .logo--dark:hover {
+    color: var(--white);
+  }
+
+  .logo-text {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+</style>

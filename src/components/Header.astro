@@ -1,0 +1,243 @@
+---
+import { site } from '../config/index.ts';
+import { nav, actions } from '../content/home.ts';
+import Logo from './Logo.astro';
+
+const live = site.token.status === 'live' ? site.token : null;
+---
+
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <Logo href="#top" />
+
+    <nav class="primary-nav" aria-label="Primary">
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-menu"
+        data-menu-toggle
+        hidden
+      >
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+        <span class="menu-label">Menu</span>
+      </button>
+      <ul id="primary-menu" class="nav-list" data-menu>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      live ? (
+        <a class="btn btn--small header-cta" href={live.tradeUrl} rel="noopener" target="_blank">
+          {actions.buy}
+          <span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
+      ) : (
+        <a class="btn btn--small header-cta" href="#token">
+          {actions.tokenDetails}
+        </a>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.9);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-height: var(--header-height);
+  }
+
+  .primary-nav {
+    margin-left: auto;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    color: var(--ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-control);
+  }
+
+  .nav-list a:hover {
+    color: var(--interactive);
+    background: var(--frost);
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  @media (max-width: 899px) {
+    .header-inner {
+      gap: 12px;
+    }
+
+    .primary-nav {
+      order: 3;
+      margin-left: 0;
+    }
+
+    .header-cta {
+      margin-left: auto;
+    }
+
+    /* With JavaScript: compact disclosure menu. */
+    :global(.js) .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      min-width: 44px;
+      padding: 0 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-control);
+      background: var(--white);
+      color: var(--ink);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    :global(.js) .menu-toggle:hover {
+      border-color: var(--ink);
+    }
+
+    .menu-icon {
+      position: relative;
+      width: 16px;
+      height: 10px;
+    }
+
+    .menu-icon span {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: currentColor;
+      border-radius: 1px;
+      transition: transform 180ms var(--ease-out), top 180ms var(--ease-out);
+    }
+
+    .menu-icon span:first-child {
+      top: 0;
+    }
+
+    .menu-icon span:last-child {
+      top: 8px;
+    }
+
+    .menu-toggle[aria-expanded='true'] .menu-icon span:first-child {
+      top: 4px;
+      transform: rotate(45deg);
+    }
+
+    .menu-toggle[aria-expanded='true'] .menu-icon span:last-child {
+      top: 4px;
+      transform: rotate(-45deg);
+    }
+
+    :global(.js) .nav-list {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 8px var(--gutter) 20px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 24px 32px -24px rgb(7 24 39 / 0.25);
+    }
+
+    :global(.js) .nav-list.is-open {
+      display: flex;
+    }
+
+    :global(.js) .nav-list li + li {
+      border-top: 1px solid var(--border);
+    }
+
+    :global(.js) .nav-list a {
+      width: 100%;
+      min-height: 52px;
+      padding: 0;
+      font-size: 1.0625rem;
+      border-radius: 0;
+    }
+
+    :global(.js) .nav-list a:hover {
+      background: none;
+    }
+
+    /* Without JavaScript: links stay visible in a scrollable row. */
+    :global(.no-js) .header-inner {
+      flex-wrap: wrap;
+    }
+
+    :global(.no-js) .primary-nav {
+      order: 4;
+      width: 100%;
+      overflow-x: auto;
+      margin-inline: -8px;
+    }
+
+    :global(.no-js) .nav-list a {
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .header-cta {
+      padding: 0 14px;
+    }
+
+    .menu-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+  }
+</style>
+
+<script>
+  import { initMenu } from '../scripts/menu.ts';
+  initMenu();
+</script>

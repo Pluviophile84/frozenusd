@@ -1,0 +1,396 @@
+---
+/**
+ * Hero product composition: the frozen coin travels between two abstract
+ * wallets without thawing. The resting (and reduced-motion) state shows the
+ * block arrived at Wallet B, with the empty slot and route at Wallet A, so the
+ * idea reads without animation or JavaScript.
+ */
+import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
+import { hero } from '../content/home.ts';
+
+const W = 620;
+const H = 560;
+const padY = 446;
+const padA = 156;
+const padB = 456;
+const scale = 1.1;
+const blockX = padB - 121 * scale;
+const blockY = padY - 32 - 200 * scale;
+
+const pct = (value: number, total: number) => `${((value / total) * 100).toFixed(2)}%`;
+---
+
+<figure class="hero-art" aria-labelledby="hero-art-caption">
+  <figcaption id="hero-art-caption" class="visually-hidden">{hero.art.alt}</figcaption>
+
+  <input class="motion-switch" type="checkbox" id="hero-motion" role="switch" />
+  <label class="motion-label" for="hero-motion">
+    <span class="motion-track" aria-hidden="true"><span class="motion-thumb"></span></span>
+    Pause movement
+  </label>
+
+  <div class="stage">
+    <div class="canvas">
+    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="pad-top" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"></stop>
+          <stop offset="1" stop-color="#EAF6FC" stop-opacity="0.95"></stop>
+        </linearGradient>
+        <linearGradient id="pad-side" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#BFE2F1"></stop>
+          <stop offset="0.5" stop-color="#D9EFF8"></stop>
+          <stop offset="1" stop-color="#A9D6EA"></stop>
+        </linearGradient>
+        <marker id="route-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M1 1 L7 5 L1 9" fill="none" stroke="#005570" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+      </defs>
+
+      {
+        [padA, padB].map((x) => (
+          <g class="pad">
+            <path
+              d={`M ${x - 116} ${padY} v 12 a 116 26 0 0 0 232 0 v -12`}
+              fill="url(#pad-side)"
+              stroke="#A3CDE0"
+              stroke-width="1"
+            />
+            <ellipse cx={x} cy={padY} rx="116" ry="26" fill="url(#pad-top)" stroke="#A3CDE0" stroke-width="1" />
+            <ellipse cx={x} cy={padY} rx="84" ry="17" fill="none" stroke="#005570" stroke-opacity="0.35" stroke-dasharray="4 5" />
+          </g>
+        ))
+      }
+
+      <!-- Route between the wallets. -->
+      <path
+        d={`M ${padA + 30} ${padY - 34} Q ${(padA + padB) / 2} ${padY - 120} ${padB - 70} ${padY - 40}`}
+        fill="none"
+        stroke="#005570"
+        stroke-opacity="0.55"
+        stroke-width="1.5"
+        stroke-dasharray="2 6"
+        stroke-linecap="round"
+        marker-end="url(#route-arrow)"></path>
+
+      <!-- Empty departure slot at Wallet A. -->
+      <g class="ghost" transform={`translate(${padA - 121 * scale} ${blockY}) scale(${scale})`}>
+        <polygon
+          points="0,0 42,-32 242,-32 242,168 200,200 0,200"
+          fill="#FFFFFF"
+          fill-opacity="0.18"
+          stroke="#005570"
+          stroke-opacity="0.32"
+          stroke-dasharray="5 6"></polygon>
+      </g>
+
+      <g class="mover">
+        <g class="lift-shadow" style={`transform-origin: ${padB}px ${padY}px`}>
+          <Fragment set:html={iceShadowSvg('hero-shadow', padB, padY + 2, 250)} />
+        </g>
+        <g class="hop">
+          <g transform={`translate(${blockX} ${blockY}) scale(${scale})`}>
+            <Fragment set:html={iceBlockSvg('hero-ice', 'full')} />
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <p class="art-tag art-tag--caption" aria-hidden="true">{hero.art.label}</p>
+    <p class="art-tag art-tag--wallet" style={`left: ${pct(padA, W)}; top: ${pct(padY + 52, H)}`} aria-hidden="true">Wallet A</p>
+    <p class="art-tag art-tag--wallet" style={`left: ${pct(padB, W)}; top: ${pct(padY + 52, H)}`} aria-hidden="true">Wallet B</p>
+    </div>
+    <ul class="art-readout" aria-hidden="true">
+      <li><span class="dot dot--location"></span>{hero.art.location}</li>
+      <li><span class="dot dot--temp"></span>{hero.art.temperature}</li>
+    </ul>
+  </div>
+</figure>
+
+<style>
+  .hero-art {
+    position: relative;
+    margin: 0;
+  }
+
+  .stage {
+    position: relative;
+    border: 1px solid #d3e6f0;
+    border-radius: var(--radius-material);
+    background:
+      radial-gradient(120% 80% at 18% 0%, rgb(255 255 255 / 0.95) 0%, rgb(255 255 255 / 0) 55%),
+      linear-gradient(180deg, #eef8fd 0%, #d9eef8 100%);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Fine engineering grid, fading towards the floor. */
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.85) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.85) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.5) 60%, transparent 92%);
+    mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.5) 60%, transparent 92%);
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .art-tag {
+    position: absolute;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .art-tag--caption {
+    top: 22px;
+    left: 24px;
+    text-transform: uppercase;
+  }
+
+  .canvas {
+    position: relative;
+  }
+
+  .art-tag--wallet {
+    transform: translateX(-50%);
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .art-readout {
+    position: absolute;
+    top: 64px;
+    right: 22px;
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    justify-items: end;
+  }
+
+  .art-readout li {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 12px;
+    background: rgb(255 255 255 / 0.88);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-soft);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot--location {
+    border: 1.5px solid var(--interactive);
+  }
+
+  .dot--temp {
+    background: var(--cyan);
+    box-shadow: 0 0 0 3px rgb(121 218 255 / 0.35);
+  }
+
+  /* Pause switch: a native checkbox, so it works without JavaScript. */
+  .motion-switch {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  .motion-label {
+    position: absolute;
+    z-index: 2;
+    top: 10px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 10px;
+    border-radius: var(--radius-control);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .motion-track {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    border-radius: 9px;
+    background: #b8cfdc;
+    transition: background-color 160ms var(--ease-out);
+  }
+
+  .motion-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 1px 2px rgb(7 24 39 / 0.3);
+    transition: transform 160ms var(--ease-out);
+  }
+
+  .motion-switch:checked + .motion-label .motion-track {
+    background: var(--ink);
+  }
+
+  .motion-switch:checked + .motion-label .motion-thumb {
+    transform: translateX(14px);
+  }
+
+  .motion-switch:focus-visible + .motion-label {
+    outline: 3px solid var(--interactive);
+    outline-offset: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mover {
+      animation: travel-x 14s infinite both;
+    }
+
+    .hop {
+      animation: travel-y 14s infinite both;
+    }
+
+    .lift-shadow {
+      animation: travel-shadow 14s infinite both;
+    }
+
+    .motion-switch:checked ~ .stage :is(.mover, .hop, .lift-shadow),
+    .hero-art:global(.is-offscreen) :is(.mover, .hop, .lift-shadow) {
+      animation-play-state: paused;
+    }
+  }
+
+  /* Nothing moves: no pause control needed. */
+  @media (prefers-reduced-motion: reduce) {
+    .motion-label {
+      display: none;
+    }
+  }
+
+  @keyframes travel-x {
+    0%,
+    28% {
+      transform: translateX(0);
+      animation-timing-function: cubic-bezier(0.55, 0, 0.35, 1);
+    }
+    46%,
+    78% {
+      transform: translateX(-300px);
+      animation-timing-function: cubic-bezier(0.55, 0, 0.35, 1);
+    }
+    96%,
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes travel-y {
+    0%,
+    28% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+    }
+    37% {
+      transform: translateY(-30px);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.7, 1);
+    }
+    46%,
+    78% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+    }
+    87% {
+      transform: translateY(-30px);
+      animation-timing-function: cubic-bezier(0.6, 0, 0.7, 1);
+    }
+    96%,
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes travel-shadow {
+    0%,
+    28%,
+    46%,
+    78%,
+    96%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    37%,
+    87% {
+      transform: scale(0.8);
+      opacity: 0.55;
+    }
+  }
+
+  @media (max-width: 559px) {
+    .art-tag--caption {
+      top: 16px;
+      left: 16px;
+    }
+
+    .motion-label {
+      top: 4px;
+      right: 4px;
+    }
+
+    .art-readout {
+      position: static;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 12px 16px;
+    }
+
+    .art-readout li {
+      padding: 5px 9px;
+      font-size: 0.6875rem;
+    }
+
+    .art-tag--wallet {
+      font-size: 0.6875rem;
+    }
+  }
+</style>
+
+<script>
+  import { initMotionVisibility } from '../scripts/motion.ts';
+  initMotionVisibility('.hero-art');
+</script>

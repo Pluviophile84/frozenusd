@@ -1,0 +1,136 @@
+---
+import { site } from '../config/index.ts';
+import { token as copy, actions } from '../content/home.ts';
+import AddressActions from './AddressActions.astro';
+
+const live = site.token.status === 'live' ? site.token : null;
+const networkLabel = site.token.networkLabel ?? copy.networkPending;
+---
+
+<section class="section token" id="token" aria-labelledby="token-title">
+  <div class="container token-grid">
+    <div class="token-intro">
+      <h2 id="token-title">{copy.title}</h2>
+      <p class="lead">{copy.body}</p>
+    </div>
+
+    <div class="sheet">
+      <dl class="facts">
+        <div class="fact">
+          <dt>Name</dt>
+          <dd>{site.brand.name}</dd>
+        </div>
+        <div class="fact">
+          <dt>Ticker</dt>
+          <dd>{site.brand.ticker}</dd>
+        </div>
+        <div class="fact">
+          <dt>Network</dt>
+          <dd class:list={{ pending: !site.token.networkLabel }}>{networkLabel}</dd>
+        </div>
+        <div class="fact fact--contract">
+          <dt>Contract</dt>
+          <dd class:list={{ pending: !live }}>
+            {live ? <AddressActions token={live} id="token-address" /> : copy.contractPending}
+          </dd>
+        </div>
+        <div class="fact">
+          <dt>Status</dt>
+          <dd>
+            <span class:list={['status', { 'status--live': live }]}>{copy.statusLabels[site.token.status]}</span>
+          </dd>
+        </div>
+      </dl>
+
+      {
+        live ? (
+          <div class="sheet-actions">
+            <a class="btn" href={live.tradeUrl} target="_blank" rel="noopener">
+              {actions.buy}
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          </div>
+        ) : (
+          <p class="sheet-note">{copy.prelaunchNote}</p>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .token-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 48px clamp(48px, 7vw, 120px);
+    align-items: start;
+  }
+
+  .token-intro .lead {
+    margin-top: 24px;
+    max-width: 30rem;
+  }
+
+  .sheet {
+    border-top: 2px solid var(--ink);
+  }
+
+  .facts {
+    margin: 0;
+  }
+
+  .fact {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    min-height: 64px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .fact dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .fact dd {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    min-width: 0;
+  }
+
+  .fact dd.pending {
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .sheet-note {
+    margin-top: 20px;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .sheet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  @media (max-width: 899px) {
+    .token-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 479px) {
+    .fact {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4px;
+    }
+  }
+</style>

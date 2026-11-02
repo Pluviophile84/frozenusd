@@ -1,0 +1,99 @@
+---
+import { site } from '../config/index.ts';
+import { closing, actions } from '../content/home.ts';
+
+const live = site.token.status === 'live' ? site.token : null;
+---
+
+<section class="section closing" aria-labelledby="closing-title">
+  <div class="container closing-inner">
+    <img class="closing-mark" src="/brand/frozen-usd-master.svg" width="64" height="64" alt="" loading="lazy" />
+    <h2 id="closing-title">{closing.title}</h2>
+    <p class="closing-signature">{closing.signature}</p>
+    <div class="closing-actions">
+      {
+        live ? (
+          <a class="btn" href={live.tradeUrl} target="_blank" rel="noopener">
+            {actions.buy}
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        ) : (
+          <a class="btn" href="#token">
+            {actions.coldFacts}
+          </a>
+        )
+      }
+      {
+        site.social.xUrl && (
+          <a class="btn btn--secondary" href={site.social.xUrl} target="_blank" rel="noopener">
+            {actions.followX}
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        )
+      }
+    </div>
+    <p class="sign-off">{closing.signOff}</p>
+  </div>
+</section>
+
+<style>
+  .closing {
+    background:
+      radial-gradient(50% 70% at 50% 100%, rgb(121 218 255 / 0.22) 0%, rgb(121 218 255 / 0) 70%),
+      linear-gradient(180deg, var(--white) 0%, var(--frost) 100%);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .closing-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .closing-mark {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 32px;
+  }
+
+  .closing h2 {
+    max-width: 14ch;
+    font-size: clamp(2.375rem, 1.4rem + 3.6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .closing-signature {
+    margin-top: 22px;
+    font-size: var(--text-lead);
+    font-weight: 800;
+    color: var(--interactive);
+  }
+
+  .closing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .sign-off {
+    margin-top: 56px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .sign-off::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 40px;
+    margin: 0 auto 16px;
+    background: var(--border-strong);
+  }
+</style>

@@ -1,0 +1,145 @@
+---
+import { benefits } from '../content/home.ts';
+import { sentences } from '../lib/text.ts';
+
+const ink = '#071827';
+const blue = '#005570';
+const cyan = '#79DAFF';
+---
+
+<section class="section benefits" aria-labelledby="benefits-title">
+  <div class="container">
+    <h2 id="benefits-title">{sentences(benefits.title).map((line) => <span class="line">{line} </span>)}</h2>
+
+    <ul class="benefit-list">
+      {
+        benefits.items.map((item) => (
+          <li class="benefit">
+            <svg class="benefit-art" viewBox="0 0 200 120" width="200" height="120" aria-hidden="true" focusable="false">
+              {item.art === 'start' && (
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  {/* A timeline that is frozen from t=0. */}
+                  <line x1="16" y1="92" x2="188" y2="92" stroke={ink} stroke-width="1.5" />
+                  {[16, 50, 84, 118, 152, 186].map((x) => (
+                    <line x1={x} y1="88" x2={x} y2="96" stroke={ink} stroke-width="1.5" />
+                  ))}
+                  <rect x="16" y="78" width="172" height="8" fill={cyan} fill-opacity="0.45" stroke="none" />
+                  <g transform="translate(16 26)">
+                    <path d="M0 10 L10 2 H48 V40 L38 48 H0 Z" fill="#FFFFFF" stroke={ink} stroke-width="1.5" />
+                    <path d="M0 10 H38 V48 M38 10 L48 2" stroke={ink} stroke-width="1.5" />
+                    <circle cx="19" cy="29" r="10" fill={cyan} stroke={ink} stroke-width="1.5" />
+                  </g>
+                  <text x="16" y="114" fill={blue} stroke="none" font-family="ui-monospace, Menlo, monospace" font-size="10">
+                    t = 0
+                  </text>
+                </g>
+              )}
+              {item.art === 'transfer' && (
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  {/* Two wallets; the block crosses between them unchanged. */}
+                  <rect x="6" y="52" width="52" height="40" rx="6" stroke={ink} stroke-width="1.5" />
+                  <path d="M6 64 H58 M44 72 h8" stroke={ink} stroke-width="1.5" />
+                  <rect x="142" y="52" width="52" height="40" rx="6" stroke={ink} stroke-width="1.5" />
+                  <path d="M142 64 H194 M180 72 h8" stroke={ink} stroke-width="1.5" />
+                  <path d="M64 72 C 84 30, 116 30, 136 72" stroke={blue} stroke-width="1.5" stroke-dasharray="2 5" />
+                  <path d="M130 66 l6 6 l-8 2" stroke={blue} stroke-width="1.5" />
+                  <g transform="translate(82 14)">
+                    <path d="M0 8 L8 2 H36 V30 L28 36 H0 Z" fill="#FFFFFF" stroke={ink} stroke-width="1.5" />
+                    <path d="M0 8 H28 V36 M28 8 L36 2" stroke={ink} stroke-width="1.5" />
+                    <circle cx="14" cy="22" r="7.5" fill={cyan} stroke={ink} stroke-width="1.5" />
+                  </g>
+                </g>
+              )}
+              {item.art === 'custody' && (
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  {/* Your key, inside our freezer. */}
+                  <rect x="56" y="6" width="88" height="108" rx="6" fill="#FFFFFF" stroke={ink} stroke-width="1.5" />
+                  <line x1="56" y1="40" x2="144" y2="40" stroke={ink} stroke-width="1.5" />
+                  <line x1="132" y1="16" x2="132" y2="30" stroke={ink} stroke-width="2" />
+                  <line x1="132" y1="52" x2="132" y2="74" stroke={ink} stroke-width="2" />
+                  <rect x="64" y="48" width="58" height="58" rx="3" fill={cyan} fill-opacity="0.35" stroke="none" />
+                  <circle cx="80" cy="77" r="9" stroke={ink} stroke-width="1.5" fill="#FFFFFF" />
+                  <path d="M89 77 H114 M106 77 v7 M112 77 v5" stroke={ink} stroke-width="1.5" />
+                  <path d="M68 16 h20 M68 24 h12" stroke={blue} stroke-width="1.5" />
+                </g>
+              )}
+            </svg>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .benefits h2 .line {
+    display: block;
+  }
+
+  .benefit-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: clamp(48px, 6vw, 80px) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--ink);
+  }
+
+  .benefit {
+    padding: 32px clamp(16px, 2.6vw, 40px) 8px;
+  }
+
+  .benefit:first-child {
+    padding-left: 0;
+  }
+
+  .benefit + .benefit {
+    border-left: 1px solid var(--border);
+  }
+
+  .benefit-art {
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 32px;
+  }
+
+  .benefit h3 {
+    max-width: 18ch;
+    font-size: clamp(1.25rem, 1.1rem + 0.4vw, 1.5rem);
+    letter-spacing: -0.02em;
+  }
+
+  .benefit p {
+    margin-top: 10px;
+    color: var(--muted);
+    max-width: 32ch;
+  }
+
+  @media (max-width: 899px) {
+    .benefit-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .benefit {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      column-gap: 24px;
+      padding: 28px 0;
+    }
+
+    .benefit + .benefit {
+      border-left: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .benefit-art {
+      grid-row: 1 / span 2;
+      width: 112px;
+      margin-bottom: 0;
+    }
+  }
+</style>

@@ -1,0 +1,126 @@
+---
+/**
+ * A real, configured contract address with Copy and Explorer actions.
+ * Only rendered in live mode; pre-launch pages never include it.
+ */
+import type { LiveToken } from '../config/index.ts';
+import { actions } from '../content/home.ts';
+
+interface Props {
+  token: LiveToken;
+  id: string;
+  /** Visually truncate long addresses (the full value stays in the DOM). */
+  truncate?: boolean;
+  tone?: 'light' | 'dark';
+}
+
+const { token, id, truncate = false, tone = 'light' } = Astro.props;
+---
+
+<div class:list={['address', { 'address--truncate': truncate }, `address--${tone}`]} data-copy-root>
+  <code id={`${id}-value`} class="address-value" title={token.contractAddress}>{token.contractAddress}</code>
+  <div class="address-actions">
+    <button
+      type="button"
+      class="address-btn"
+      data-copy-button
+      data-copy-value={token.contractAddress}
+      aria-describedby={`${id}-status`}
+      hidden
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"
+        ><rect x="5" y="5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"
+        ></rect><path d="M11 3.5V3a1.5 1.5 0 0 0-1.5-1.5h-6A1.5 1.5 0 0 0 2 3v6a1.5 1.5 0 0 0 1.5 1.5H4" fill="none" stroke="currentColor" stroke-width="1.5"
+        ></path></svg
+      >
+      {actions.copy}<span class="visually-hidden"> contract address</span>
+    </button>
+    <a class="address-btn" href={token.explorerUrl} target="_blank" rel="noopener">
+      {actions.explorer}<span class="visually-hidden"> (opens in a new tab)</span>
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"
+        ><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg
+      >
+    </a>
+  </div>
+  <p id={`${id}-status`} class="address-status" role="status" aria-live="polite" data-copy-status></p>
+</div>
+
+<style>
+  .address {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 12px;
+  }
+
+  .address-value {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: inherit;
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+
+  .address--truncate .address-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .address-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .address-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .address-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .address--dark .address-btn {
+    background: transparent;
+    border-color: var(--ink-rule);
+    color: var(--white);
+  }
+
+  .address-status {
+    grid-column: 1 / -1;
+    min-height: 1.4em;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--interactive);
+  }
+
+  .address-status:empty {
+    min-height: 0;
+  }
+
+  @media (max-width: 559px) {
+    .address {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { initCopyButtons } from '../scripts/copy.ts';
+  initCopyButtons();
+</script>
