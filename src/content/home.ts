@@ -1,5 +1,5 @@
 /**
- * Selected public copy for the FROZEN USD launch website.
+ * Selected public copy for the Frozen USD launch website.
  * Edit wording here; layout lives in src/components/.
  * Conditional launch labels (Buy, Copy, Explorer) live with the components
  * that decide whether they may render.
@@ -13,7 +13,7 @@ export const nav = [
 ] as const;
 
 export const hero = {
-  eyebrow: 'FROZEN USD · $FRZUSD',
+  eyebrow: 'Frozen USD · $FUSD',
   identity: 'MEMECOIN PARODY',
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
@@ -23,7 +23,7 @@ export const hero = {
     label: 'Concept illustration',
     location: 'Location: updated',
     temperature: 'Temperature: unchanged',
-    alt: 'Concept illustration: the FROZEN USD coin, sealed inside a clear block of ice, travels between two abstract wallets. Location: updated. Temperature: unchanged.',
+    alt: 'Concept illustration: the Frozen USD coin, sealed inside a clear block of ice, travels between two abstract wallets. Location: updated. Temperature: unchanged.',
   },
 };
 
@@ -82,7 +82,7 @@ export const satire = {
 
 export const token = {
   title: 'The cold facts.',
-  body: 'FROZEN USD is a memecoin parody. No dollar peg. No dollar redemption. The frozen-dollar technology is the joke.',
+  body: 'Frozen USD is a memecoin parody. No dollar peg. No dollar redemption. The frozen-dollar technology is the joke.',
   networkPending: 'To be announced',
   contractPending: 'Not available yet',
   statusLabels: { prelaunch: 'Pre-launch', live: 'Live' },
@@ -91,7 +91,7 @@ export const token = {
 
 export const memes = {
   title: ['Some people hold dollars.', 'Some people hold opinions about dollars.'],
-  body: ['$FRZUSD is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
+  body: ['$FUSD is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
   posters: [
     { slug: 'frozen-still-moving', line: 'FROZEN. STILL MOVING.' },
     { slug: 'your-keys-our-freezer', line: 'YOUR KEYS. OUR FREEZER.' },
@@ -103,7 +103,7 @@ export const memes = {
 export const faq = [
   {
     q: 'Is Frozen USD a stablecoin?',
-    a: ['It has the brochure confidence of one. $FRZUSD is a memecoin with no dollar peg or redemption promise.'],
+    a: ['It has the brochure confidence of one. $FUSD is a memecoin with no dollar peg or redemption promise.'],
   },
   {
     q: 'How can it be frozen and still move?',
@@ -118,7 +118,7 @@ export const faq = [
     a: ["No. We do not have access to another issuer's controls or provide an unfreezing service."],
   },
   {
-    q: 'Why hold $FRZUSD?',
+    q: 'Why hold $FUSD?',
     a: ['Because you enjoy the premise and want to take part in it. No financial return or dollar safety is attached to the punchline.'],
   },
   {
@@ -134,7 +134,7 @@ export const closing = {
 };
 
 export const footer = {
-  tagline: 'FROZEN USD — Frozen. Still moving.',
+  tagline: 'Frozen USD — Frozen. Still moving.',
   disclaimer:
     'Independent memecoin parody. No dollar peg or redemption. No affiliation with Tether, Circle or Binance. Cryptoassets can lose all their value.',
 };
@@ -146,15 +146,15 @@ export const notFound = {
 };
 
 export const seo = {
-  title: 'FROZEN USD — Frozen. Still moving.',
+  title: 'Frozen USD — Frozen. Still moving.',
   description:
-    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $FRZUSD is a memecoin parody of stablecoins and the freeze button.',
+    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $FUSD is a memecoin parody of stablecoins and the freeze button.',
 };
 
 export const actions = {
   explore: 'Explore frozen finance',
   tokenDetails: 'Token details',
-  buy: 'Buy $FRZUSD',
+  buy: 'Buy $FUSD',
   coldFacts: 'The cold facts',
   followX: 'Follow on X',
   community: 'Join the community',

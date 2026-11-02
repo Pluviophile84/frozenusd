@@ -19,11 +19,11 @@ Colours confirmed from the SVGs: glacial cyan `#79DAFF`, ink `#071827`.
 
 `tests/brand.test.mjs` verifies the package checksums, the byte-identical copies and the inline path.
 
-No wordmark was supplied, so the site sets "FROZEN USD" in Manrope beside the unchanged emblem. The earlier snowflake direction is not used.
+No wordmark was supplied, so the site sets "Frozen USD" in Manrope beside the unchanged emblem. The earlier snowflake direction is not used.
 
 ## Product art (original)
 
-`src/lib/ice-block.ts` draws the hero object as native SVG: the official emblem on a coin with a rim, suspended in a beveled ice block with depth faces, refraction offsets in the bevel facets, internal reflection bands, specular streaks, edge highlights, bubbles, a restrained turbulence-based frost texture, and a contact shadow with a cyan caustic. It is an illustration, not a photographic render. No image generation, stock imagery or WebGL is used.
+`src/lib/ice-block.ts` draws the hero object as native SVG: the official emblem on a coin with a rim, embedded in an ice block with irregular rounded edges, layered cloudy inclusions, branching stress fractures, trapped air bubbles, a static turbulence-based frost texture, lit depth faces, and a contact shadow with a cyan caustic. The polished rectangular bevels were replaced in the $FUSD refinement to make the material read as ice. It is an illustration, not a photographic render. No image generation, stock imagery or WebGL is used.
 
 The same function renders the hero, the idea section, the three product stages (simplified detail), the 404 page, poster 1 and the Open Graph image.
 

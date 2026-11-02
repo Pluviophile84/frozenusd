@@ -1,5 +1,5 @@
 /**
- * FROZEN USD — launch configuration.
+ * Frozen USD — launch configuration.
  *
  * This is the only file that needs to change when the token launches.
  * See docs/launch-checklist.md for the exact steps. The site is static:
@@ -12,8 +12,8 @@ import type { SiteConfigInput } from './schema.ts';
 
 export const siteConfig: SiteConfigInput = {
   brand: {
-    name: 'FROZEN USD',
-    ticker: '$FRZUSD',
+    name: 'Frozen USD',
+    ticker: '$FUSD',
     slogan: 'Frozen. Still moving.',
   },
 

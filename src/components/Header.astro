@@ -235,6 +235,10 @@ const live = site.token.status === 'live' ? site.token : null;
       clip: rect(0 0 0 0);
     }
   }
+  @media (max-width: 359px) {
+    .header-cta { display: none; }
+    .primary-nav { margin-left: auto; }
+  }
 </style>
 
 <script>

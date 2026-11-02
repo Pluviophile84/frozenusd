@@ -1,262 +1,90 @@
 /**
- * The FROZEN USD product object: the official emblem on a coin, suspended
- * inside a clear, beveled block of ice. Returned as SVG markup so the same
- * geometry is shared by the website (hero, diagram) and the generated
- * poster / social assets (scripts/build-assets.mjs).
- *
- * Local coordinates: the front face spans 0..200 on both axes. The block's
- * depth recedes up and to the right by (DX, DY), so the full object occupies
- * x 0..242, y -32..200. Light comes from the upper left.
- *
- * The emblem path and colours are the unchanged official artwork.
+ * Shared product illustration: the unchanged official coin embedded in ice.
+ * Cloudy inclusions, irregular edges and branching stress fractures replace
+ * the polished bevels of a glass display case. No external image or runtime.
  */
 import { EMBLEM_PATH, BRAND_COLORS } from './emblem.ts';
 
 export const BLOCK = {
-  size: 200,
-  dx: 42,
-  dy: -32,
-  bevel: 22,
-  /** Bounding box of the whole object in local units. */
+  size: 200, dx: 42, dy: -32, bevel: 22,
   bounds: { x: 0, y: -32, width: 242, height: 232 },
 } as const;
-
 export type IceDetail = 'full' | 'simple';
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-const pts = (list: Point[]): string => list.map((p) => `${p.x},${p.y}`).join(' ');
-
-/** Official circle + emblem, scaled to radius `r` around (cx, cy). */
 export function emblemDisc(cx: number, cy: number, r: number): string {
   const scale = (r * 2) / 1024;
-  return (
-    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${BRAND_COLORS.cyan}"/>` +
-    `<path transform="translate(${cx - r} ${cy - r}) scale(${scale})" fill="${BRAND_COLORS.ink}" fill-rule="evenodd" d="${EMBLEM_PATH}"/>`
-  );
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${BRAND_COLORS.cyan}"/>` +
+    `<path transform="translate(${cx - r} ${cy - r}) scale(${scale})" fill="${BRAND_COLORS.ink}" fill-rule="evenodd" d="${EMBLEM_PATH}"/>`;
 }
 
-/**
- * SVG markup (a <g>) for the ice block. `id` must be unique per document;
- * it prefixes every gradient, clip path, mask and filter id.
- */
+/** Every definition is namespaced so multiple blocks can share a document. */
 export function iceBlockSvg(id: string, detail: IceDetail = 'full'): string {
-  const S = BLOCK.size;
-  const { dx, dy, bevel: b } = BLOCK;
   const u = (name: string) => `${id}-${name}`;
   const ref = (name: string) => `url(#${u(name)})`;
-
-  // Coin sits mid-depth inside the block, so it is offset towards the back.
-  const cx = 121;
-  const cy = 86;
-  const rim = 74;
-  const face = 66;
-
-  const front: Point[] = [
-    { x: 0, y: 0 },
-    { x: S, y: 0 },
-    { x: S, y: S },
-    { x: 0, y: S },
-  ];
-  const top: Point[] = [
-    { x: 0, y: 0 },
-    { x: S, y: 0 },
-    { x: S + dx, y: dy },
-    { x: dx, y: dy },
-  ];
-  const side: Point[] = [
-    { x: S, y: 0 },
-    { x: S + dx, y: dy },
-    { x: S + dx, y: S + dy },
-    { x: S, y: S },
-  ];
-  const facetTop: Point[] = [
-    { x: 0, y: 0 },
-    { x: S, y: 0 },
-    { x: S - b, y: b },
-    { x: b, y: b },
-  ];
-  const facetLeft: Point[] = [
-    { x: 0, y: 0 },
-    { x: b, y: b },
-    { x: b, y: S - b },
-    { x: 0, y: S },
-  ];
-  const facetRight: Point[] = [
-    { x: S, y: 0 },
-    { x: S, y: S },
-    { x: S - b, y: S - b },
-    { x: S - b, y: b },
-  ];
-  const facetBottom: Point[] = [
-    { x: 0, y: S },
-    { x: b, y: S - b },
-    { x: S - b, y: S - b },
-    { x: S, y: S },
-  ];
-  const silhouette: Point[] = [
-    { x: 0, y: 0 },
-    { x: dx, y: dy },
-    { x: S + dx, y: dy },
-    { x: S + dx, y: S + dy },
-    { x: S, y: S },
-    { x: 0, y: S },
-  ];
-
-  const coin = (extra = '') =>
-    `<g${extra}>` +
-    // Coin edge, visible towards the viewer's upper right.
-    `<circle cx="${cx + 4.5}" cy="${cy - 3.5}" r="${rim}" fill="#1E8DBE"/>` +
-    `<circle cx="${cx}" cy="${cy}" r="${rim}" fill="${ref('rim')}"/>` +
-    `<circle cx="${cx}" cy="${cy}" r="${rim - 3.5}" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1"/>` +
-    emblemDisc(cx, cy, face) +
-    `</g>`;
-
   const full = detail === 'full';
-
-  const defs =
-    `<defs>` +
-    `<linearGradient id="${u('body')}" x1="0" y1="0" x2="1" y2="1">` +
-    `<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.78"/>` +
-    `<stop offset="0.55" stop-color="#E4F6FE" stop-opacity="0.6"/>` +
-    `<stop offset="1" stop-color="#A9DFF5" stop-opacity="0.62"/>` +
-    `</linearGradient>` +
-    `<radialGradient id="${u('glow')}" cx="0.5" cy="0.45" r="0.62">` +
-    `<stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/>` +
-    `<stop offset="1" stop-color="#FFFFFF" stop-opacity="0.42"/>` +
-    `</radialGradient>` +
-    `<linearGradient id="${u('rim')}" x1="0" y1="0" x2="1" y2="1">` +
-    `<stop offset="0" stop-color="#D9F5FF"/>` +
-    `<stop offset="0.5" stop-color="#8FDDFB"/>` +
-    `<stop offset="1" stop-color="#3BA9D6"/>` +
-    `</linearGradient>` +
-    `<linearGradient id="${u('top')}" x1="0" y1="1" x2="0.25" y2="0">` +
-    `<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.96"/>` +
-    `<stop offset="1" stop-color="#D4F1FD" stop-opacity="0.9"/>` +
-    `</linearGradient>` +
-    `<linearGradient id="${u('side')}" x1="0" y1="0" x2="1" y2="0.3">` +
-    `<stop offset="0" stop-color="#8AD6F5" stop-opacity="0.94"/>` +
-    `<stop offset="1" stop-color="#3FA6D6" stop-opacity="0.86"/>` +
-    `</linearGradient>` +
-    `<linearGradient id="${u('streak')}" x1="0" y1="0" x2="1" y2="1">` +
-    `<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.5"/>` +
-    `<stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>` +
-    `</linearGradient>` +
-    `<linearGradient id="${u('facetR')}" x1="0" y1="0" x2="0" y2="1">` +
-    `<stop offset="0" stop-color="#6CC8EE" stop-opacity="0.28"/>` +
-    `<stop offset="1" stop-color="#2F9CCB" stop-opacity="0.36"/>` +
-    `</linearGradient>` +
-    `<linearGradient id="${u('tirR')}" x1="1" y1="0" x2="0" y2="0">` +
-    `<stop offset="0" stop-color="#1E8DBE" stop-opacity="0.26"/>` +
-    `<stop offset="1" stop-color="#1E8DBE" stop-opacity="0"/>` +
-    `</linearGradient>` +
-    `<linearGradient id="${u('tirB')}" x1="0" y1="1" x2="0" y2="0">` +
-    `<stop offset="0" stop-color="#1E8DBE" stop-opacity="0.22"/>` +
-    `<stop offset="1" stop-color="#1E8DBE" stop-opacity="0"/>` +
-    `</linearGradient>` +
-    `<clipPath id="${u('front')}"><polygon points="${pts(front)}"/></clipPath>` +
-    `<clipPath id="${u('facets')}"><polygon points="${pts(facetTop)}"/><polygon points="${pts(facetRight)}"/></clipPath>` +
-    (full
-      ? `<filter id="${u('frost')}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">` +
-        `<feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="11"/>` +
-        `<feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  2.4 0 0 0 -1.15"/>` +
-        `</filter>` +
-        `<radialGradient id="${u('frostFade')}" cx="0.42" cy="0.5" r="0.75">` +
-        `<stop offset="0.45" stop-color="#000"/>` +
-        `<stop offset="1" stop-color="#FFF"/>` +
-        `</radialGradient>` +
-        `<mask id="${u('frostMask')}" maskUnits="userSpaceOnUse" x="-4" y="-36" width="250" height="240">` +
-        `<rect x="-4" y="-36" width="250" height="240" fill="${ref('frostFade')}"/>` +
-        `</mask>`
-      : '') +
-    `</defs>`;
-
-  const bubbles = full
-    ? [
-        [34, 152, 2.4],
-        [46, 166, 1.5],
-        [58, 140, 1.1],
-        [160, 172, 1.9],
-        [172, 160, 1.2],
-        [30, 58, 1.6],
-        [146, 186, 1.1],
-      ]
-        .map(
-          ([x, y, r]) =>
-            `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" fill-opacity="0.75" stroke="#2F9CCB" stroke-opacity="0.35" stroke-width="0.6"/>`,
-        )
-        .join('')
-    : '';
-
-  return (
-    `<g class="ice-block">` +
-    defs +
-    // Ice body behind the coin.
-    `<polygon points="${pts(front)}" fill="${ref('body')}"/>` +
-    // Back edges seen through the clear ice.
-    `<polyline points="${dx},${dy} ${dx},${S + dy} ${S + dx},${S + dy}" fill="none" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.3"/>` +
-    `<polyline points="${dx + 1.2},${dy + 2} ${dx + 1.2},${S + dy + 1.2} ${S + dx - 2},${S + dy + 1.2}" fill="none" stroke="#2F9CCB" stroke-opacity="0.22" stroke-width="1"/>` +
-    `<line x1="0" y1="${S}" x2="${dx}" y2="${S + dy}" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="1"/>` +
-    // The coin, then a refracted copy displaced inside the bevel facets.
-    `<g clip-path="${ref('front')}">` +
-    coin() +
-    `<g clip-path="${ref('facets')}"><g transform="translate(7 -6)" opacity="0.92">${coin()}</g></g>` +
-    `</g>` +
-    // Ice surface over the coin: soft edge glow, specular streaks.
-    `<polygon points="${pts(front)}" fill="${ref('glow')}"/>` +
-    `<g clip-path="${ref('front')}">` +
-    `<polygon points="28,0 84,0 0,84 0,28" fill="${ref('streak')}"/>` +
-    `<polygon points="104,0 114,0 0,114 0,104" fill="#FFFFFF" fill-opacity="0.22"/>` +
-    `<polygon points="200,118 200,150 150,200 118,200" fill="#FFFFFF" fill-opacity="0.12"/>` +
-    `<rect x="${S - b - 16}" y="${b}" width="16" height="${S - 2 * b}" fill="${ref('tirR')}"/>` +
-    `<rect x="${b}" y="${S - b - 14}" width="${S - 2 * b}" height="14" fill="${ref('tirB')}"/>` +
-    `<line x1="${b + 6}" y1="${S - b - 3}" x2="${S - b - 30}" y2="${S - b - 3}" stroke="#FFFFFF" stroke-opacity="0.7" stroke-width="1"/>` +
-    `</g>` +
-    // Bevel facets, lit from the upper left.
-    `<polygon points="${pts(facetTop)}" fill="#FFFFFF" fill-opacity="0.5"/>` +
-    `<polygon points="${pts(facetLeft)}" fill="#FFFFFF" fill-opacity="0.34"/>` +
-    `<polygon points="${pts(facetRight)}" fill="${ref('facetR')}"/>` +
-    `<polygon points="${pts(facetBottom)}" fill="#0B5E7E" fill-opacity="0.16"/>` +
-    `<g stroke="#FFFFFF" stroke-width="1" stroke-opacity="0.9" fill="none">` +
-    `<line x1="0" y1="0" x2="${b}" y2="${b}"/><line x1="${S}" y1="0" x2="${S - b}" y2="${b}"/>` +
-    `<line x1="0" y1="${S}" x2="${b}" y2="${S - b}"/><line x1="${S}" y1="${S}" x2="${S - b}" y2="${S - b}"/>` +
-    `<rect x="${b}" y="${b}" width="${S - 2 * b}" height="${S - 2 * b}" stroke-opacity="0.75"/>` +
-    `</g>` +
-    // Depth faces.
-    `<polygon points="${pts(top)}" fill="${ref('top')}"/>` +
-    `<polygon points="${pts(side)}" fill="${ref('side')}"/>` +
-    `<polyline points="${b * 0.7},${-b * 0.42} ${S + dx - b * 0.55},${-b * 0.42 + 0.0} " fill="none" stroke="#FFFFFF" stroke-opacity="0.8" stroke-width="1"/>` +
-    `<polyline points="${S + b * 0.38},${-b * 0.2} ${S + b * 0.38},${S - b * 0.75}" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1"/>` +
-    `<polygon points="${S + 6},${-2} ${S + 14},${-8} ${S + 14},${S - 30} ${S + 6},${S - 22}" fill="#FFFFFF" fill-opacity="0.22"/>` +
-    // Frost, concentrated at edges and corners.
-    (full
-      ? `<g mask="${ref('frostMask')}" opacity="0.7"><polygon points="${pts(silhouette)}" fill="#FFFFFF" filter="${ref('frost')}"/></g>`
-      : '') +
-    bubbles +
-    // Crisp edges.
-    `<polygon points="${pts(silhouette)}" fill="none" stroke="#0B5E7E" stroke-opacity="0.32" stroke-width="1"/>` +
-    `<polyline points="0,${S} 0,0 ${S},0 ${S + dx},${dy}" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>` +
-    `<line x1="0" y1="0" x2="${dx}" y2="${dy}" stroke="#FFFFFF" stroke-width="1.6"/>` +
-    `<line x1="${dx}" y1="${dy}" x2="${S + dx}" y2="${dy}" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="1.2"/>` +
-    `<line x1="${S}" y1="0" x2="${S}" y2="${S}" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.3"/>` +
-    `</g>`
-  );
+  const front = 'M11 0 58 2 116 0 185 1Q199 1 200 15L198 67 200 136 198 184Q198 198 184 200L122 198 62 200 14 198Q1 198 1 184L3 122 0 65 1 14Q1 3 11 0Z';
+  const top = 'M11 0 45-28Q51-32 61-31L226-30Q240-30 242-20L200 15Q199 1 185 1L116 0 58 2Z';
+  const side = 'M200 15 242-20 240 45 242 108 239 157Q239 167 230 174L184 200Q198 198 198 184L200 136 198 67Z';
+  const outline = 'M11 0 45-28Q51-32 61-31L226-30Q240-30 242-20L240 45 242 108 239 157Q239 167 230 174L184 200 122 198 62 200 14 198Q1 198 1 184L3 122 0 65 1 14Q1 3 11 0Z';
+  const cracks = [
+    'M5 24 23 34 29 51 40 59 44 78M23 34 39 30 52 35M29 51 17 61 20 77',
+    'M9 175 29 161 35 143 47 131M29 161 46 166 64 159M35 143 26 134',
+    'M198 153 178 146 170 155 151 160M178 146 181 129 175 117M170 155 173 174 160 187',
+    'M218-25 205-14 188-13 175-3M205-14 204-3M237 65 226 78 230 96 217 113M226 78 215 73',
+  ].map(d => `<path d="${d}"/>`).join('');
+  // Deterministic air inclusions: dense at the frozen margins, sparse over the mark.
+  const bubbles = Array.from({ length: full ? 72 : 18 }, (_, i) => {
+    const x = 8 + ((i * 67 + 13) % 184);
+    const y = 8 + ((i * 43 + 29) % 182);
+    if (Math.hypot(x - 113, y - 86) < 72) return '';
+    const r = (0.45 + ((i * 7) % 13) / 10).toFixed(2);
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" fill-opacity=".76" stroke="#5D9EB9" stroke-opacity=".28" stroke-width=".45"/>`;
+  }).join('');
+  return `<g class="ice-block"><defs>
+    <linearGradient id="${u('body')}" x2=".8" y2="1"><stop stop-color="#E8F8FF"/><stop offset=".5" stop-color="#C2E4F1"/><stop offset="1" stop-color="#8DBED2"/></linearGradient>
+    <linearGradient id="${u('top')}" x2=".25" y2="1"><stop stop-color="#FAFEFF"/><stop offset=".6" stop-color="#D2EAF3"/><stop offset="1" stop-color="#A8D1E2"/></linearGradient>
+    <linearGradient id="${u('side')}" x2="1" y2=".5"><stop stop-color="#7BAEC6"/><stop offset=".45" stop-color="#BADCE9"/><stop offset="1" stop-color="#81B3C9"/></linearGradient>
+    <linearGradient id="${u('rim')}" x2="1" y2="1"><stop stop-color="#F3FCFF"/><stop offset=".32" stop-color="#B4ECFF"/><stop offset=".7" stop-color="#399BC1"/><stop offset="1" stop-color="#C5EFFF"/></linearGradient>
+    <radialGradient id="${u('cloud')}" cx=".57" cy=".42" r=".68"><stop offset=".38" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".73" stop-color="#F2FBFF" stop-opacity=".43"/><stop offset="1" stop-color="#FFFFFF" stop-opacity=".94"/></radialGradient>
+    <linearGradient id="${u('snow')}" x2=".7" y2="1"><stop stop-color="#FFFFFF" stop-opacity=".85"/><stop offset=".45" stop-color="#FFFFFF" stop-opacity=".12"/><stop offset="1" stop-color="#FFFFFF" stop-opacity=".8"/></linearGradient>
+    <radialGradient id="${u('fade')}"><stop offset=".35" stop-color="#000000"/><stop offset="1" stop-color="#FFFFFF"/></radialGradient>
+    <clipPath id="${u('clip')}"><path d="${outline}"/></clipPath>
+    <clipPath id="${u('front')}"><path d="${front}"/></clipPath>
+    ${`<filter id="${u('frost')}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".13 .19" numOctaves="${full ? 3 : 1}" seed="23"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.8 -.45"/></filter><mask id="${u('mask')}" x="0" y="-32" width="242" height="232" maskUnits="userSpaceOnUse"><rect y="-32" width="242" height="232" fill="${ref('fade')}"/></mask>`}
+    </defs>
+    <path d="${front}" fill="${ref('body')}"/>
+    <g clip-path="${ref('front')}">
+      <ellipse cx="122" cy="102" rx="81" ry="76" fill="#1A627E" opacity=".16"/>
+      <circle cx="125" cy="84" r="74" fill="#287B9A"/>
+      <circle cx="121" cy="86" r="74" fill="${ref('rim')}"/>
+      <circle cx="121" cy="86" r="70.5" fill="none" stroke="#EBFAFF" stroke-width="1.2"/>
+      ${emblemDisc(121, 86, 66)}
+      <path d="${front}" fill="${ref('cloud')}"/>
+      <path d="M0 13Q29 16 31 45T21 113Q31 160 73 172L123 198H0Z" fill="${ref('snow')}"/>
+      <path d="M183 0 173 30 185 55 181 97 193 126 176 181 200 200 204 0Z" fill="#EDFAFF" opacity=".48"/>
+      <path d="M12 187Q44 166 76 183T145 182L180 191 190 200H8Z" fill="#F8FDFF" opacity=".68"/>
+      ${bubbles}
+    </g>
+    <path d="${top}" fill="${ref('top')}"/>
+    <path d="${side}" fill="${ref('side')}"/>
+    <g clip-path="${ref('clip')}">
+      <path d="M38-18 72-24 145-22 194-26 227-21 212-13 148-11 93-14 58-8Z" fill="#FFFFFF" opacity=".52"/>
+      <path d="M221-3 229-8 226 34 231 67 225 103 229 144 215 162 211 119 217 81 213 44Z" fill="#F4FCFF" opacity=".4"/>
+      <g mask="${ref('mask')}" opacity="${full ? .85 : .52}"><path d="${outline}" filter="${ref('frost')}"/></g>
+      <g fill="none" stroke="#FFFFFF" stroke-opacity=".78" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round">${cracks}</g>
+      <g fill="none" stroke="#609EB7" stroke-opacity=".27" stroke-width=".45" transform="translate(1 1)">${cracks}</g>
+      <path d="M16 5 53 8 83 5M4 86 7 112 5 142M17 191 48 189 64 193M206 9 210 36 207 59" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>
+    </g>
+    <path d="${outline}" fill="none" stroke="#7CAABD" stroke-opacity=".55" stroke-width=".8"/>
+    <path d="M3 179 4 121 2 66 3 15Q3 5 12 2L58 4 116 2 184 3Q196 3 198 15M13 0 46-27Q51-30 61-29L223-28" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    <path d="M200 18 198 67 200 136 196 183" fill="none" stroke="#EAF9FF" stroke-width="1.5" opacity=".8"/>
+  </g>`;
 }
 
-/** Soft contact shadow with a cyan caustic, centred under the block. */
 export function iceShadowSvg(id: string, cx: number, cy: number, width = 250): string {
-  const u = (name: string) => `${id}-${name}`;
-  return (
-    `<g class="ice-shadow">` +
-    `<defs>` +
-    `<radialGradient id="${u('shadow')}"><stop offset="0" stop-color="#071827" stop-opacity="0.34"/><stop offset="1" stop-color="#071827" stop-opacity="0"/></radialGradient>` +
-    `<radialGradient id="${u('caustic')}"><stop offset="0" stop-color="#79DAFF" stop-opacity="0.75"/><stop offset="1" stop-color="#79DAFF" stop-opacity="0"/></radialGradient>` +
-    `</defs>` +
-    `<ellipse cx="${cx}" cy="${cy}" rx="${width / 2}" ry="${width / 11}" fill="url(#${u('shadow')})"/>` +
-    `<ellipse cx="${cx + width * 0.08}" cy="${cy + 2}" rx="${width * 0.24}" ry="${width / 22}" fill="url(#${u('caustic')})"/>` +
-    `</g>`
-  );
+  return `<g class="ice-shadow"><defs>
+    <radialGradient id="${id}-shadow"><stop stop-color="#103D54" stop-opacity=".3"/><stop offset="1" stop-color="#103D54" stop-opacity="0"/></radialGradient>
+    <radialGradient id="${id}-caustic"><stop stop-color="#79DAFF" stop-opacity=".7"/><stop offset="1" stop-color="#79DAFF" stop-opacity="0"/></radialGradient>
+    </defs><ellipse cx="${cx}" cy="${cy}" rx="${width / 2}" ry="${width / 11}" fill="url(#${id}-shadow)"/>
+    <ellipse cx="${cx + width * .08}" cy="${cy + 2}" rx="${width * .24}" ry="${width / 22}" fill="url(#${id}-caustic)"/></g>`;
 }

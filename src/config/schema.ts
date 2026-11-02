@@ -79,7 +79,7 @@ export class SiteConfigError extends Error {
   readonly problems: string[];
   constructor(problems: string[]) {
     super(
-      'Invalid FROZEN USD launch configuration (src/config/site.ts):\n' +
+      'Invalid Frozen USD launch configuration (src/config/site.ts):\n' +
         problems.map((p) => `  - ${p}`).join('\n') +
         '\nSee docs/launch-checklist.md.',
     );

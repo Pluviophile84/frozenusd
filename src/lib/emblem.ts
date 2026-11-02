@@ -1,5 +1,5 @@
 /**
- * Official FROZEN USD emblem geometry, copied verbatim from
+ * Official Frozen USD emblem geometry, copied verbatim from
  * brand-source/Frozen-USD-Logo-Master-v1.1/SVG/Frozen-USD-Master.svg (v1.1).
  * tests/brand.test.mjs verifies this string still matches the official file.
  * Do not edit, simplify or re-draw this path.

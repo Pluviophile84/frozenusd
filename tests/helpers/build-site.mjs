@@ -17,7 +17,7 @@ if (!fixtureJson) {
   await build({ root, outDir, logLevel: 'error' });
 } else {
   const fixture = JSON.parse(await readFile(fixtureJson, 'utf8'));
-  const dir = await mkdtemp(join(tmpdir(), 'frzusd-fixture-'));
+  const dir = await mkdtemp(join(tmpdir(), 'fusd-fixture-'));
   const fixtureModule = join(dir, 'site.mjs');
   await writeFile(fixtureModule, `export const siteConfig = ${JSON.stringify(fixture, null, 2)};\n`);
 
