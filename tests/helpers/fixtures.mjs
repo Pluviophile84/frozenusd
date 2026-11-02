@@ -22,7 +22,7 @@ export const FIXTURE_EVM_ADDRESS = '0x' + 'ab12'.repeat(10);
 
 export function liveFixture() {
   return {
-    brand: { name: 'FROZEN USD', ticker: '$FRZUSD', slogan: 'Frozen. Still moving.' },
+    brand: { name: 'Frozen USD', ticker: '$FUSD', slogan: 'Frozen. Still moving.' },
     canonicalOrigin: 'https://frozen-usd-fixture.vercel.app',
     token: {
       status: 'live',

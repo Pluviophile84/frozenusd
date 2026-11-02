@@ -61,14 +61,21 @@ const fontFace = `@font-face{font-family:'Manrope';font-style:normal;font-displa
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <meta property="og:image:width" content="1200" />}
     {ogImage && <meta property="og:image:height" content="630" />}
-    {ogImage && <meta property="og:image:alt" content="FROZEN USD — The dollar that trades frozen. Frozen. Still moving." />}
+    {ogImage && <meta property="og:image:alt" content="Frozen USD — The dollar that trades frozen. Frozen. Still moving." />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={ogImage} />}
   </head>
-  <body>
+  <body id="top" tabindex="-1">
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
   </body>
 </html>
+
+<script>
+  import { initScrollNavigation } from '../scripts/scroll.ts';
+  import { initSectionMotion } from '../scripts/motion.ts';
+  initScrollNavigation();
+  initSectionMotion();
+</script>

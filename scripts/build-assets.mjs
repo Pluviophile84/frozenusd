@@ -10,6 +10,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import opentype from 'opentype.js';
 import { iceBlockSvg, iceShadowSvg, emblemDisc } from '../src/lib/ice-block.ts';
+import { siteConfig } from '../src/config/site.ts';
 import { EMBLEM_PATH } from '../src/lib/emblem.ts';
 import { memes, hero, product } from '../src/content/home.ts';
 
@@ -63,8 +64,8 @@ function fitSize(lines, maxWidth, max, weight = 800, tracking = -0.035) {
 }
 
 function brandRow({ W, fg, emblem }) {
-  const name = text('FROZEN USD', { size: 30, weight: 800, x: 84 + 64 + 20, y: 132, tracking: 0.04 });
-  const ticker = text('$FRZUSD', { size: 28, weight: 700, x: W - 84, y: 132, anchor: 'end', tracking: 0.02 });
+  const name = text(siteConfig.brand.name, { size: 30, weight: 800, x: 84 + 64 + 20, y: 132, tracking: 0.04 });
+  const ticker = text(siteConfig.brand.ticker, { size: 28, weight: 700, x: W - 84, y: 132, anchor: 'end', tracking: 0.02 });
   const disc =
     emblem === 'master'
       ? emblemDisc(84 + 32, 121, 32)
@@ -95,6 +96,7 @@ const H = 1350;
 /** `bg` is either a colour or ready-made background markup. */
 const svgOpen = (w, h, bg) =>
   `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">` +
+  `<title>${siteConfig.brand.name} (${siteConfig.brand.ticker})</title>` +
   (bg.startsWith('<') ? bg : `<rect width="${w}" height="${h}" fill="${bg}"/>`);
 
 function chip(label, x, y, { dot }) {
@@ -211,11 +213,11 @@ function ogImage() {
     `<rect width="${OW}" height="${OH}" fill="url(#ogbg)"/>` +
     `<rect x="700" y="40" width="460" height="550" rx="28" fill="url(#ogpanel)" stroke="#D3E6F0" stroke-width="2"/>` +
     `<rect x="700" y="40" width="460" height="550" rx="28" fill="url(#oggrid)" opacity="0.8"/>`;
-  const name = text('FROZEN USD', { size: 26, weight: 800, x: 72 + 48 + 16, y: 104, tracking: 0.04 });
+  const name = text(siteConfig.brand.name, { size: 26, weight: 800, x: 72 + 48 + 16, y: 104, tracking: 0.04 });
   const l1 = text('The dollar that', { size: 76, weight: 800, x: 68, y: 262, tracking: -0.038 });
   const l2 = text('trades frozen.', { size: 76, weight: 800, x: 68, y: 342, tracking: -0.038 });
   const sig = text('Frozen. Still moving.', { size: 32, weight: 800, x: 116, y: 428 });
-  const meta = text('$FRZUSD  ·  MEMECOIN PARODY', { size: 18, weight: 700, x: 68, y: 548, tracking: 0.12 });
+  const meta = text(`${siteConfig.brand.ticker}  ·  MEMECOIN PARODY`, { size: 18, weight: 700, x: 68, y: 548, tracking: 0.12 });
   const s = 1.25;
   const bx = 930 - 121 * s;
   const padY = 486;

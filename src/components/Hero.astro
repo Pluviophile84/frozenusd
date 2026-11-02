@@ -7,7 +7,7 @@ import AddressActions from './AddressActions.astro';
 const live = site.token.status === 'live' ? site.token : null;
 ---
 
-<section class="hero" id="top" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title">
   <div class="container hero-grid">
     <div class="hero-copy">
       <div class="hero-meta">
@@ -95,6 +95,11 @@ const live = site.token.status === 'live' ? site.token : null;
     align-items: center;
     gap: 10px 16px;
     margin-bottom: 26px;
+  }
+
+  .hero-meta .eyebrow {
+    text-transform: none;
+    letter-spacing: 0.06em;
   }
 
   .identity {

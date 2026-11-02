@@ -133,10 +133,24 @@ const year = new Date().getFullYear();
   .back-to-top {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
     min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    color: var(--ink);
     font-weight: 700;
+    text-decoration: none;
+    transition: border-color 180ms var(--ease-out), background 180ms var(--ease-out);
   }
+
+  .back-to-top:hover {
+    border-color: var(--interactive);
+    background: var(--frost);
+  }
+
+  .back-to-top svg { transition: transform 180ms var(--ease-out); }
+  .back-to-top:hover svg { transform: translateY(-3px); }
 
   @media (max-width: 559px) {
     .footer-nav ul {

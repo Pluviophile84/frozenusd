@@ -6,7 +6,7 @@ Copy follows the website build prompt's selected copy (section 8), which overrid
 
 | Order | Section (anchor) | Component | Copy export | Notes |
 |---|---|---|---|---|
-| A | Header | `Header.astro` | `nav`, `actions` | Action: *Token details* → `#token` pre-launch; *Buy $FRZUSD* when live |
+| A | Header | `Header.astro` | `nav`, `actions` | Action: *Token details* → `#token` pre-launch; *Buy $FUSD* when live |
 | B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | One H1. Contract strip: unavailable text pre-launch; address + Copy + Explorer when live |
 | C | The idea (`#idea`) | `Idea.astro` | `idea` | Closing line: *Hot wallet. Cold dollars.* |
 | D | The product (`#how-it-works`) | `Product.astro` | `product` | Three stages, *No thawing required.*, Fictional Proof of Cold |

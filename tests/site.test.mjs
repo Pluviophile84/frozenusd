@@ -17,7 +17,7 @@ import { liveFixture, FIXTURE_SOLANA_ADDRESS } from './helpers/fixtures.mjs';
 
 const run = promisify(execFile);
 const buildScript = fileURLToPath(new URL('./helpers/build-site.mjs', import.meta.url));
-const work = await mkdtemp(join(tmpdir(), 'frzusd-test-'));
+const work = await mkdtemp(join(tmpdir(), 'fusd-test-'));
 
 async function buildSite(name, fixture, env = {}) {
   const outDir = join(work, name);
@@ -77,7 +77,7 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal((await page.locator('h1').innerText()).trim(), 'The dollar that trades frozen.');
     assert.ok(html.includes('Contract address not available yet.'));
     assert.equal(await page.locator('[data-copy-button]').count(), 0);
-    assert.equal(await page.getByText('Buy $FRZUSD').count(), 0);
+    assert.equal(await page.getByText('Buy $FUSD').count(), 0);
     assert.equal(await page.getByText('Follow on X').count(), 0);
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), '#token');
     assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Token details');
@@ -114,7 +114,7 @@ describe('pre-launch build (committed configuration)', () => {
     const { context, page } = await open(origin);
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex, nofollow');
     assert.equal(await page.locator('link[rel="canonical"]').count(), 0);
-    assert.equal(await page.title(), 'FROZEN USD — Frozen. Still moving.');
+    assert.equal(await page.title(), 'Frozen USD — Frozen. Still moving.');
     assert.equal(await exists(join(dist, 'sitemap.xml')), false);
     assert.ok(await exists(join(dist, 'robots.txt')));
     assert.doesNotMatch(await readFile(join(dist, 'robots.txt'), 'utf8'), /Sitemap/);
@@ -170,6 +170,53 @@ describe('pre-launch build (committed configuration)', () => {
     }
     const width = await page.evaluate(() => document.documentElement.scrollWidth);
     assert.equal(width, 390);
+    for (const width of [320, 360, 768, 1024]) {
+      await page.setViewportSize({ width, height: 900 });
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width, `overflow at ${width}px`);
+    }
+    await context.close();
+  });
+
+  test('Frozen USD / $FUSD branding is consistent across visible copy and metadata', async () => {
+    const { context, page } = await open(origin);
+    assert.equal(await page.locator('.site-header .logo-text').innerText(), 'Frozen USD');
+    assert.equal(await page.locator('.hero .eyebrow').innerText(), 'Frozen USD · $FUSD');
+    assert.equal(await page.locator('.hero .eyebrow').evaluate((el) => getComputedStyle(el).textTransform), 'none');
+    assert.doesNotMatch(await page.locator('body').innerText(), /FRZUSD|FROZEN USD/);
+    assert.match(await page.locator('meta[name="description"]').getAttribute('content'), /\$FUSD/);
+    await context.close();
+  });
+
+  test('footer and logo return smoothly to the actual top, including repeated #top clicks', async () => {
+    for (const width of [1440, 390]) {
+      const { context, page } = await open(origin, { width, height: 900 });
+      for (const selector of ['.back-to-top', '.site-header .logo', '.site-footer .logo', '.back-to-top']) {
+        await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+        await page.locator(selector).click();
+        await page.waitForTimeout(100);
+        assert.ok(await page.evaluate(() => window.scrollY > 0), `${selector}: should animate the return`);
+        await page.waitForFunction(() => window.scrollY === 0);
+        // Pixel rounding can reach zero just before the easing curve finishes.
+        await page.waitForTimeout(150);
+        assert.equal(await page.evaluate(() => location.hash), '#top');
+      }
+      // Keyboard activation uses the same handler, even if #top is already active.
+      await page.evaluate(() => window.scrollTo({ top: 1800, behavior: 'instant' }));
+      await page.locator('.site-header .logo').focus();
+      await page.keyboard.press('Enter');
+      await page.waitForFunction(() => window.scrollY === 0);
+      await context.close();
+    }
+  });
+
+  test('reduced-motion navigation is immediate and section targets clear the sticky header', async () => {
+    const { context, page } = await open(origin, { reducedMotion: 'reduce' });
+    await page.locator('.header-cta').click();
+    const offset = await page.locator('#token').evaluate((el) => el.getBoundingClientRect().top);
+    const headerHeight = await page.locator('.site-header').evaluate((el) => el.offsetHeight);
+    assert.ok(Math.abs(offset - headerHeight - 16) < 2);
+    await page.locator('.site-header .logo').click();
+    assert.equal(await page.evaluate(() => window.scrollY), 0);
     await context.close();
   });
 
@@ -192,6 +239,11 @@ describe('pre-launch build (committed configuration)', () => {
     await moving.page.locator('label[for="hero-motion"]').click();
     assert.equal(await moving.page.locator('#hero-motion').isChecked(), true);
     assert.equal(await state(moving.page), 'paused');
+    assert.ok(await moving.page.locator('.hero-art :is(.hop, .lift-shadow, .route-signal, .arrival-ring)').evaluateAll((els) => els.every((el) => getComputedStyle(el).animationPlayState === 'paused')));
+    await moving.page.locator('label[for="hero-motion"]').click();
+    await moving.page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+    await moving.page.waitForFunction(() => document.querySelector('.hero-art')?.classList.contains('is-offscreen'));
+    assert.equal(await state(moving.page), 'paused');
     await moving.context.close();
 
     const still = await open(origin, { reducedMotion: 'reduce' });
@@ -208,6 +260,10 @@ describe('pre-launch build (committed configuration)', () => {
     const details = page.locator('#faq details').nth(3);
     await details.locator('summary').click();
     assert.ok(await details.getByText("We do not have access to another issuer's controls").isVisible());
+    await page.locator('.back-to-top').click();
+    // Poll from the test process: the page deliberately has JavaScript disabled.
+    for (let i = 0; i < 30 && await page.evaluate(() => window.scrollY) !== 0; i++) await page.waitForTimeout(100);
+    assert.equal(await page.evaluate(() => window.scrollY), 0);
     await context.close();
   });
 
@@ -237,7 +293,7 @@ describe('live build (test fixture)', () => {
   test('enables trading, explorer and social controls', async () => {
     const { context, page, errors } = await open(origin);
     const cta = page.locator('.site-header .header-cta');
-    assert.match(await cta.innerText(), /Buy \$FRZUSD/);
+    assert.match(await cta.innerText(), /Buy \$FUSD/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
     assert.equal(await page.locator('.hero-actions a').first().getAttribute('href'), fixture.token.tradeUrl);
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
@@ -256,6 +312,7 @@ describe('live build (test fixture)', () => {
     const button = page.locator('#token .fact--contract [data-copy-button]');
     assert.ok(await button.isVisible());
     await button.click();
+    await page.waitForFunction(() => document.querySelector('#token-address-status')?.textContent === 'Address copied.');
     assert.equal(await page.locator('#token-address-status').innerText(), 'Address copied.');
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), FIXTURE_SOLANA_ADDRESS);
     await context.close();
@@ -296,7 +353,7 @@ describe('invalid live configuration', () => {
     const fixture = liveFixture();
     fixture.token.contractAddress = 'PASTE_CONTRACT_ADDRESS_HERE';
     await assert.rejects(buildSite('invalid', fixture), (error) => {
-      assert.match(String(error.stderr), /Invalid FROZEN USD launch configuration/);
+      assert.match(String(error.stderr), /Invalid Frozen USD launch configuration/);
       assert.match(String(error.stderr), /contractAddress/);
       return true;
     });
