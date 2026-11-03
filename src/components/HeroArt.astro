@@ -1,0 +1,291 @@
+---
+/**
+ * Hero artwork, ported as-is from Pluviophile84/frzusd (src/components/HeroArt.astro)
+ * with the approved Frozen USD ice cube in place of that repo's token image.
+ *
+ * One stationary centre cube; three cubes on the outer ring and eight on the
+ * inner ring. Each carrier is a full-scene square rotated about the centre;
+ * the offset places the cube at its radius (outer 42%, inner 25%); the counter
+ * rotates by the exact negative of the carrier angle, so every cube stays
+ * upright. Outer ring clockwise, inner counter-clockwise, 100 s per turn.
+ * Motion only starts once JavaScript marks the scene `motion-ready`; it pauses
+ * off-screen, in hidden tabs, for reduced motion and from the toggle button.
+ */
+import { CUBE_NATIVE_SIZE, cubeSrc, cubeSrcset } from '../lib/cube.ts';
+
+const rings = [
+  { name: 'outer', phases: [0, 120, 240] },
+  { name: 'inner', phases: [0, 45, 90, 135, 180, 225, 270, 315] },
+];
+---
+
+<figure class="hero-art orbital-scene" aria-label="Frozen USD tokens circulate while remaining frozen.">
+  <div class="orbital-system" aria-hidden="true">
+    <svg class="orbital-guides" viewBox="0 0 1000 1000" width="1000" height="1000">
+      <circle cx="500" cy="500" r="420"></circle>
+      <circle cx="500" cy="500" r="250"></circle>
+      {[0, 120, 240].map((angle) => <circle cx="500" cy="290" r="210" transform={`rotate(${angle} 500 500)`} />)}
+    </svg>
+    <div class="central-cube">
+      <img
+        src={cubeSrc(512)}
+        srcset={cubeSrcset([512, 1024])}
+        sizes="(min-width: 600px) 138px, 26vw"
+        width={CUBE_NATIVE_SIZE}
+        height={CUBE_NATIVE_SIZE}
+        alt=""
+        fetchpriority="high"
+      />
+    </div>
+    {
+      rings.map(({ name, phases }) => (
+        <div class={`orbital-ring orbital-ring-${name}`}>
+          {phases.map((phase) => (
+            <div class="orbit-carrier moving-object" style={`--phase: ${phase}deg; --counter-phase: ${-phase}deg`}>
+              <div class="orbit-offset">
+                <div class="orbit-counter">
+                  <img
+                    src={cubeSrc(256)}
+                    srcset={cubeSrcset([128, 256])}
+                    sizes="(min-width: 600px) 78px, 15vw"
+                    width={CUBE_NATIVE_SIZE}
+                    height={CUBE_NATIVE_SIZE}
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+  <figcaption>
+    <div>
+      <span class="status-dot"></span> In circulation
+      <br />
+      <span class="caption-indent">Temperature: unchanged</span>
+    </div>
+    <button class="motion-toggle" type="button" aria-pressed="false" hidden> Pause movement </button>
+  </figcaption>
+</figure>
+
+<style>
+  /* Shared hero-art surface (frzusd global.css, final values). */
+  .hero-art {
+    position: relative;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 45%, #e4f4fb 0, #f6fbfd80 48%, #fff0 70%);
+    min-width: 0;
+  }
+
+  .hero-art figcaption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    font: 10px/1.9 var(--font-mono);
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-block: 15px;
+  }
+
+  .status-dot {
+    width: 5px;
+    height: 5px;
+    margin-right: 6px;
+    display: inline-block;
+    background: var(--interactive);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .caption-indent {
+    padding-left: 11px;
+  }
+
+  .motion-toggle {
+    border: 1px solid var(--border);
+    background: #ffffffb0;
+    color: var(--ink);
+    font-size: 10px;
+    min-height: 44px;
+    padding: 10px 15px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .motion-toggle:hover {
+    border-color: var(--interactive);
+  }
+
+  /* Orbital scene (frzusd HeroArt.astro). */
+  .orbital-scene {
+    display: block;
+    align-self: center;
+    min-width: 0;
+    width: 100%;
+    max-width: 540px;
+    justify-self: center;
+    margin: 0;
+    /* frzusd ends this gradient in solid #fff on its white hero; it ends
+       transparent here so it blends into this site's pale hero background. */
+    background: radial-gradient(ellipse at 50% 46%, #edf8fd, #fff0 72%);
+  }
+
+  .orbital-system {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  .orbital-guides {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #9dbfce;
+    stroke-width: 1.2;
+    stroke-dasharray: 3 7;
+  }
+
+  .central-cube {
+    position: absolute;
+    width: 25.5%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .orbital-scene img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .orbital-ring {
+    position: absolute;
+    inset: 0;
+  }
+
+  .orbital-scene .orbit-carrier {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    margin: 0;
+    filter: none;
+    transform: rotate(var(--phase));
+    animation: none;
+  }
+
+  .orbit-offset {
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    width: 14.5%;
+    transform: translate(-50%, -50%);
+  }
+
+  .orbital-ring-inner .orbit-offset {
+    top: 25%;
+    width: 9.3%;
+  }
+
+  .orbit-counter {
+    transform: rotate(var(--counter-phase));
+  }
+
+  .orbital-scene:global(.motion-ready) .orbit-carrier {
+    animation: orbit-clockwise 100s linear infinite;
+  }
+
+  .orbital-scene:global(.motion-ready) .orbit-counter {
+    animation: orbit-counterclockwise 100s linear infinite;
+  }
+
+  .orbital-scene:global(.motion-ready) .orbital-ring-inner .orbit-carrier {
+    animation-name: orbit-counterclockwise;
+  }
+
+  .orbital-scene:global(.motion-ready) .orbital-ring-inner .orbit-counter {
+    animation-name: orbit-clockwise;
+  }
+
+  .orbital-scene:global(.motion-ready:not(.is-moving)) :is(.orbit-carrier, .orbit-counter) {
+    animation-play-state: paused;
+  }
+
+  @keyframes orbit-clockwise {
+    from {
+      transform: rotate(var(--phase, var(--counter-phase)));
+    }
+    to {
+      transform: rotate(calc(var(--phase, var(--counter-phase)) + 360deg));
+    }
+  }
+
+  @keyframes orbit-counterclockwise {
+    from {
+      transform: rotate(var(--phase, var(--counter-phase)));
+    }
+    to {
+      transform: rotate(calc(var(--phase, var(--counter-phase)) - 360deg));
+    }
+  }
+
+  /* Each counter uses its own complete negative phase, including at rest. */
+  .orbit-counter {
+    --phase: var(--counter-phase);
+  }
+
+  .orbital-scene figcaption {
+    margin: 18px 12px 0;
+    padding: 16px 0;
+    border-top: 1px solid #dcebf2;
+  }
+
+  @media (max-width: 900px) {
+    .hero-art {
+      align-self: center;
+    }
+
+    .hero-art figcaption {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero-art {
+      margin-inline: -4px;
+    }
+
+    .hero-art figcaption {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .motion-toggle {
+      font-size: 9px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbital-scene:global(.motion-ready) :is(.orbit-carrier, .orbit-counter) {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { initHeroMotion } from '../scripts/hero-motion.ts';
+  initHeroMotion();
+</script>

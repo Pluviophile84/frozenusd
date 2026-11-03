@@ -6,8 +6,8 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 
 | Order | Section (anchor) | Component | Copy export | Notes |
 |---|---|---|---|---|
-| A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *Token details* → `#token` pre-launch; *Buy $FUSD* when live |
-| B | Hero (`#top`) | `Hero.astro`, `HeroOrbit.astro` | `hero` | `$FUSD` ticker above one H1 (the eyebrow and MEMECOIN PARODY tag were removed at the owner's request; the parody status remains in token facts, FAQ and footer). Backing claim links to `#reserves`. Orbit of 12 cubes. Contract strip: unavailable text pre-launch; address + Copy + Explorer when live |
+| A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *Buy $FUSD* → `#token` pre-launch (no trading link exists yet; the token facts say so); *Buy $FUSD* → trading URL when live |
+| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | `$FUSD` ticker above one H1 (the eyebrow and MEMECOIN PARODY tag were removed at the owner's request; the parody status remains in token facts, FAQ and footer). No backing line (removed at the owner's request; Reserves carries it). Orbit of 12 cubes ported from frzusd, caption *In circulation / Temperature: unchanged*. Contract strip: unavailable text pre-launch; address + Copy + Explorer when live |
 | B2 | Reserves (`#reserves`) | `Reserves.astro` | `reserves` | Dark ink section directly after the hero. Parody backing only; never in the token table |
 | C | The idea (`#idea`) | `Idea.astro` | `idea` | Closing line: *Hot wallet. Cold dollars.* |
 | D | The product (`#how-it-works`) | `Product.astro` | `product` | Three stages, *No thawing required.*, Fictional Proof of Cold |
@@ -26,7 +26,7 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 |---|---|---|
 | Main slogan | Frozen. Still moving. | Hero signature, closing signature, footer, title, posters, OG image |
 | Product headline | The dollar that trades frozen. | H1, OG image |
-| Backing proposition | Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves. | Hero link to Reserves; Reserves section; FAQ |
+| Backing proposition | Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves. | Reserves section; FAQ |
 | Product explanation | Transfer it. Trade it. No thawing required. | Hero support, description |
 | Institutional descriptor | A new standard in frozen finance. | Idea eyebrow |
 | Satirical signature | Decentralized until further notice. | Satire H2, poster 2 |
@@ -36,7 +36,7 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 
 ## Small interface labels added by the build
 
-These are functional labels, not new marketing claims: *Wallet A*, *Wallet B* (How it works only), *In transit*, *Pause movement*, *Contract*, *Pre-launch* / *Live*, *Copy*, *Explorer*, *Download*, *SVG*, *Back to top*, *Skip to content*, *Frequently asked questions*, *Error 404*. Poster footers read *MEMECOIN PARODY* and *NO DOLLAR PEG OR REDEMPTION* so a shared image keeps its disclaimer.
+These are functional labels, not new marketing claims: *Wallet A*, *Wallet B* (How it works only), *In transit*, *In circulation*, *Temperature: unchanged*, *Pause movement* / *Replay movement*, *Contract*, *Pre-launch* / *Live*, *Copy*, *Explorer*, *Download*, *SVG*, *Back to top*, *Skip to content*, *Frequently asked questions*, *Error 404*. Poster footers read *MEMECOIN PARODY* and *NO DOLLAR PEG OR REDEMPTION* so a shared image keeps its disclaimer.
 
 ## Not rendered
 

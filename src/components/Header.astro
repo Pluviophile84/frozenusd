@@ -4,6 +4,8 @@ import { nav, actions } from '../content/home.ts';
 import Logo from './Logo.astro';
 
 const live = site.token.status === 'live' ? site.token : null;
+// Before launch no trading link exists, so "Buy $FUSD" leads to the token
+// facts, which state that official links will appear there.
 ---
 
 <header class="site-header" data-header>
@@ -41,7 +43,7 @@ const live = site.token.status === 'live' ? site.token : null;
         </a>
       ) : (
         <a class="btn btn--small header-cta" href="#token">
-          {actions.tokenDetails}
+          {actions.buy}
         </a>
       )
     }

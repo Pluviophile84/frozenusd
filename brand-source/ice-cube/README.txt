@@ -32,3 +32,8 @@ Reflections and highlights are fixed; the background is visible through alpha
 transparency. This is not physically simulated or live refractive glass.
 Appearance naturally varies with the background. Tested on white, website
 frost (#F2F8FC), deep ink (#071827) and a checkerboard.
+
+REFLECTION COLOR REFINEMENT
+Ice-shell and front-reflection chroma reduced by 60% toward neutral gray,
+with luminance and alpha retained. The cyan coin plate and official vector
+emblem are unchanged. Use at normal opacity.

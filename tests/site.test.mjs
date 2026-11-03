@@ -77,10 +77,11 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal((await page.locator('h1').innerText()).trim(), 'The dollar that trades frozen.');
     assert.ok(html.includes('Contract address not available yet.'));
     assert.equal(await page.locator('[data-copy-button]').count(), 0);
-    assert.equal(await page.getByText('Buy $FUSD').count(), 0);
+    // Before launch, "Buy $FUSD" exists only as the header action pointing at the token facts.
+    assert.equal(await page.getByText('Buy $FUSD').count(), 1);
     assert.equal(await page.getByText('Follow on X').count(), 0);
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), '#token');
-    assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Token details');
+    assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Buy $FUSD');
     // Lazy images: scroll through the page, then confirm every image decoded.
     for (let y = 0; y < (await page.evaluate(() => document.body.scrollHeight)); y += 700) {
       await page.evaluate((top) => window.scrollTo(0, top), y);
@@ -164,7 +165,7 @@ describe('pre-launch build (committed configuration)', () => {
 
   test('the first mobile screen shows the ticker, promise, action and contract status', async () => {
     const { context, page } = await open(origin, { width: 390, height: 844 });
-    for (const selector of ['.hero-ticker', 'h1', '.hero-backing', '.hero-actions .btn', '.contract-strip']) {
+    for (const selector of ['.hero-ticker', 'h1', '.hero-actions .btn', '.contract-strip']) {
       const box = await page.locator(selector).first().boundingBox();
       assert.ok(box && box.y + box.height <= 844, `${selector} below the fold`);
     }
@@ -184,16 +185,16 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('brand, ticker, backing claim and reserves section', async () => {
+  test('brand, ticker and reserves section', async () => {
     const { context, page } = await open(origin);
     assert.equal(await page.locator('.site-header .logo-text').innerText(), 'Frozen USD');
     assert.equal(await page.locator('.site-header .logo-text').evaluate((el) => getComputedStyle(el).textTransform), 'none');
     const text = await page.locator('body').innerText();
     assert.doesNotMatch(text, /FRZUSD/);
     assert.match(text, /\$FUSD/);
-    // The hero proposition links to the reserves.
-    const claim = page.locator('.hero a[href="#reserves"]');
-    assert.equal((await claim.innerText()).trim(), 'Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves.');
+    // The backing line was removed from the hero; Reserves carries it.
+    assert.equal(await page.locator('.hero a[href="#reserves"], .hero-backing').count(), 0);
+    assert.doesNotMatch(await page.locator('.hero-copy').innerText(), /Pegged 1:1/);
     // Reserves sits directly after the hero on the dark ink background.
     const order = await page.$$eval('main > section', (sections) => sections.map((s) => s.id || s.className.split(' ')[1]));
     assert.deepEqual(order.slice(0, 4), ['top', 'reserves', 'idea', 'how-it-works']);
@@ -277,7 +278,7 @@ describe('pre-launch build (committed configuration)', () => {
       await page.waitForTimeout(30);
     }
     await page.waitForLoadState('networkidle');
-    const cubes = await page.$$eval('img.cube', (imgs) => imgs.map((i) => ({ src: i.currentSrc, w: i.naturalWidth, h: i.naturalHeight })));
+    const cubes = await page.$$eval('img[src*="/media/cube/"]', (imgs) => imgs.map((i) => ({ src: i.currentSrc, w: i.naturalWidth, h: i.naturalHeight })));
     // 12 in the hero + reserves + idea + 3 stages.
     assert.equal(cubes.length, 17);
     for (const cube of cubes) {
@@ -286,51 +287,77 @@ describe('pre-launch build (committed configuration)', () => {
     }
     const svgCubes = await page.$$eval('svg image', (els) => els.map((el) => el.getAttribute('href')));
     assert.ok(svgCubes.length >= 2 && svgCubes.every((href) => /\/media\/cube\//.test(href ?? '')));
-    assert.equal(await page.locator('.ice-block, .hero-art, [class*="wallet"]').count(), 0);
+    assert.equal(await page.locator('.ice-block, [class*="wallet"]').count(), 0);
     await context.close();
   });
 
-  test('hero orbit: one centre, three outer and eight inner cubes, all upright', async () => {
-    const { context, page } = await open(origin);
-    const scene = page.locator('.orbit-scene');
-    assert.equal(await scene.getAttribute('role'), 'img');
-    assert.equal(await scene.getAttribute('aria-label'), 'Frozen USD tokens circulate while remaining frozen.');
-    assert.equal(await scene.locator('.orbit-center img.cube').count(), 1);
-    assert.equal(await scene.locator('.carrier--outer img.cube').count(), 3);
-    assert.equal(await scene.locator('.carrier--inner img.cube').count(), 8);
-    assert.equal(await scene.locator('img.cube').count(), 12);
-    assert.equal(await page.locator('.hero').getByText(/Wallet [AB]|Location: updated|Concept illustration/).count(), 0);
-
-    const animations = () =>
-      page.evaluate(() =>
-        document
-          .getAnimations()
-          .filter((a) => a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-'))
-          .map((a) => ({ name: a.animationName, state: a.playState, duration: a.effect.getTiming().duration })),
+  test('watermarks are the official logo files, whole and unrotated', async () => {
+    for (const width of [1440, 390]) {
+      const { context, page } = await open(origin, { width, height: 900 });
+      const marks = await page.$$eval('.decor--emblem', (els) =>
+        els.map((el) => {
+          const section = el.closest('section').getBoundingClientRect();
+          const box = el.getBoundingClientRect();
+          return {
+            src: el.querySelector('img')?.getAttribute('src'),
+            transform: getComputedStyle(el).transform,
+            inside: box.left >= section.left && box.right <= section.right && box.top >= section.top && box.bottom <= section.bottom,
+          };
+        }),
       );
-    const running = await animations();
+      assert.ok(marks.length >= 6);
+      for (const mark of marks) {
+        assert.match(mark.src ?? '', /^\/brand\/frozen-usd-symbol-(ink|white)\.svg$/);
+        assert.equal(mark.transform, 'none');
+        assert.ok(mark.inside, `watermark cropped at ${width}px`);
+      }
+      // No inline re-drawings of the emblem remain on the page.
+      assert.equal(await page.locator('svg path[d^="M479.179636"]').count(), 0);
+      await context.close();
+    }
+  });
+
+  const orbitAnimations = (page) =>
+    page.evaluate(() =>
+      document
+        .getAnimations()
+        .filter((a) => a.animationName === 'orbit-clockwise' || a.animationName === 'orbit-counterclockwise')
+        .map((a) => ({ name: a.animationName, state: a.playState, duration: a.effect.getTiming().duration, time: Number(a.currentTime) })),
+    );
+
+  test('hero orbit (frzusd mechanism): one centre, three outer and eight inner cubes, all upright', async () => {
+    const { context, page } = await open(origin);
+    const scene = page.locator('.orbital-scene');
+    assert.equal(await scene.getAttribute('aria-label'), 'Frozen USD tokens circulate while remaining frozen.');
+    assert.equal(await page.locator('.orbital-system').getAttribute('aria-hidden'), 'true');
+    assert.equal(await scene.locator('.central-cube img').count(), 1);
+    assert.equal(await scene.locator('.orbital-ring-outer .orbit-carrier').count(), 3);
+    assert.equal(await scene.locator('.orbital-ring-inner .orbit-carrier').count(), 8);
+    assert.equal(await scene.locator('img[src*="/media/cube/"]').count(), 12);
+    assert.equal(await scene.locator('.orbital-guides circle').count(), 5);
+    assert.match(await scene.locator('figcaption').innerText(), /In circulation\s+Temperature: unchanged/);
+
+    const running = await orbitAnimations(page);
     assert.equal(running.length, 22);
     assert.ok(running.every((a) => a.duration === 100000 && a.state === 'running'));
 
-    // At several moments, carrier + counter-rotation stays 0° (upright) and
-    // the outer ring moves clockwise while the inner ring moves counter-clockwise.
     const angles = (t) =>
       page.evaluate((time) => {
         for (const a of document.getAnimations()) {
-          if (a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-')) a.currentTime = time;
+          if (/^orbit-(counter)?clockwise$/.test(a.animationName)) a.currentTime = time;
         }
         const angle = (el) => {
           const m = new DOMMatrix(getComputedStyle(el).transform);
           return (Math.atan2(m.b, m.a) * 180) / Math.PI;
         };
-        return [...document.querySelectorAll('.carrier')].map((carrier) => ({
-          ring: carrier.classList.contains('carrier--outer') ? 'outer' : 'inner',
+        return [...document.querySelectorAll('.orbit-carrier')].map((carrier) => ({
+          ring: carrier.closest('.orbital-ring-outer') ? 'outer' : 'inner',
           carrier: angle(carrier),
-          net: angle(carrier) + angle(carrier.querySelector('.upright')),
+          net: angle(carrier) + angle(carrier.querySelector('.orbit-counter')),
           rect: carrier.querySelector('img').getBoundingClientRect().toJSON(),
         }));
       }, t);
-    const sceneBox = await scene.boundingBox();
+    const systemBox = await page.locator('.orbital-system').boundingBox();
     const norm = (deg) => ((((deg + 180) % 360) + 360) % 360) - 180;
     const t0 = await angles(10000);
     const t1 = await angles(20000);
@@ -340,11 +367,10 @@ describe('pre-launch build (committed configuration)', () => {
       assert.ok(Math.abs(Math.abs(delta) - 36) < 0.1, `cube ${i} moved ${delta}° in 10 s`);
       assert.equal(Math.sign(delta), item.ring === 'outer' ? 1 : -1);
     }
-    // Nothing leaves the scene at any point of a full revolution.
     for (let t = 0; t < 100000; t += 5000) {
       for (const item of await angles(t)) {
-        assert.ok(item.rect.left >= sceneBox.x - 1 && item.rect.right <= sceneBox.x + sceneBox.width + 1);
-        assert.ok(item.rect.top >= sceneBox.y - 1 && item.rect.bottom <= sceneBox.y + sceneBox.height + 1);
+        assert.ok(item.rect.left >= systemBox.x - 1 && item.rect.right <= systemBox.x + systemBox.width + 1);
+        assert.ok(item.rect.top >= systemBox.y - 1 && item.rect.bottom <= systemBox.y + systemBox.height + 1);
       }
     }
     await context.close();
@@ -352,82 +378,82 @@ describe('pre-launch build (committed configuration)', () => {
 
   test('hero orbit pauses together, respects visibility and keeps a user pause', async () => {
     const { context, page } = await open(origin);
-    const states = () =>
-      page.evaluate(() => [
-        ...new Set(
-          document
-            .getAnimations()
-            .filter((a) => a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-'))
-            .map((a) => a.playState),
-        ),
-      ]);
+    const states = async () => [...new Set((await orbitAnimations(page)).map((a) => a.state))];
+    const toggle = page.locator('.motion-toggle');
+    assert.ok(await toggle.isVisible());
+    assert.equal(await toggle.getAttribute('aria-pressed'), 'false');
     assert.deepEqual(await states(), ['running']);
 
     // Off-screen pauses; returning resumes.
     await page.evaluate(() => document.querySelector('#token')?.scrollIntoView());
-    await page.waitForFunction(() => document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    await page.waitForFunction(() => !document.querySelector('.hero-art')?.classList.contains('is-moving'));
     assert.deepEqual(await states(), ['paused']);
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForFunction(() => !document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    await page.waitForFunction(() => document.querySelector('.hero-art')?.classList.contains('is-moving'));
     assert.deepEqual(await states(), ['running']);
 
     // A hidden tab pauses.
     await page.evaluate(() => {
-      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
       document.dispatchEvent(new Event('visibilitychange'));
     });
     assert.deepEqual(await states(), ['paused']);
     await page.evaluate(() => {
-      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'visible' });
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
       document.dispatchEvent(new Event('visibilitychange'));
     });
     assert.deepEqual(await states(), ['running']);
 
-    // The user's pause holds every carrier and counter-rotation at the same frame
-    // and survives leaving and returning to the viewport.
-    await page.locator('label[for="orbit-pause"]').click();
-    assert.equal(await page.locator('#orbit-pause').isChecked(), true);
+    // The toggle holds every carrier and counter at the same frame, and the
+    // user's pause survives scrolling away and back.
+    await toggle.click();
+    assert.equal(await toggle.getAttribute('aria-pressed'), 'true');
+    assert.equal((await toggle.innerText()).trim(), 'Replay movement');
     assert.deepEqual(await states(), ['paused']);
-    const frozenAt = await page.evaluate(() => [...new Set(document.getAnimations().filter((a) => a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-')).map((a) => Math.round(Number(a.currentTime))))]);
-    assert.equal(frozenAt.length, 1);
+    const times = [...new Set((await orbitAnimations(page)).map((a) => Math.round(a.time)))];
+    assert.equal(times.length, 1);
     await page.evaluate(() => document.querySelector('#token')?.scrollIntoView());
-    await page.waitForFunction(() => document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    await page.waitForTimeout(300);
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForFunction(() => !document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    await page.waitForTimeout(300);
     assert.deepEqual(await states(), ['paused']);
-    // Resuming continues from the same frame.
-    await page.locator('label[for="orbit-pause"]').click();
+    await toggle.click();
+    assert.equal((await toggle.innerText()).trim(), 'Pause movement');
     assert.deepEqual(await states(), ['running']);
-    const resumedAt = await page.evaluate(() => Math.min(...document.getAnimations().filter((a) => a.animationName?.startsWith('orbit-c')).map((a) => Number(a.currentTime))));
-    assert.ok(resumedAt >= frozenAt[0] - 1 && resumedAt < frozenAt[0] + 1000, `resumed at ${resumedAt}, paused at ${frozenAt[0]}`);
+    const resumed = Math.min(...(await orbitAnimations(page)).map((a) => a.time));
+    assert.ok(resumed >= times[0] - 1 && resumed < times[0] + 1000, `resumed at ${resumed}, paused at ${times[0]}`);
     await context.close();
   });
 
   test('reduced motion and no-JavaScript keep the full static composition', async () => {
+    const upright = (page) =>
+      page.$$eval('.orbit-carrier', (carriers) =>
+        carriers.map((c) => {
+          const a = (el) => {
+            const m = new DOMMatrix(getComputedStyle(el).transform);
+            return (Math.atan2(m.b, m.a) * 180) / Math.PI;
+          };
+          const sum = Math.abs(a(c) + a(c.querySelector('.orbit-counter')));
+          return sum < 0.01 || Math.abs(sum - 360) < 0.01;
+        }),
+      );
+
     const still = await open(origin, { reducedMotion: 'reduce' });
-    const names = await still.page.$$eval('.orbit-scene *', (els) => [...new Set(els.map((el) => getComputedStyle(el).animationName))]);
+    const names = await still.page.$$eval('.orbital-scene *', (els) => [...new Set(els.map((el) => getComputedStyle(el).animationName))]);
     assert.deepEqual(names, ['none']);
-    assert.equal(await still.page.locator('label[for="orbit-pause"]').isVisible(), false);
-    const upright = await still.page.$$eval('.carrier', (carriers) =>
-      carriers.map((c) => {
-        const a = (el) => {
-          const m = new DOMMatrix(getComputedStyle(el).transform);
-          return (Math.atan2(m.b, m.a) * 180) / Math.PI;
-        };
-        return Math.abs(a(c) + a(c.querySelector('.upright')));
-      }),
-    );
-    assert.equal(upright.length, 11);
-    assert.ok(upright.every((d) => d < 0.01 || Math.abs(d - 360) < 0.01));
-    const visible = await still.page.$$eval('.orbit-scene img.cube', (imgs) => imgs.filter((i) => i.complete && i.naturalWidth > 0).length);
+    const ups = await upright(still.page);
+    assert.equal(ups.length, 11);
+    assert.ok(ups.every(Boolean));
+    const visible = await still.page.$$eval('.orbital-scene img', (imgs) => imgs.filter((i) => i.complete && i.naturalWidth > 0).length);
     assert.equal(visible, 12);
     await still.context.close();
 
     const noJs = await open(origin, { javaScriptEnabled: false });
-    assert.equal(await noJs.page.locator('.orbit-scene img.cube').count(), 12);
-    assert.ok(await noJs.page.locator('label[for="orbit-pause"]').isVisible());
-    await noJs.page.locator('label[for="orbit-pause"]').click();
-    assert.equal(await noJs.page.locator('.carrier').first().evaluate((el) => getComputedStyle(el).animationPlayState), 'paused');
+    assert.equal(await noJs.page.locator('.orbital-scene img').count(), 12);
+    assert.equal(await noJs.page.locator('.motion-toggle').isVisible(), false);
+    const noJsNames = await noJs.page.$$eval('.orbit-carrier, .orbit-counter', (els) => [...new Set(els.map((el) => getComputedStyle(el).animationName))]);
+    assert.deepEqual(noJsNames, ['none']);
+    assert.ok((await upright(noJs.page)).every(Boolean));
     await noJs.context.close();
   });
 
@@ -435,8 +461,8 @@ describe('pre-launch build (committed configuration)', () => {
     for (const width of [320, 390]) {
       const { context, page } = await open(origin, { width, height: 760 });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
-      const box = await page.locator('.orbit-scene').boundingBox();
-      assert.ok(box && box.x >= 0 && box.x + box.width <= width);
+      const box = await page.locator('.orbital-scene').boundingBox();
+      assert.ok(box && box.x >= -4 && box.x + box.width <= width + 4);
       await context.close();
     }
   });

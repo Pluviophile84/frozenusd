@@ -23,7 +23,7 @@ No wordmark was supplied, so the site sets "Frozen USD" in Manrope beside the un
 
 ## Ice-cube artwork (approved, unchanged)
 
-The approved ice cube is the opaque cyan Frozen USD coin inside genuinely translucent ice (about half the pixels are partially transparent), with a transparent exterior. It replaced an earlier version whose ice interior was opaque. It is the only cube depiction on the site and in generated assets.
+The approved ice cube is the opaque cyan Frozen USD coin inside genuinely translucent ice (about half the pixels are partially transparent), with a transparent exterior. It replaced an earlier version whose ice interior was opaque; this refinement reduces the colour of the ice reflections (README.txt). It is the only cube depiction on the site and in generated assets.
 
 | File | Notes |
 |---|---|
@@ -38,7 +38,7 @@ Every placement uses `src/components/Cube.astro` (or, inside SVG line drawings a
 
 ## Decorative marks
 
-`src/components/Decor.astro` draws faded section watermarks: the official emblem path (unchanged geometry, single colour at 2–5% opacity) and the hero's orbit-ring motif. They are `aria-hidden`, ignore pointer input and sit behind content.
+`src/components/Decor.astro` draws faded section watermarks. Emblem watermarks load the official symbol files themselves (`public/brand/frozen-usd-symbol-ink.svg` or `-white.svg`, byte-identical to the logo master package) and are faded by opacity only: never redrawn, recoloured, rotated or cropped by the section edge, so the full mark, including the short stems above and below the S, is always visible. The orbit-ring motif is the only other mark. All are `aria-hidden`, ignore pointer input and sit behind content. The How it works proof seal also loads the official master file.
 
 ## Generated files
 

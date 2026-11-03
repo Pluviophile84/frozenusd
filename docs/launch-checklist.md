@@ -39,7 +39,7 @@ Leave every unknown value as `null`. Never type a placeholder.
 
 ## What changes in live mode
 
-- Header action: *Token details* → *Buy $FUSD*.
+- Header action: *Buy $FUSD* now opens the trading page instead of the token facts.
 - Hero actions: *Buy $FUSD* + *Explore frozen finance*.
 - Contract strip and token facts: real address with Copy and Explorer.
 - Token facts: network label, status *Live*, Buy action.

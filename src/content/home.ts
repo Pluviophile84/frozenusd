@@ -18,7 +18,6 @@ export const hero = {
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
   signature: 'Frozen. Still moving.',
-  backing: 'Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves.',
   contractUnavailable: 'Contract address not available yet.',
   art: {
     alt: 'Frozen USD tokens circulate while remaining frozen.',

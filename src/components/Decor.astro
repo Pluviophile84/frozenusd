@@ -1,21 +1,26 @@
 ---
 /**
- * Decorative background marks for sections: a faded official emblem
- * watermark, or the orbit-ring motif from the hero. Always aria-hidden and
- * behind content. Place inside an element with the `decorated` class.
+ * Decorative background marks for sections. Always aria-hidden and behind
+ * content; place inside an element with the `decorated` class.
+ *
+ * - `emblem`: the official symbol file itself (public/brand, byte-identical to
+ *   the logo master), ink or white variant, faded only by opacity. It is never
+ *   redrawn, recoloured, rotated or cropped: position it fully inside the section.
+ * - `rings`: the hero's orbit-ring motif.
  */
-import { EMBLEM_PATH, EMBLEM_VIEWBOX } from '../lib/emblem.ts';
-
 interface Props {
   kind: 'emblem' | 'rings';
-  /** Any CSS colour; the mark is drawn in currentColor. */
-  color: string;
+  /** Emblem: which official symbol variant to use. */
+  variant?: 'ink' | 'white';
+  /** Rings: stroke colour. */
+  color?: string;
   opacity: number;
-  /** Size and position, e.g. "width: 720px; right: -180px; bottom: -220px". */
+  /** Size and position, e.g. "width: 420px; right: 4%; bottom: 6%". */
   style: string;
 }
 
-const { kind, color, opacity, style } = Astro.props;
+const { kind, variant = 'ink', color = 'currentColor', opacity, style } = Astro.props;
+const emblemSrc = variant === 'white' ? '/brand/frozen-usd-symbol-white.svg' : '/brand/frozen-usd-symbol-ink.svg';
 const lobes = [0, 120, 240].map((deg) => {
   const rad = (deg * Math.PI) / 180;
   return { cx: 500 + 210 * Math.sin(rad), cy: 500 - 210 * Math.cos(rad) };
@@ -25,9 +30,7 @@ const lobes = [0, 120, 240].map((deg) => {
 <div class:list={['decor', `decor--${kind}`]} style={`color: ${color}; opacity: ${opacity}; ${style}`} aria-hidden="true">
   {
     kind === 'emblem' ? (
-      <svg viewBox={`0 0 ${EMBLEM_VIEWBOX} ${EMBLEM_VIEWBOX}`} focusable="false">
-        <path fill="currentColor" fill-rule="evenodd" d={EMBLEM_PATH} />
-      </svg>
+      <img src={emblemSrc} width="1024" height="1024" alt="" loading="lazy" decoding="async" />
     ) : (
       <svg viewBox="0 0 1000 1000" focusable="false">
         <g fill="none" stroke="currentColor" stroke-width="1.2" vector-effect="non-scaling-stroke">
