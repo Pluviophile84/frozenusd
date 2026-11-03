@@ -1,15 +1,16 @@
 /**
- * The approved Frozen USD ice-cube artwork: the cyan coin embedded in clear
- * ice, with a transparent exterior. Every cube on the site and in generated
- * assets uses this one image. Do not redraw, recolour or overlay it.
+ * The approved Frozen USD ice-cube artwork: the opaque cyan coin inside
+ * genuinely translucent ice, with a transparent exterior. Every cube on the
+ * site and in generated assets uses this one image, at normal opacity.
+ * Do not redraw, recolour, fade or overlay it.
  *
  * Master: brand-source/ice-cube/frozen-usd-ice-cube-master.png (1254×1254).
- * Exports: public/media/cube/frozen-usd-ice-cube-<width>.webp, written by
- * `npm run assets` (scripts/build-assets.mjs).
+ * Web sizes: public/media/cube/frozen-usd-ice-cube-<width>.webp, exactly as
+ * supplied with the master (checksums in brand-source/ice-cube/SHA256SUMS.txt).
  */
 export const CUBE_MASTER = 'brand-source/ice-cube/frozen-usd-ice-cube-master.png';
 export const CUBE_NATIVE_SIZE = 1254;
-export const CUBE_WIDTHS = [160, 320, 640, 960] as const;
+export const CUBE_WIDTHS = [128, 256, 512, 1024] as const;
 export type CubeWidth = (typeof CUBE_WIDTHS)[number];
 
 export const cubeSrc = (width: CubeWidth): string => `/media/cube/frozen-usd-ice-cube-${width}.webp`;

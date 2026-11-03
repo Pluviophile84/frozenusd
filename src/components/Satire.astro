@@ -6,9 +6,12 @@ import { satire } from '../content/home.ts';
 const splitAt = satire.title.indexOf(' ');
 const lead = satire.title.slice(0, splitAt);
 const emphasis = satire.title.slice(splitAt + 1);
+import Decor from './Decor.astro';
 ---
 
-<section class="section satire on-ink" aria-labelledby="satire-title">
+<section class="section satire on-ink decorated" aria-labelledby="satire-title">
+  <Decor kind="rings" color="var(--cyan)" opacity={0.14} style="width: clamp(560px, 62vw, 980px); right: -26%; top: -30%" />
+  <Decor kind="emblem" color="var(--cyan)" opacity={0.05} style="width: clamp(260px, 30vw, 440px); right: 6%; top: 8%; transform: rotate(10deg)" />
   <div class="container">
     <div class="satire-grid">
       <h2 id="satire-title">{lead} <em>{emphasis}</em></h2>

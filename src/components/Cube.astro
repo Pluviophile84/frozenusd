@@ -26,7 +26,7 @@ const {
   class: className,
   style,
 } = Astro.props;
-const fallback = widths.includes(320) ? 320 : widths[widths.length - 1]!;
+const fallback = widths.includes(256) ? 256 : widths[widths.length - 1]!;
 ---
 
 <img

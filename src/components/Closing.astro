@@ -2,12 +2,16 @@
 import { site } from '../config/index.ts';
 import { closing, actions } from '../content/home.ts';
 
+import Decor from './Decor.astro';
+
 const live = site.token.status === 'live' ? site.token : null;
 ---
 
-<section class="section closing" aria-labelledby="closing-title">
+<section class="section closing decorated" aria-labelledby="closing-title">
+  <Decor kind="rings" color="var(--ink)" opacity={0.16} style="width: clamp(640px, 82vw, 1180px); left: 50%; top: 50%; transform: translate(-50%, -50%)" />
+  <Decor kind="emblem" color="var(--ink)" opacity={0.05} style="width: clamp(320px, 34vw, 520px); right: -6%; bottom: -26%; transform: rotate(-10deg)" />
   <div class="container closing-inner">
-    <img class="closing-mark" src="/brand/frozen-usd-master.svg" width="64" height="64" alt="" loading="lazy" />
+    <img class="closing-mark" src="/brand/frozen-usd-reversed.svg" width="64" height="64" alt="" loading="lazy" />
     <h2 id="closing-title">{closing.title}</h2>
     <p class="closing-signature">{closing.signature}</p>
     <div class="closing-actions">
@@ -37,11 +41,13 @@ const live = site.token.status === 'live' ? site.token : null;
 </section>
 
 <style>
+  /* The logo's glacial cyan, with a soft light source and depth at the edges. */
   .closing {
     background:
-      radial-gradient(50% 70% at 50% 100%, rgb(121 218 255 / 0.22) 0%, rgb(121 218 255 / 0) 70%),
-      linear-gradient(180deg, var(--white) 0%, var(--frost) 100%);
-    border-top: 1px solid var(--border);
+      radial-gradient(60% 55% at 50% 0%, rgb(255 255 255 / 0.45) 0%, rgb(255 255 255 / 0) 70%),
+      radial-gradient(80% 70% at 50% 120%, rgb(0 85 112 / 0.22) 0%, rgb(0 85 112 / 0) 70%),
+      var(--cyan);
+    color: var(--ink);
     text-align: center;
   }
 
@@ -68,7 +74,7 @@ const live = site.token.status === 'live' ? site.token : null;
     margin-top: 22px;
     font-size: var(--text-lead);
     font-weight: 800;
-    color: var(--interactive);
+    color: var(--ink);
   }
 
   .closing-actions {
@@ -85,7 +91,7 @@ const live = site.token.status === 'live' ? site.token : null;
     font-size: 0.8125rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--ink);
   }
 
   .sign-off::before {
@@ -94,6 +100,6 @@ const live = site.token.status === 'live' ? site.token : null;
     width: 1px;
     height: 40px;
     margin: 0 auto 16px;
-    background: var(--border-strong);
+    background: rgb(7 24 39 / 0.35);
   }
 </style>

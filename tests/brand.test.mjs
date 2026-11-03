@@ -52,21 +52,30 @@ test('posters embed the official emblem path and need no external font or file',
   }
 });
 
-test('the approved cube master and its exports keep the artwork and transparency', async () => {
-  const master = sharp(new URL(CUBE_MASTER, root).pathname);
-  const meta = await master.metadata();
+test('the approved cube ships exactly as supplied, with genuinely translucent ice', async () => {
+  // Master and web sizes match the checksums recorded from the supplied package.
+  const sums = (await read('brand-source/ice-cube/SHA256SUMS.txt')).toString().trim().split('\n');
+  assert.equal(sums.length, 1 + CUBE_WIDTHS.length);
+  for (const line of sums) {
+    const [hash, file] = line.trim().split(/\s+/);
+    const actual = createHash('sha256').update(await read(new URL(file, new URL('brand-source/ice-cube/', root)))).digest('hex');
+    assert.equal(actual, hash, file);
+  }
+  const masterPath = new URL(CUBE_MASTER, root).pathname;
+  const meta = await sharp(masterPath).metadata();
   assert.equal(meta.width, CUBE_NATIVE_SIZE);
   assert.equal(meta.height, CUBE_NATIVE_SIZE);
   assert.equal(meta.hasAlpha, true);
-  // The master is a lossless decode of the image exactly as received.
-  const received = await sharp(new URL('brand-source/ice-cube/frozen-usd-ice-cube-as-received.webp', root).pathname).raw().toBuffer();
-  const decoded = await sharp(new URL(CUBE_MASTER, root).pathname).raw().toBuffer();
-  assert.ok(received.equals(decoded));
+  // A large share of the ice is partially transparent, so the page shows through.
+  const { data, info } = await sharp(masterPath).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  let partial = 0;
+  for (let i = 3; i < data.length; i += info.channels) if (data[i] > 0 && data[i] < 250) partial++;
+  assert.ok(partial / (info.width * info.height) > 0.3, 'cube ice is not translucent');
+  assert.equal(data[3], 0, 'exterior must be transparent');
   for (const width of CUBE_WIDTHS) {
     const exp = await sharp(new URL(`public${cubeSrc(width)}`, root).pathname).metadata();
     assert.equal(exp.width, width);
-    assert.equal(exp.height, width);
-    assert.equal(exp.hasAlpha, true, `${width}px export lost its alpha channel`);
+    assert.equal(exp.hasAlpha, true, `${width}px file lost its alpha channel`);
   }
 });
 

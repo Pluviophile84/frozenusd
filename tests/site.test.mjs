@@ -162,9 +162,9 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('the first mobile screen shows identity, promise, action and contract status', async () => {
+  test('the first mobile screen shows the ticker, promise, action and contract status', async () => {
     const { context, page } = await open(origin, { width: 390, height: 844 });
-    for (const selector of ['.hero .eyebrow', '.hero .identity', 'h1', '.hero-actions .btn', '.contract-strip']) {
+    for (const selector of ['.hero-ticker', 'h1', '.hero-backing', '.hero-actions .btn', '.contract-strip']) {
       const box = await page.locator(selector).first().boundingBox();
       assert.ok(box && box.y + box.height <= 844, `${selector} below the fold`);
     }
@@ -204,7 +204,7 @@ describe('pre-launch build (committed configuration)', () => {
     for (const line of [
       'THE COLD STANDARD',
       '100% backed by cold, hard reserves.',
-      'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Siberia. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+      'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
       'One FUSD. One ice cube.',
       'Fully reserved. Deeply refrigerated.',
       'Cold storage. Literally.',
@@ -220,16 +220,30 @@ describe('pre-launch build (committed configuration)', () => {
     assert.deepEqual(facts, [
       ['1:1', 'Ice-cube peg'],
       ['100%', 'Cold, hard backing'],
-      ['Siberia', 'Reserve location'],
+      ['Antarctica', 'Reserve location'],
     ]);
-    assert.doesNotMatch(text, /Greenland|Alaska/);
+    assert.doesNotMatch(text, /Greenland|Alaska|Siberia/);
     // The verified token table stays factual.
-    assert.doesNotMatch(await page.locator('#token .facts').innerText(), /ice|reserve|Siberia/i);
+    assert.doesNotMatch(await page.locator('#token .facts').innerText(), /ice|reserve|Antarctica|Siberia/i);
     // Navigation lists Reserves right after The idea, in the header and footer.
     for (const nav of ['#primary-menu', '.footer-nav']) {
       const labels = await page.$$eval(`${nav} a`, (as) => as.map((a) => a.textContent?.trim()));
       assert.deepEqual(labels.slice(0, 2), ['The idea', 'Reserves'], nav);
     }
+    await context.close();
+  });
+
+  test('hero shows only the $FUSD ticker above the headline; closing sits on the logo cyan', async () => {
+    const { context, page } = await open(origin);
+    assert.equal((await page.locator('.hero-ticker').innerText()).trim(), '$FUSD');
+    const heroText = await page.locator('.hero-copy').innerText();
+    assert.doesNotMatch(heroText, /MEMECOIN PARODY|Frozen USD ·/i);
+    const closing = page.locator('section.closing');
+    assert.equal(await closing.evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(121, 218, 255)');
+    // Decorative watermarks stay behind content and out of the accessibility tree.
+    const decor = await page.$$eval('.decor', (els) => els.map((el) => [el.getAttribute('aria-hidden'), getComputedStyle(el).pointerEvents]));
+    assert.ok(decor.length >= 8);
+    assert.ok(decor.every(([hidden, pe]) => hidden === 'true' && pe === 'none'));
     await context.close();
   });
 
@@ -248,7 +262,7 @@ describe('pre-launch build (committed configuration)', () => {
       await answer('What is FUSD pegged to?'),
       'One FUSD. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough. This is our parody peg. FUSD is a memecoin with no dollar peg or redemption promise.',
     );
-    assert.equal(await answer('What backs it?'), 'Our Strategic Ice Reserve in Siberia. One institutional-grade ice cube per FUSD. Cold storage. Literally.');
+    assert.equal(await answer('What backs it?'), 'Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per FUSD. Cold storage. Literally.');
     assert.equal(
       await answer('Is Frozen USD a stablecoin?'),
       'It has the brochure confidence of one. $FUSD is a memecoin with no dollar peg or redemption promise.',

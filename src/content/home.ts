@@ -14,8 +14,7 @@ export const nav = [
 ] as const;
 
 export const hero = {
-  eyebrow: 'Frozen USD · $FUSD',
-  identity: 'MEMECOIN PARODY',
+  ticker: '$FUSD',
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
   signature: 'Frozen. Still moving.',
@@ -29,11 +28,11 @@ export const hero = {
 export const reserves = {
   eyebrow: 'THE COLD STANDARD',
   title: '100% backed by cold, hard reserves.',
-  body: 'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Siberia. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+  body: 'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
   facts: [
     { value: '1:1', label: 'Ice-cube peg', line: 'One FUSD. One ice cube.' },
     { value: '100%', label: 'Cold, hard backing', line: 'Fully reserved. Deeply refrigerated.' },
-    { value: 'Siberia', label: 'Reserve location', line: 'Cold storage. Literally.' },
+    { value: 'Antarctica', label: 'Reserve location', line: 'Cold storage. Literally.' },
   ],
   subtitle: 'Fully backed. Mostly transparent.',
   text: 'Transparency is central to our operation. Unfortunately, so is frost.',
@@ -143,7 +142,7 @@ export const faq = [
   },
   {
     q: 'What backs it?',
-    a: ['Our Strategic Ice Reserve in Siberia. One institutional-grade ice cube per FUSD. Cold storage. Literally.'],
+    a: ['Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per FUSD. Cold storage. Literally.'],
   },
 ];
 

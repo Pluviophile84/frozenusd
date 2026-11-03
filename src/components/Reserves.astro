@@ -1,9 +1,11 @@
 ---
 import { reserves } from '../content/home.ts';
 import Cube from './Cube.astro';
+import Decor from './Decor.astro';
 ---
 
-<section class="section reserves on-ink" id="reserves" aria-labelledby="reserves-title">
+<section class="section reserves on-ink decorated" id="reserves" aria-labelledby="reserves-title">
+  <Decor kind="emblem" color="var(--white)" opacity={0.045} style="width: clamp(420px, 52vw, 760px); right: -12%; bottom: -26%; transform: rotate(-8deg)" />
   <div class="container">
     <div class="reserves-grid">
       <div class="reserves-intro">
@@ -12,7 +14,7 @@ import Cube from './Cube.astro';
         <p class="reserves-body">{reserves.body}</p>
       </div>
       <div class="reserves-unit" aria-hidden="true">
-        <Cube sizes="(min-width: 900px) 340px, 52vw" widths={[320, 640, 960]} />
+        <Cube sizes="(min-width: 900px) 340px, 52vw" widths={[512, 1024]} />
       </div>
     </div>
 
@@ -131,7 +133,8 @@ import Cube from './Cube.astro';
   .reserve-value {
     order: 1;
     margin-bottom: 10px;
-    font-size: clamp(2.75rem, 1.9rem + 2.8vw, 4.5rem);
+    font-size: clamp(2.5rem, 1.5rem + 2.6vw, 4.25rem);
+    overflow-wrap: anywhere;
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.045em;

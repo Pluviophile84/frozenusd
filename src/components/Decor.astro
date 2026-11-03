@@ -1,0 +1,44 @@
+---
+/**
+ * Decorative background marks for sections: a faded official emblem
+ * watermark, or the orbit-ring motif from the hero. Always aria-hidden and
+ * behind content. Place inside an element with the `decorated` class.
+ */
+import { EMBLEM_PATH, EMBLEM_VIEWBOX } from '../lib/emblem.ts';
+
+interface Props {
+  kind: 'emblem' | 'rings';
+  /** Any CSS colour; the mark is drawn in currentColor. */
+  color: string;
+  opacity: number;
+  /** Size and position, e.g. "width: 720px; right: -180px; bottom: -220px". */
+  style: string;
+}
+
+const { kind, color, opacity, style } = Astro.props;
+const lobes = [0, 120, 240].map((deg) => {
+  const rad = (deg * Math.PI) / 180;
+  return { cx: 500 + 210 * Math.sin(rad), cy: 500 - 210 * Math.cos(rad) };
+});
+---
+
+<div class:list={['decor', `decor--${kind}`]} style={`color: ${color}; opacity: ${opacity}; ${style}`} aria-hidden="true">
+  {
+    kind === 'emblem' ? (
+      <svg viewBox={`0 0 ${EMBLEM_VIEWBOX} ${EMBLEM_VIEWBOX}`} focusable="false">
+        <path fill="currentColor" fill-rule="evenodd" d={EMBLEM_PATH} />
+      </svg>
+    ) : (
+      <svg viewBox="0 0 1000 1000" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="1.2" vector-effect="non-scaling-stroke">
+          <circle cx="500" cy="500" r="420" />
+          <circle cx="500" cy="500" r="270" />
+          <circle cx="500" cy="500" r="490" stroke-dasharray="2 8" />
+          {lobes.map((lobe) => (
+            <circle cx={lobe.cx.toFixed(2)} cy={lobe.cy.toFixed(2)} r="210" stroke-dasharray="3 7" />
+          ))}
+        </g>
+      </svg>
+    )
+  }
+</div>

@@ -6,9 +6,11 @@ const social = [
   site.social.xUrl ? { href: site.social.xUrl, label: actions.followX } : null,
   site.social.communityUrl ? { href: site.social.communityUrl, label: actions.community } : null,
 ].filter((item): item is { href: string; label: string } => item !== null);
+import Decor from './Decor.astro';
 ---
 
-<section class="section memes" id="memes" aria-labelledby="memes-title">
+<section class="section memes decorated" id="memes" aria-labelledby="memes-title">
+  <Decor kind="rings" color="#9fc2d4" opacity={0.45} style="width: clamp(520px, 56vw, 860px); right: -24%; top: -30%" />
   <div class="container">
     <div class="memes-head">
       <h2 id="memes-title">
@@ -72,7 +74,9 @@ const social = [
 
 <style>
   .memes {
-    background: var(--frost);
+    background:
+      radial-gradient(70% 60% at 0% 100%, rgb(121 218 255 / 0.14) 0%, rgb(121 218 255 / 0) 70%),
+      linear-gradient(180deg, var(--frost) 0%, #eaf4fa 100%);
     border-top: 1px solid var(--border);
   }
 

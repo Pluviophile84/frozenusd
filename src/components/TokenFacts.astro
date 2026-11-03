@@ -5,9 +5,11 @@ import AddressActions from './AddressActions.astro';
 
 const live = site.token.status === 'live' ? site.token : null;
 const networkLabel = site.token.networkLabel ?? copy.networkPending;
+import Decor from './Decor.astro';
 ---
 
-<section class="section token" id="token" aria-labelledby="token-title">
+<section class="section token decorated" id="token" aria-labelledby="token-title">
+  <Decor kind="emblem" color="var(--interactive)" opacity={0.04} style="width: clamp(320px, 34vw, 520px); left: -6%; bottom: -24%; transform: rotate(-10deg)" />
   <div class="container token-grid">
     <div class="token-intro">
       <h2 id="token-title">{copy.title}</h2>

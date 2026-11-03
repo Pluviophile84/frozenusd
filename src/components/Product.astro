@@ -28,9 +28,11 @@ const stageArt = [
   { tag: 'In transit', lift: 20, pad: false, trail: true },
   { tag: 'Wallet B', lift: 0, pad: true, trail: false },
 ];
+import Decor from './Decor.astro';
 ---
 
-<section class="section product" id="how-it-works" aria-labelledby="product-title">
+<section class="section product decorated" id="how-it-works" aria-labelledby="product-title">
+  <Decor kind="emblem" color="var(--interactive)" opacity={0.04} style="width: clamp(360px, 40vw, 620px); left: -10%; top: -12%; transform: rotate(-12deg)" />
   <div class="container">
     <header class="product-head">
       <h2 id="product-title">{sentences(product.title).map((line) => <span class="line">{line} </span>)}</h2>
@@ -63,7 +65,7 @@ const stageArt = [
                   )}
                   <Fragment set:html={contactShadowSvg(`stage-shadow-${index}`, 160, 198, art.lift ? 150 : 178)} />
                 </svg>
-                <Cube class="stage-cube" sizes="(min-width: 900px) 140px, 26vw" widths={[160, 320]} style={cubeStyle(art.lift)} />
+                <Cube class="stage-cube" sizes="(min-width: 900px) 140px, 26vw" widths={[256, 512]} style={cubeStyle(art.lift)} />
                 </div>
                 <span class="stage-tag">{art.tag}</span>
               </div>
@@ -105,7 +107,9 @@ const stageArt = [
 
 <style>
   .product {
-    background: var(--frost);
+    background:
+      radial-gradient(60% 50% at 100% 0%, rgb(121 218 255 / 0.16) 0%, rgb(121 218 255 / 0) 70%),
+      linear-gradient(180deg, var(--frost) 0%, #edf6fb 100%);
     border-block: 1px solid var(--border);
   }
 

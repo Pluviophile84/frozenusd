@@ -6,9 +6,11 @@ import { cubeSrc } from '../lib/cube.ts';
 const ink = '#071827';
 const blue = '#005570';
 const cyan = '#79DAFF';
+import Decor from './Decor.astro';
 ---
 
-<section class="section benefits" aria-labelledby="benefits-title">
+<section class="section benefits decorated" aria-labelledby="benefits-title">
+  <Decor kind="rings" color="#a9cfe2" opacity={0.45} style="width: clamp(480px, 50vw, 760px); left: -24%; bottom: -55%" />
   <div class="container">
     <h2 id="benefits-title">{sentences(benefits.title).map((line) => <span class="line">{line} </span>)}</h2>
 
@@ -25,7 +27,7 @@ const cyan = '#79DAFF';
                     <line x1={x} y1="88" x2={x} y2="96" stroke={ink} stroke-width="1.5" />
                   ))}
                   <rect x="16" y="78" width="172" height="8" fill={cyan} fill-opacity="0.45" stroke="none" />
-                  <image href={cubeSrc(160)} x="10" y="18" width="60" height="60" preserveAspectRatio="xMidYMid meet" />
+                  <image href={cubeSrc(128)} x="10" y="18" width="60" height="60" preserveAspectRatio="xMidYMid meet" />
                   <text x="16" y="114" fill={blue} stroke="none" font-family="ui-monospace, Menlo, monospace" font-size="10">
                     t = 0
                   </text>
@@ -40,7 +42,7 @@ const cyan = '#79DAFF';
                   <path d="M142 64 H194 M180 72 h8" stroke={ink} stroke-width="1.5" />
                   <path d="M64 72 C 84 30, 116 30, 136 72" stroke={blue} stroke-width="1.5" stroke-dasharray="2 5" />
                   <path d="M130 66 l6 6 l-8 2" stroke={blue} stroke-width="1.5" />
-                  <image href={cubeSrc(160)} x="75" y="4" width="50" height="50" preserveAspectRatio="xMidYMid meet" />
+                  <image href={cubeSrc(128)} x="75" y="4" width="50" height="50" preserveAspectRatio="xMidYMid meet" />
                 </g>
               )}
               {item.art === 'custody' && (

@@ -11,9 +11,11 @@ const CUBE_W = 320;
 const cubeX = 260 - CUBE_W / 2;
 const cubeY = 364 - CUBE_CONTENT.bottom * CUBE_W;
 const pct = (value: number, total: number) => `${((value / total) * 100).toFixed(3)}%`;
+import Decor from './Decor.astro';
 ---
 
-<section class="section idea" id="idea" aria-labelledby="idea-title">
+<section class="section idea decorated" id="idea" aria-labelledby="idea-title">
+  <Decor kind="rings" color="#9fc2d4" opacity={0.5} style="width: clamp(520px, 60vw, 900px); right: -22%; top: -38%" />
   <div class="container idea-grid">
     <div class="idea-object" aria-hidden="true">
       <div class="idea-figure" style={`--cube-left: ${pct(cubeX, VB_W)}; --cube-top: ${pct(cubeY, VB_H)}; --cube-width: ${pct(CUBE_W, VB_W)}`}>
@@ -29,7 +31,7 @@ const pct = (value: number, total: number) => `${((value / total) * 100).toFixed
           <path d="M 40 345 A 220 60 0 0 1 480 345" fill="none" stroke="url(#orbit-fade)" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
           <Fragment set:html={contactShadowSvg('idea-shadow', 260, 394, 270)} />
         </svg>
-        <Cube class="idea-cube" sizes="(min-width: 900px) 320px, 60vw" widths={[320, 640, 960]} />
+        <Cube class="idea-cube" sizes="(min-width: 900px) 320px, 60vw" widths={[512, 1024]} />
         <svg class="layer layer--front" viewBox={`0 0 ${VB_W} ${VB_H}`} width={VB_W} height={VB_H} focusable="false">
           <defs>
             <marker id="orbit-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="10" markerHeight="10" orient="auto">

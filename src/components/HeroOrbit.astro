@@ -15,8 +15,10 @@ const outer = [0, 120, 240];
 const inner = [0, 45, 90, 135, 180, 225, 270, 315];
 
 // Guide geometry on a 1000-unit square (scene width S = 1000).
+// Outer 0.42·S, inner 0.27·S. Cube sizes (CSS below): centre 0.30·S,
+// outer 0.15·S, inner 0.10·S, leaving clear air between centre, rings and edge.
 const R_OUTER = 420;
-const R_INNER = 250;
+const R_INNER = 270;
 const R_LOBE = R_OUTER / 2;
 const lobes = [0, 120, 240].map((deg) => {
   const rad = (deg * Math.PI) / 180;
@@ -24,7 +26,7 @@ const lobes = [0, 120, 240].map((deg) => {
 });
 
 // All orbiting copies share one rendered size hint, so they share one file.
-const orbitSizes = '(min-width: 600px) 76px, 14vw';
+const orbitSizes = '(min-width: 700px) 96px, 15vw';
 ---
 
 <div class="orbit" data-orbit>
@@ -36,6 +38,20 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
 
   <div class="orbit-scene" role="img" aria-label={hero.art.alt}>
     <svg class="orbit-guides" viewBox="0 0 1000 1000" width="1000" height="1000" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="orbit-halo">
+          <stop offset="0" stop-color="#79DAFF" stop-opacity="0.42"></stop>
+          <stop offset="0.55" stop-color="#79DAFF" stop-opacity="0.12"></stop>
+          <stop offset="1" stop-color="#79DAFF" stop-opacity="0"></stop>
+        </radialGradient>
+        <radialGradient id="orbit-disc">
+          <stop offset="0.6" stop-color="#FFFFFF" stop-opacity="0.9"></stop>
+          <stop offset="1" stop-color="#E6F3FA" stop-opacity="0.9"></stop>
+        </radialGradient>
+      </defs>
+      <circle cx="500" cy="500" r={R_OUTER} fill="#FFFFFF" fill-opacity="0.45"></circle>
+      <circle cx="500" cy="500" r={R_INNER} fill="url(#orbit-disc)"></circle>
+      <circle cx="500" cy="500" r="230" fill="url(#orbit-halo)"></circle>
       <g fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke">
         {
           lobes.map((lobe) => (
@@ -53,7 +69,7 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
           <div class="carrier carrier--outer" style={`--phase: ${phase}deg`}>
             <div class="arm">
               <div class="upright">
-                <Cube class="orbit-cube" sizes={orbitSizes} widths={[160, 320]} />
+                <Cube class="orbit-cube" sizes={orbitSizes} widths={[128, 256]} />
               </div>
             </div>
           </div>
@@ -64,7 +80,7 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
           <div class="carrier carrier--inner" style={`--phase: ${phase}deg`}>
             <div class="arm">
               <div class="upright">
-                <Cube class="orbit-cube" sizes={orbitSizes} widths={[160, 320]} />
+                <Cube class="orbit-cube" sizes={orbitSizes} widths={[128, 256]} />
               </div>
             </div>
           </div>
@@ -73,7 +89,7 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
     </div>
 
     <div class="orbit-center" aria-hidden="true">
-      <Cube class="center-cube" sizes="(min-width: 600px) 162px, 30vw" widths={[320, 640]} loading="eager" fetchpriority="high" />
+      <Cube class="center-cube" sizes="(min-width: 700px) 192px, 30vw" widths={[256, 512, 1024]} loading="eager" fetchpriority="high" />
     </div>
   </div>
 </div>
@@ -85,7 +101,7 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 540px;
+    max-width: 620px;
     margin-inline: auto;
     container-type: inline-size;
   }
@@ -94,10 +110,10 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
     order: 1;
     /* Scene width S = 100cqw. Proportions are fractions of S. */
     --r-outer: 42cqw;
-    --r-inner: 25cqw;
+    --r-inner: 27cqw;
     --size-center: 30cqw;
-    --size-outer: 14cqw;
-    --size-inner: 9.5cqw;
+    --size-outer: 15cqw;
+    --size-inner: 10cqw;
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -116,15 +132,14 @@ const orbitSizes = '(min-width: 600px) 76px, 14vw';
 
   .guide--outer,
   .guide--inner {
-    stroke: #7fa6bb;
-    stroke-opacity: 0.55;
-    stroke-dasharray: 2 7;
+    stroke: #9fc2d4;
+    stroke-opacity: 0.85;
   }
 
   .guide--lobe {
-    stroke: #79daff;
-    stroke-opacity: 0.75;
-    stroke-dasharray: 1 6;
+    stroke: #5bb8de;
+    stroke-opacity: 0.55;
+    stroke-dasharray: 3 7;
   }
 
   .orbit-rings {
