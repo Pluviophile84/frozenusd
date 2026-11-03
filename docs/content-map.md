@@ -7,7 +7,7 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 | Order | Section (anchor) | Component | Copy export | Notes |
 |---|---|---|---|---|
 | A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *Buy $FUSD* → `#token` pre-launch (no trading link exists yet; the token facts say so); *Buy $FUSD* → trading URL when live |
-| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | `$FUSD` ticker above one H1 (the eyebrow and MEMECOIN PARODY tag were removed at the owner's request; the parody status remains in token facts, FAQ and footer). No backing line (removed at the owner's request; Reserves carries it). Orbit of 12 cubes ported from frzusd, caption *In circulation / Temperature: unchanged*. Contract strip: unavailable text pre-launch; address + Copy + Explorer when live |
+| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | `$FUSD` ticker directly below the H1 (the eyebrow and MEMECOIN PARODY tag were removed at the owner's request; the parody status remains in token facts, FAQ and footer). No backing line (removed at the owner's request; Reserves carries it). Orbit of 12 cubes ported from frzusd, caption *In circulation / Temperature: unchanged*. Contract strip: unavailable text pre-launch; address + Copy + Explorer when live |
 | B2 | Reserves (`#reserves`) | `Reserves.astro` | `reserves` | Dark ink section directly after the hero. Parody backing only; never in the token table |
 | C | The idea (`#idea`) | `Idea.astro` | `idea` | Closing line: *Hot wallet. Cold dollars.* |
 | D | The product (`#how-it-works`) | `Product.astro` | `product` | Three stages, *No thawing required.*, Fictional Proof of Cold |

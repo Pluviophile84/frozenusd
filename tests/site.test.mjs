@@ -234,9 +234,12 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('hero shows only the $FUSD ticker above the headline; closing sits on the logo cyan', async () => {
+  test('hero shows the $FUSD ticker directly below the headline; closing sits on the logo cyan', async () => {
     const { context, page } = await open(origin);
     assert.equal((await page.locator('.hero-ticker').innerText()).trim(), '$FUSD');
+    assert.equal(await page.locator('h1 + .hero-ticker').count(), 1);
+    const [h1Box, tickerBox] = [await page.locator('h1').boundingBox(), await page.locator('.hero-ticker').boundingBox()];
+    assert.ok(h1Box && tickerBox && tickerBox.y >= h1Box.y + h1Box.height);
     const heroText = await page.locator('.hero-copy').innerText();
     assert.doesNotMatch(heroText, /MEMECOIN PARODY|Frozen USD ·/i);
     const closing = page.locator('section.closing');
