@@ -4,9 +4,10 @@
  * site and in generated assets uses this one image, at normal opacity.
  * Do not redraw, recolour, fade or overlay it.
  *
- * Master: brand-source/ice-cube/frozen-usd-ice-cube-master.png (1254×1254).
- * Web sizes: public/media/cube/frozen-usd-ice-cube-<width>.webp, exactly as
- * supplied with the master (checksums in brand-source/ice-cube/SHA256SUMS.txt).
+ * Master: brand-source/ice-cube/frozen-usd-ice-cube-master.png (1254×1254,
+ * a lossless decode of the image as received).
+ * Web sizes: public/media/cube/frozen-usd-ice-cube-<width>.webp, downscaled
+ * from the master by `npm run assets` (checksums in brand-source/ice-cube/SHA256SUMS.txt).
  */
 export const CUBE_MASTER = 'brand-source/ice-cube/frozen-usd-ice-cube-master.png';
 export const CUBE_NATIVE_SIZE = 1254;
@@ -24,4 +25,4 @@ export const cubeSrcset = (widths: readonly CubeWidth[] = CUBE_WIDTHS): string =
  * image size (measured from the master's alpha channel). Used to rest the
  * cube on surfaces without cropping the artwork.
  */
-export const CUBE_CONTENT = { left: 0.065, top: 0.061, right: 0.935, bottom: 0.919 } as const;
+export const CUBE_CONTENT = { left: 0.067, top: 0.072, right: 0.931, bottom: 0.922 } as const;

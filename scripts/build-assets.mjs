@@ -1,11 +1,12 @@
 // Generates the committed image assets:
+//   public/media/cube/frozen-usd-ice-cube-<w>.webp  (sized exports of the approved cube master)
 //   public/media/posters/*.svg  (text converted to outlines: no font needed)
 //   public/media/posters/*.png  (1080×1350, for sharing on X and elsewhere)
 //   public/media/posters/*-preview.webp  (lightweight thumbnails shown on the page)
 //   public/media/og-frozen-usd.png (1200×630 Open Graph image)
 //
 // Run with `npm run assets` after changing poster copy or the cube master.
-// Resizing uses sharp (the cube's web sizes are supplied, not generated); rasterising uses Playwright's Chromium. Vercel never
+// Resizing uses sharp (cube web sizes are downscaled from the master); rasterising uses Playwright's Chromium. Vercel never
 // runs this script: the finished files are committed.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -31,11 +32,17 @@ const fonts = { 800: await loadFont(800), 700: await loadFont(700), 600: await l
 
 const { name: BRAND_NAME, ticker: TICKER } = siteConfig.brand;
 
-// The approved cube. Its web sizes ship exactly as supplied (public/media/cube);
-// posters and the social image embed a PNG copy of the master, alpha intact.
+// The approved cube: sized WebP exports for the site (alpha preserved, never
+// upscaled), and a PNG copy embedded in posters and the social image.
+const { width: masterWidth, hasAlpha: masterAlpha } = await sharp(out(CUBE_MASTER)).metadata();
+if (!masterAlpha) throw new Error('The cube master must keep its transparency');
+await mkdir(out('public/media/cube'), { recursive: true });
 for (const width of CUBE_WIDTHS) {
-  const { width: w, hasAlpha } = await sharp(out(`public/media/cube/frozen-usd-ice-cube-${width}.webp`)).metadata();
-  if (w !== width || !hasAlpha) throw new Error(`Supplied ${width}px cube export is missing or lost its alpha`);
+  if (width > masterWidth) throw new Error(`Refusing to upscale the cube master to ${width}px`);
+  await sharp(out(CUBE_MASTER))
+    .resize(width, width, { kernel: 'lanczos3' })
+    .webp({ quality: 90, alphaQuality: 100, effort: 6, smartSubsample: true })
+    .toFile(out(`public/media/cube/frozen-usd-ice-cube-${width}.webp`));
 }
 const cubePng = await sharp(out(CUBE_MASTER)).resize(440, 440, { kernel: "lanczos3" }).png({ compressionLevel: 9 }).toBuffer();
 const cubeHref = `data:image/png;base64,${cubePng.toString('base64')}`;

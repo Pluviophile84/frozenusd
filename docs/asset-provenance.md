@@ -23,18 +23,18 @@ No wordmark was supplied, so the site sets "Frozen USD" in Manrope beside the un
 
 ## Ice-cube artwork (approved, unchanged)
 
-The approved ice cube is the opaque cyan Frozen USD coin inside genuinely translucent ice (about half the pixels are partially transparent), with a transparent exterior. It replaced an earlier version whose ice interior was opaque; this refinement reduces the colour of the ice reflections (README.txt). It is the only cube depiction on the site and in generated assets.
+The approved ice cube is the owner's refined artwork: an opaque cyan coin with the emblem inside translucent ice (about 63% of pixels partially transparent), with a transparent exterior. It is the only cube depiction on the site and in generated assets.
 
 | File | Notes |
 |---|---|
-| `brand-source/ice-cube/frozen-usd-ice-cube-master.png` | 1254×1254 RGBA master, byte-identical to the supplied file |
-| `brand-source/ice-cube/README.txt` | the supplier's usage notes |
-| `public/media/cube/frozen-usd-ice-cube-{128,256,512,1024}.webp` | the supplied WebP sizes, byte-identical |
-| `brand-source/ice-cube/SHA256SUMS.txt` | checksums of all five files, verified by `tests/brand.test.mjs` |
+| `brand-source/ice-cube/frozen-usd-ice-cube-as-received.webp` | the image exactly as attached (1254×1254 RGBA) |
+| `brand-source/ice-cube/frozen-usd-ice-cube-master.png` | lossless PNG decode of those pixels and alpha; the master for all exports |
+| `public/media/cube/frozen-usd-ice-cube-{128,256,512,1024}.webp` | downscaled from the master by `npm run assets` (Lanczos, alpha kept, never upscaled) |
+| `brand-source/ice-cube/SHA256SUMS.txt` | checksums of all of the above, verified by `tests/brand.test.mjs` |
 
-The supplied layered SVG and separate layer PNGs (about 9 MB) are not committed; they are editing sources, not needed by the site.
+Only a single full-size image was supplied with this revision, so the web sizes are generated rather than supplied. If an original PNG or official web sizes exist, replace the files above and run `npm run assets`.
 
-Every placement uses `src/components/Cube.astro` (or, inside SVG line drawings and generated assets, the same files): the hero orbit (1 + 3 + 8), Reserves, the idea section, the three How it works stages, two small benefit drawings and the 404 page. The image is used at normal opacity, never cropped, stretched, recoloured, blurred, faded or overlaid with a second logo. Contact shadows beneath it are separate SVG shapes (`src/lib/shadow.ts`).
+Every placement uses `src/components/Cube.astro`, the hero's `HeroArt.astro`, or (inside SVG line drawings and generated assets) the same files: the hero orbit (1 + 3 + 8), Reserves, the idea section, the three How it works stages, two small benefit drawings, the 404 page, poster 1 and the Open Graph image. The image is used at normal opacity and is never cropped, stretched, recoloured, blurred, faded or overlaid with a second logo. Contact shadows beneath it are separate SVG shapes (`src/lib/shadow.ts`).
 
 ## Decorative marks
 
