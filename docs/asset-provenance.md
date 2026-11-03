@@ -38,7 +38,7 @@ Every placement uses `src/components/Cube.astro` (or, inside SVG line drawings a
 
 ## Decorative marks
 
-`src/components/Decor.astro` draws faded section watermarks. Emblem watermarks load the official symbol files themselves (`public/brand/frozen-usd-symbol-ink.svg` or `-white.svg`, byte-identical to the logo master package) and are faded by opacity only: never redrawn, recoloured, rotated or cropped by the section edge, so the full mark, including the short stems above and below the S, is always visible. The orbit-ring motif is the only other mark. All are `aria-hidden`, ignore pointer input and sit behind content. The How it works proof seal also loads the official master file.
+`src/components/Decor.astro` draws the faint orbit-ring motif behind a few sections (Idea, Benefits, Satire, Memes, closing). Logo watermarks were removed at the owner's request; the logo appears only as a real brand mark (header, footer, closing mark, How it works proof seal), always loaded from the official files.
 
 ## Generated files
 

@@ -1,26 +1,19 @@
 ---
 /**
- * Decorative background marks for sections. Always aria-hidden and behind
- * content; place inside an element with the `decorated` class.
- *
- * - `emblem`: the official symbol file itself (public/brand, byte-identical to
- *   the logo master), ink or white variant, faded only by opacity. It is never
- *   redrawn, recoloured, rotated or cropped: position it fully inside the section.
- * - `rings`: the hero's orbit-ring motif.
+ * Decorative background mark for sections: the hero's orbit-ring motif.
+ * Always aria-hidden and behind content; place inside an element with the
+ * `decorated` class. (Logo watermarks were removed at the owner's request.)
  */
 interface Props {
-  kind: 'emblem' | 'rings';
-  /** Emblem: which official symbol variant to use. */
-  variant?: 'ink' | 'white';
-  /** Rings: stroke colour. */
+  kind: 'rings';
+  /** Stroke colour. */
   color?: string;
   opacity: number;
-  /** Size and position, e.g. "width: 420px; right: 4%; bottom: 6%". */
+  /** Size and position, e.g. "width: 720px; right: -20%; top: -30%". */
   style: string;
 }
 
-const { kind, variant = 'ink', color = 'currentColor', opacity, style } = Astro.props;
-const emblemSrc = variant === 'white' ? '/brand/frozen-usd-symbol-white.svg' : '/brand/frozen-usd-symbol-ink.svg';
+const { kind, color = 'currentColor', opacity, style } = Astro.props;
 const lobes = [0, 120, 240].map((deg) => {
   const rad = (deg * Math.PI) / 180;
   return { cx: 500 + 210 * Math.sin(rad), cy: 500 - 210 * Math.cos(rad) };
@@ -29,9 +22,7 @@ const lobes = [0, 120, 240].map((deg) => {
 
 <div class:list={['decor', `decor--${kind}`]} style={`color: ${color}; opacity: ${opacity}; ${style}`} aria-hidden="true">
   {
-    kind === 'emblem' ? (
-      <img src={emblemSrc} width="1024" height="1024" alt="" loading="lazy" decoding="async" />
-    ) : (
+    kind === 'rings' && (
       <svg viewBox="0 0 1000 1000" focusable="false">
         <g fill="none" stroke="currentColor" stroke-width="1.2" vector-effect="non-scaling-stroke">
           <circle cx="500" cy="500" r="420" />

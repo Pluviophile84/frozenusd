@@ -16,7 +16,7 @@ During both builds (including the orbit revision), the sandbox's network policy 
 
 ## How the art direction was applied
 
-- **Bright, composed surfaces:** white and frost backgrounds, deep-ink type, cyan used for emphasis, marks and the product only. Two dark-ink sections, Reserves and the satire, are separated by light sections; the closing call to action sits on the logo cyan. Light sections carry quiet radial gradients, and most sections a faded emblem watermark or orbit-ring motif, for an institutional finish.
+- **Bright, composed surfaces:** white and frost backgrounds, deep-ink type, cyan used for emphasis, marks and the product only. Two dark-ink sections, Reserves and the satire, are separated by light sections; the closing call to action sits on the logo cyan. Light sections carry quiet radial gradients, and several sections a faint orbit-ring motif, for an institutional finish (no logo watermarks).
 - **Issuer-grade hierarchy:** one large H1, controlled H2 scale, Manrope only, mono reserved for addresses and diagram labels.
 - **Varied composition, few cards:** hero split (copy left, orbit right), dark Reserves statement with a ruled three-part fact row, idea split (object left, text right), product demonstration on a shared route, three-part benefits divided by fine rules, monumental dark satire, specification-sheet token facts, posters, FAQ list, centred close.
 - **Humour in the product details:** the ice-cube peg and Strategic Ice Reserve, "In transit", and the Fictional Proof of Cold receipt carry the joke while the interface stays serious.

@@ -27,11 +27,9 @@ const stageArt = [
   { tag: 'In transit', lift: 20, pad: false, trail: true },
   { tag: 'Wallet B', lift: 0, pad: true, trail: false },
 ];
-import Decor from './Decor.astro';
 ---
 
-<section class="section product decorated" id="how-it-works" aria-labelledby="product-title">
-  <Decor kind="emblem" variant="ink" opacity={0.05} style="width: clamp(220px, 30vw, 460px); right: 2%; top: 3%" />
+<section class="section product" id="how-it-works" aria-labelledby="product-title">
   <div class="container">
     <header class="product-head">
       <h2 id="product-title">{sentences(product.title).map((line) => <span class="line">{line} </span>)}</h2>

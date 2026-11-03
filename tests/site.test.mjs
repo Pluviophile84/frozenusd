@@ -241,9 +241,9 @@ describe('pre-launch build (committed configuration)', () => {
     assert.doesNotMatch(heroText, /MEMECOIN PARODY|Frozen USD ·/i);
     const closing = page.locator('section.closing');
     assert.equal(await closing.evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(121, 218, 255)');
-    // Decorative watermarks stay behind content and out of the accessibility tree.
+    // Decorative ring marks stay behind content and out of the accessibility tree.
     const decor = await page.$$eval('.decor', (els) => els.map((el) => [el.getAttribute('aria-hidden'), getComputedStyle(el).pointerEvents]));
-    assert.ok(decor.length >= 8);
+    assert.ok(decor.length >= 5);
     assert.ok(decor.every(([hidden, pe]) => hidden === 'true' && pe === 'none'));
     await context.close();
   });
@@ -291,30 +291,14 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('watermarks are the official logo files, whole and unrotated', async () => {
-    for (const width of [1440, 390]) {
-      const { context, page } = await open(origin, { width, height: 900 });
-      const marks = await page.$$eval('.decor--emblem', (els) =>
-        els.map((el) => {
-          const section = el.closest('section').getBoundingClientRect();
-          const box = el.getBoundingClientRect();
-          return {
-            src: el.querySelector('img')?.getAttribute('src'),
-            transform: getComputedStyle(el).transform,
-            inside: box.left >= section.left && box.right <= section.right && box.top >= section.top && box.bottom <= section.bottom,
-          };
-        }),
-      );
-      assert.ok(marks.length >= 6);
-      for (const mark of marks) {
-        assert.match(mark.src ?? '', /^\/brand\/frozen-usd-symbol-(ink|white)\.svg$/);
-        assert.equal(mark.transform, 'none');
-        assert.ok(mark.inside, `watermark cropped at ${width}px`);
-      }
-      // No inline re-drawings of the emblem remain on the page.
-      assert.equal(await page.locator('svg path[d^="M479.179636"]').count(), 0);
-      await context.close();
-    }
+  test('section backgrounds carry no logo watermarks', async () => {
+    const { context, page } = await open(origin);
+    assert.equal(await page.locator('.decor--emblem').count(), 0);
+    // Logo files appear only as real brand marks: header, footer, closing mark and proof seal.
+    const logos = await page.$$eval('main section img[src^="/brand/"]', (imgs) => imgs.map((i) => i.closest('section')?.className ?? ''));
+    assert.ok(logos.every((cls) => /closing|product/.test(cls)), JSON.stringify(logos));
+    assert.equal(await page.locator('svg path[d^="M479.179636"]').count(), 0);
+    await context.close();
   });
 
   const orbitAnimations = (page) =>
