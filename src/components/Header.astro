@@ -226,6 +226,20 @@ const live = site.token.status === 'live' ? site.token : null;
     .header-cta {
       padding: 0 14px;
     }
+  }
+
+  /* Narrow phones: the hero repeats this action, so the header keeps the brand and menu. */
+  @media (max-width: 359px) {
+    .header-cta {
+      display: none;
+    }
+
+    .primary-nav {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 479px) {
 
     .menu-label {
       position: absolute;

@@ -1,7 +1,7 @@
 ---
 import { site } from '../config/index.ts';
 import { hero, actions, token as tokenCopy } from '../content/home.ts';
-import HeroArt from './HeroArt.astro';
+import HeroOrbit from './HeroOrbit.astro';
 import AddressActions from './AddressActions.astro';
 
 const live = site.token.status === 'live' ? site.token : null;
@@ -22,6 +22,15 @@ const live = site.token.status === 'live' ? site.token : null;
       </p>
 
       <p class="hero-signature">{hero.signature}</p>
+
+      <p class="hero-backing">
+        <a href="#reserves">
+          {hero.backing}
+          <svg class="backing-arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M6 1.5v8M2.5 6.5 6 10l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+          </svg>
+        </a>
+      </p>
 
       <div class="hero-actions">
         {
@@ -67,7 +76,7 @@ const live = site.token.status === 'live' ? site.token : null;
     </div>
 
     <div class="hero-visual">
-      <HeroArt />
+      <HeroOrbit />
     </div>
   </div>
 </section>
@@ -134,6 +143,21 @@ const live = site.token.status === 'live' ? site.token : null;
     background: var(--border-strong);
   }
 
+  /* Below wide desktop the three sentences may wrap: drop the dividers. */
+  @media (max-width: 1199px) {
+    .hero-support {
+      column-gap: 0.32em;
+    }
+
+    .hero-support span {
+      white-space: nowrap;
+    }
+
+    .hero-support span + span::before {
+      display: none;
+    }
+  }
+
   .hero-signature {
     display: flex;
     align-items: center;
@@ -153,11 +177,38 @@ const live = site.token.status === 'live' ? site.token : null;
     background: var(--cyan);
   }
 
+  .hero-backing {
+    margin-top: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .hero-backing a {
+    color: var(--ink-soft);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--border-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+
+  .hero-backing a:hover {
+    color: var(--interactive);
+    text-decoration-color: currentColor;
+  }
+
+  .backing-arrow {
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: -0.05em;
+    color: var(--interactive);
+  }
+
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 36px;
+    margin-top: 32px;
   }
 
   .contract-strip {
@@ -193,7 +244,9 @@ const live = site.token.status === 'live' ? site.token : null;
     }
 
     .hero-visual {
-      max-width: 680px;
+      width: 100%;
+      max-width: 540px;
+      margin-inline: auto;
     }
   }
 
@@ -204,15 +257,6 @@ const live = site.token.status === 'live' ? site.token : null;
 
     .hero-support {
       margin-top: 20px;
-      column-gap: 0.32em;
-    }
-
-    .hero-support span {
-      white-space: nowrap;
-    }
-
-    .hero-support span + span::before {
-      display: none;
     }
 
     .hero-actions {

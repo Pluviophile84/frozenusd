@@ -77,7 +77,7 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal((await page.locator('h1').innerText()).trim(), 'The dollar that trades frozen.');
     assert.ok(html.includes('Contract address not available yet.'));
     assert.equal(await page.locator('[data-copy-button]').count(), 0);
-    assert.equal(await page.getByText('Buy $FRZUSD').count(), 0);
+    assert.equal(await page.getByText('Buy $FUSD').count(), 0);
     assert.equal(await page.getByText('Follow on X').count(), 0);
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), '#token');
     assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Token details');
@@ -114,7 +114,7 @@ describe('pre-launch build (committed configuration)', () => {
     const { context, page } = await open(origin);
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex, nofollow');
     assert.equal(await page.locator('link[rel="canonical"]').count(), 0);
-    assert.equal(await page.title(), 'FROZEN USD — Frozen. Still moving.');
+    assert.equal(await page.title(), 'Frozen USD — Frozen. Still moving.');
     assert.equal(await exists(join(dist, 'sitemap.xml')), false);
     assert.ok(await exists(join(dist, 'robots.txt')));
     assert.doesNotMatch(await readFile(join(dist, 'robots.txt'), 'utf8'), /Sitemap/);
@@ -184,20 +184,247 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('hero motion loops, can be paused, and is removed for reduced motion', async () => {
-    const moving = await open(origin);
-    const state = (p) => p.locator('.hero-art .mover').evaluate((el) => getComputedStyle(el).animationPlayState);
-    assert.notEqual(await moving.page.locator('.hero-art .mover').evaluate((el) => getComputedStyle(el).animationName), 'none');
-    assert.equal(await state(moving.page), 'running');
-    await moving.page.locator('label[for="hero-motion"]').click();
-    assert.equal(await moving.page.locator('#hero-motion').isChecked(), true);
-    assert.equal(await state(moving.page), 'paused');
-    await moving.context.close();
+  test('brand, ticker, backing claim and reserves section', async () => {
+    const { context, page } = await open(origin);
+    assert.equal(await page.locator('.site-header .logo-text').innerText(), 'Frozen USD');
+    assert.equal(await page.locator('.site-header .logo-text').evaluate((el) => getComputedStyle(el).textTransform), 'none');
+    const text = await page.locator('body').innerText();
+    assert.doesNotMatch(text, /FRZUSD/);
+    assert.match(text, /\$FUSD/);
+    // The hero proposition links to the reserves.
+    const claim = page.locator('.hero a[href="#reserves"]');
+    assert.equal((await claim.innerText()).trim(), 'Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves.');
+    // Reserves sits directly after the hero on the dark ink background.
+    const order = await page.$$eval('main > section', (sections) => sections.map((s) => s.id || s.className.split(' ')[1]));
+    assert.deepEqual(order.slice(0, 4), ['top', 'reserves', 'idea', 'how-it-works']);
+    const bg = (sel) => page.locator(sel).evaluate((el) => getComputedStyle(el).backgroundColor);
+    assert.equal(await bg('#reserves'), 'rgb(7, 24, 39)');
+    assert.notEqual(await bg('#idea'), 'rgb(7, 24, 39)');
+    const reserves = await page.locator('#reserves').innerText();
+    for (const line of [
+      'THE COLD STANDARD',
+      '100% backed by cold, hard reserves.',
+      'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Siberia. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+      'One FUSD. One ice cube.',
+      'Fully reserved. Deeply refrigerated.',
+      'Cold storage. Literally.',
+      'Fully backed. Mostly transparent.',
+      'Transparency is central to our operation. Unfortunately, so is frost.',
+      'Reserve visibility may vary depending on frost conditions.',
+    ]) {
+      assert.ok(reserves.includes(line), line);
+    }
+    const facts = await page.$$eval('#reserves .reserve-fact', (els) =>
+      els.map((el) => [el.querySelector('.reserve-value')?.textContent, el.querySelector('dt')?.textContent]),
+    );
+    assert.deepEqual(facts, [
+      ['1:1', 'Ice-cube peg'],
+      ['100%', 'Cold, hard backing'],
+      ['Siberia', 'Reserve location'],
+    ]);
+    assert.doesNotMatch(text, /Greenland|Alaska/);
+    // The verified token table stays factual.
+    assert.doesNotMatch(await page.locator('#token .facts').innerText(), /ice|reserve|Siberia/i);
+    // Navigation lists Reserves right after The idea, in the header and footer.
+    for (const nav of ['#primary-menu', '.footer-nav']) {
+      const labels = await page.$$eval(`${nav} a`, (as) => as.map((a) => a.textContent?.trim()));
+      assert.deepEqual(labels.slice(0, 2), ['The idea', 'Reserves'], nav);
+    }
+    await context.close();
+  });
 
+  test('FAQ carries the parody peg and reserve answers', async () => {
+    const { context, page } = await open(origin);
+    const questions = await page.$$eval('#faq summary .q', (els) => els.map((el) => el.textContent));
+    const pegged = questions.indexOf('What is FUSD pegged to?');
+    assert.ok(pegged >= 0);
+    assert.equal(questions[pegged + 1], 'What backs it?');
+    const answer = (q) =>
+      page
+        .locator('#faq details', { hasText: q })
+        .locator('.answer p')
+        .evaluateAll((ps) => ps.map((p) => p.textContent?.trim()).join(' '));
+    assert.equal(
+      await answer('What is FUSD pegged to?'),
+      'One FUSD. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough. This is our parody peg. FUSD is a memecoin with no dollar peg or redemption promise.',
+    );
+    assert.equal(await answer('What backs it?'), 'Our Strategic Ice Reserve in Siberia. One institutional-grade ice cube per FUSD. Cold storage. Literally.');
+    assert.equal(
+      await answer('Is Frozen USD a stablecoin?'),
+      'It has the brochure confidence of one. $FUSD is a memecoin with no dollar peg or redemption promise.',
+    );
+    await context.close();
+  });
+
+  test('every cube is the approved image and the old renderer is gone', async () => {
+    const { context, page } = await open(origin);
+    for (let y = 0; y < (await page.evaluate(() => document.body.scrollHeight)); y += 700) {
+      await page.evaluate((top) => window.scrollTo(0, top), y);
+      await page.waitForTimeout(30);
+    }
+    await page.waitForLoadState('networkidle');
+    const cubes = await page.$$eval('img.cube', (imgs) => imgs.map((i) => ({ src: i.currentSrc, w: i.naturalWidth, h: i.naturalHeight })));
+    // 12 in the hero + reserves + idea + 3 stages.
+    assert.equal(cubes.length, 17);
+    for (const cube of cubes) {
+      assert.match(cube.src, /\/media\/cube\/frozen-usd-ice-cube-\d+\.webp$/);
+      assert.equal(cube.w, cube.h);
+    }
+    const svgCubes = await page.$$eval('svg image', (els) => els.map((el) => el.getAttribute('href')));
+    assert.ok(svgCubes.length >= 2 && svgCubes.every((href) => /\/media\/cube\//.test(href ?? '')));
+    assert.equal(await page.locator('.ice-block, .hero-art, [class*="wallet"]').count(), 0);
+    await context.close();
+  });
+
+  test('hero orbit: one centre, three outer and eight inner cubes, all upright', async () => {
+    const { context, page } = await open(origin);
+    const scene = page.locator('.orbit-scene');
+    assert.equal(await scene.getAttribute('role'), 'img');
+    assert.equal(await scene.getAttribute('aria-label'), 'Frozen USD tokens circulate while remaining frozen.');
+    assert.equal(await scene.locator('.orbit-center img.cube').count(), 1);
+    assert.equal(await scene.locator('.carrier--outer img.cube').count(), 3);
+    assert.equal(await scene.locator('.carrier--inner img.cube').count(), 8);
+    assert.equal(await scene.locator('img.cube').count(), 12);
+    assert.equal(await page.locator('.hero').getByText(/Wallet [AB]|Location: updated|Concept illustration/).count(), 0);
+
+    const animations = () =>
+      page.evaluate(() =>
+        document
+          .getAnimations()
+          .filter((a) => a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-'))
+          .map((a) => ({ name: a.animationName, state: a.playState, duration: a.effect.getTiming().duration })),
+      );
+    const running = await animations();
+    assert.equal(running.length, 22);
+    assert.ok(running.every((a) => a.duration === 100000 && a.state === 'running'));
+
+    // At several moments, carrier + counter-rotation stays 0° (upright) and
+    // the outer ring moves clockwise while the inner ring moves counter-clockwise.
+    const angles = (t) =>
+      page.evaluate((time) => {
+        for (const a of document.getAnimations()) {
+          if (a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-')) a.currentTime = time;
+        }
+        const angle = (el) => {
+          const m = new DOMMatrix(getComputedStyle(el).transform);
+          return (Math.atan2(m.b, m.a) * 180) / Math.PI;
+        };
+        return [...document.querySelectorAll('.carrier')].map((carrier) => ({
+          ring: carrier.classList.contains('carrier--outer') ? 'outer' : 'inner',
+          carrier: angle(carrier),
+          net: angle(carrier) + angle(carrier.querySelector('.upright')),
+          rect: carrier.querySelector('img').getBoundingClientRect().toJSON(),
+        }));
+      }, t);
+    const sceneBox = await scene.boundingBox();
+    const norm = (deg) => ((((deg + 180) % 360) + 360) % 360) - 180;
+    const t0 = await angles(10000);
+    const t1 = await angles(20000);
+    for (const [i, item] of t0.entries()) {
+      assert.ok(Math.abs(norm(item.net)) < 0.01, `cube ${i} not upright`);
+      const delta = norm(t1[i].carrier - item.carrier);
+      assert.ok(Math.abs(Math.abs(delta) - 36) < 0.1, `cube ${i} moved ${delta}° in 10 s`);
+      assert.equal(Math.sign(delta), item.ring === 'outer' ? 1 : -1);
+    }
+    // Nothing leaves the scene at any point of a full revolution.
+    for (let t = 0; t < 100000; t += 5000) {
+      for (const item of await angles(t)) {
+        assert.ok(item.rect.left >= sceneBox.x - 1 && item.rect.right <= sceneBox.x + sceneBox.width + 1);
+        assert.ok(item.rect.top >= sceneBox.y - 1 && item.rect.bottom <= sceneBox.y + sceneBox.height + 1);
+      }
+    }
+    await context.close();
+  });
+
+  test('hero orbit pauses together, respects visibility and keeps a user pause', async () => {
+    const { context, page } = await open(origin);
+    const states = () =>
+      page.evaluate(() => [
+        ...new Set(
+          document
+            .getAnimations()
+            .filter((a) => a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-'))
+            .map((a) => a.playState),
+        ),
+      ]);
+    assert.deepEqual(await states(), ['running']);
+
+    // Off-screen pauses; returning resumes.
+    await page.evaluate(() => document.querySelector('#token')?.scrollIntoView());
+    await page.waitForFunction(() => document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    assert.deepEqual(await states(), ['paused']);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForFunction(() => !document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    assert.deepEqual(await states(), ['running']);
+
+    // A hidden tab pauses.
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    assert.deepEqual(await states(), ['paused']);
+    await page.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'visible' });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    assert.deepEqual(await states(), ['running']);
+
+    // The user's pause holds every carrier and counter-rotation at the same frame
+    // and survives leaving and returning to the viewport.
+    await page.locator('label[for="orbit-pause"]').click();
+    assert.equal(await page.locator('#orbit-pause').isChecked(), true);
+    assert.deepEqual(await states(), ['paused']);
+    const frozenAt = await page.evaluate(() => [...new Set(document.getAnimations().filter((a) => a.animationName?.startsWith('orbit-c') || a.animationName?.startsWith('upright-')).map((a) => Math.round(Number(a.currentTime))))]);
+    assert.equal(frozenAt.length, 1);
+    await page.evaluate(() => document.querySelector('#token')?.scrollIntoView());
+    await page.waitForFunction(() => document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForFunction(() => !document.querySelector('[data-orbit]')?.classList.contains('is-offscreen'));
+    assert.deepEqual(await states(), ['paused']);
+    // Resuming continues from the same frame.
+    await page.locator('label[for="orbit-pause"]').click();
+    assert.deepEqual(await states(), ['running']);
+    const resumedAt = await page.evaluate(() => Math.min(...document.getAnimations().filter((a) => a.animationName?.startsWith('orbit-c')).map((a) => Number(a.currentTime))));
+    assert.ok(resumedAt >= frozenAt[0] - 1 && resumedAt < frozenAt[0] + 1000, `resumed at ${resumedAt}, paused at ${frozenAt[0]}`);
+    await context.close();
+  });
+
+  test('reduced motion and no-JavaScript keep the full static composition', async () => {
     const still = await open(origin, { reducedMotion: 'reduce' });
-    assert.equal(await still.page.locator('.hero-art .mover').evaluate((el) => getComputedStyle(el).animationName), 'none');
-    assert.equal(await still.page.locator('label[for="hero-motion"]').isVisible(), false);
+    const names = await still.page.$$eval('.orbit-scene *', (els) => [...new Set(els.map((el) => getComputedStyle(el).animationName))]);
+    assert.deepEqual(names, ['none']);
+    assert.equal(await still.page.locator('label[for="orbit-pause"]').isVisible(), false);
+    const upright = await still.page.$$eval('.carrier', (carriers) =>
+      carriers.map((c) => {
+        const a = (el) => {
+          const m = new DOMMatrix(getComputedStyle(el).transform);
+          return (Math.atan2(m.b, m.a) * 180) / Math.PI;
+        };
+        return Math.abs(a(c) + a(c.querySelector('.upright')));
+      }),
+    );
+    assert.equal(upright.length, 11);
+    assert.ok(upright.every((d) => d < 0.01 || Math.abs(d - 360) < 0.01));
+    const visible = await still.page.$$eval('.orbit-scene img.cube', (imgs) => imgs.filter((i) => i.complete && i.naturalWidth > 0).length);
+    assert.equal(visible, 12);
     await still.context.close();
+
+    const noJs = await open(origin, { javaScriptEnabled: false });
+    assert.equal(await noJs.page.locator('.orbit-scene img.cube').count(), 12);
+    assert.ok(await noJs.page.locator('label[for="orbit-pause"]').isVisible());
+    await noJs.page.locator('label[for="orbit-pause"]').click();
+    assert.equal(await noJs.page.locator('.carrier').first().evaluate((el) => getComputedStyle(el).animationPlayState), 'paused');
+    await noJs.context.close();
+  });
+
+  test('the orbit fits without overflow on narrow phones', async () => {
+    for (const width of [320, 390]) {
+      const { context, page } = await open(origin, { width, height: 760 });
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
+      const box = await page.locator('.orbit-scene').boundingBox();
+      assert.ok(box && box.x >= 0 && box.x + box.width <= width);
+      await context.close();
+    }
   });
 
   test('content, navigation and FAQ work without JavaScript', async () => {
@@ -237,7 +464,7 @@ describe('live build (test fixture)', () => {
   test('enables trading, explorer and social controls', async () => {
     const { context, page, errors } = await open(origin);
     const cta = page.locator('.site-header .header-cta');
-    assert.match(await cta.innerText(), /Buy \$FRZUSD/);
+    assert.match(await cta.innerText(), /Buy \$FUSD/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
     assert.equal(await page.locator('.hero-actions a').first().getAttribute('href'), fixture.token.tradeUrl);
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
@@ -256,6 +483,7 @@ describe('live build (test fixture)', () => {
     const button = page.locator('#token .fact--contract [data-copy-button]');
     assert.ok(await button.isVisible());
     await button.click();
+    await page.waitForFunction(() => document.querySelector('#token-address-status')?.textContent !== '');
     assert.equal(await page.locator('#token-address-status').innerText(), 'Address copied.');
     assert.equal(await page.evaluate(() => navigator.clipboard.readText()), FIXTURE_SOLANA_ADDRESS);
     await context.close();
@@ -272,6 +500,7 @@ describe('live build (test fixture)', () => {
     await page.goto(origin + '/');
     await page.locator('#hero-address-status').waitFor({ state: 'attached' });
     await page.locator('.contract-strip [data-copy-button]').click();
+    await page.waitForFunction(() => document.querySelector('#hero-address-status')?.textContent !== '');
     assert.equal(
       await page.locator('#hero-address-status').innerText(),
       'Copy failed. Select the address and copy it manually.',
@@ -296,7 +525,7 @@ describe('invalid live configuration', () => {
     const fixture = liveFixture();
     fixture.token.contractAddress = 'PASTE_CONTRACT_ADDRESS_HERE';
     await assert.rejects(buildSite('invalid', fixture), (error) => {
-      assert.match(String(error.stderr), /Invalid FROZEN USD launch configuration/);
+      assert.match(String(error.stderr), /Invalid Frozen USD launch configuration/);
       assert.match(String(error.stderr), /contractAddress/);
       return true;
     });

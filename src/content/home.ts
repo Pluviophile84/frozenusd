@@ -1,5 +1,5 @@
 /**
- * Selected public copy for the FROZEN USD launch website.
+ * Selected public copy for the Frozen USD launch website.
  * Edit wording here; layout lives in src/components/.
  * Conditional launch labels (Buy, Copy, Explorer) live with the components
  * that decide whether they may render.
@@ -7,24 +7,37 @@
 
 export const nav = [
   { label: 'The idea', href: '#idea' },
+  { label: 'Reserves', href: '#reserves' },
   { label: 'How it works', href: '#how-it-works' },
   { label: 'The cold facts', href: '#token' },
   { label: 'Memes', href: '#memes' },
 ] as const;
 
 export const hero = {
-  eyebrow: 'FROZEN USD · $FRZUSD',
+  eyebrow: 'Frozen USD · $FUSD',
   identity: 'MEMECOIN PARODY',
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
   signature: 'Frozen. Still moving.',
+  backing: 'Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves.',
   contractUnavailable: 'Contract address not available yet.',
   art: {
-    label: 'Concept illustration',
-    location: 'Location: updated',
-    temperature: 'Temperature: unchanged',
-    alt: 'Concept illustration: the FROZEN USD coin, sealed inside a clear block of ice, travels between two abstract wallets. Location: updated. Temperature: unchanged.',
+    alt: 'Frozen USD tokens circulate while remaining frozen.',
   },
+};
+
+export const reserves = {
+  eyebrow: 'THE COLD STANDARD',
+  title: '100% backed by cold, hard reserves.',
+  body: 'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Siberia. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+  facts: [
+    { value: '1:1', label: 'Ice-cube peg', line: 'One FUSD. One ice cube.' },
+    { value: '100%', label: 'Cold, hard backing', line: 'Fully reserved. Deeply refrigerated.' },
+    { value: 'Siberia', label: 'Reserve location', line: 'Cold storage. Literally.' },
+  ],
+  subtitle: 'Fully backed. Mostly transparent.',
+  text: 'Transparency is central to our operation. Unfortunately, so is frost.',
+  small: 'Reserve visibility may vary depending on frost conditions.',
 };
 
 export const idea = {
@@ -82,7 +95,7 @@ export const satire = {
 
 export const token = {
   title: 'The cold facts.',
-  body: 'FROZEN USD is a memecoin parody. No dollar peg. No dollar redemption. The frozen-dollar technology is the joke.',
+  body: 'Frozen USD is a memecoin parody. No dollar peg. No dollar redemption. The frozen-dollar technology is the joke.',
   networkPending: 'To be announced',
   contractPending: 'Not available yet',
   statusLabels: { prelaunch: 'Pre-launch', live: 'Live' },
@@ -91,7 +104,7 @@ export const token = {
 
 export const memes = {
   title: ['Some people hold dollars.', 'Some people hold opinions about dollars.'],
-  body: ['$FRZUSD is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
+  body: ['$FUSD is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
   posters: [
     { slug: 'frozen-still-moving', line: 'FROZEN. STILL MOVING.' },
     { slug: 'your-keys-our-freezer', line: 'YOUR KEYS. OUR FREEZER.' },
@@ -103,7 +116,7 @@ export const memes = {
 export const faq = [
   {
     q: 'Is Frozen USD a stablecoin?',
-    a: ['It has the brochure confidence of one. $FRZUSD is a memecoin with no dollar peg or redemption promise.'],
+    a: ['It has the brochure confidence of one. $FUSD is a memecoin with no dollar peg or redemption promise.'],
   },
   {
     q: 'How can it be frozen and still move?',
@@ -118,12 +131,19 @@ export const faq = [
     a: ["No. We do not have access to another issuer's controls or provide an unfreezing service."],
   },
   {
-    q: 'Why hold $FRZUSD?',
+    q: 'Why hold $FUSD?',
     a: ['Because you enjoy the premise and want to take part in it. No financial return or dollar safety is attached to the punchline.'],
   },
   {
+    q: 'What is FUSD pegged to?',
+    a: [
+      "One FUSD. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough.",
+      'This is our parody peg. FUSD is a memecoin with no dollar peg or redemption promise.',
+    ],
+  },
+  {
     q: 'What backs it?',
-    a: ['Creatively: cold hard memes.', 'Financially: there is no dollar-backing or redemption claim.'],
+    a: ['Our Strategic Ice Reserve in Siberia. One institutional-grade ice cube per FUSD. Cold storage. Literally.'],
   },
 ];
 
@@ -134,7 +154,7 @@ export const closing = {
 };
 
 export const footer = {
-  tagline: 'FROZEN USD — Frozen. Still moving.',
+  tagline: 'Frozen USD — Frozen. Still moving.',
   disclaimer:
     'Independent memecoin parody. No dollar peg or redemption. No affiliation with Tether, Circle or Binance. Cryptoassets can lose all their value.',
 };
@@ -146,15 +166,15 @@ export const notFound = {
 };
 
 export const seo = {
-  title: 'FROZEN USD — Frozen. Still moving.',
+  title: 'Frozen USD — Frozen. Still moving.',
   description:
-    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $FRZUSD is a memecoin parody of stablecoins and the freeze button.',
+    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $FUSD is a memecoin parody of stablecoins and the freeze button.',
 };
 
 export const actions = {
   explore: 'Explore frozen finance',
   tokenDetails: 'Token details',
-  buy: 'Buy $FRZUSD',
+  buy: 'Buy $FUSD',
   coldFacts: 'The cold facts',
   followX: 'Follow on X',
   community: 'Join the community',

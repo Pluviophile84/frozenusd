@@ -16,8 +16,8 @@ During this build, the sandbox's network policy refused connections to all three
 
 ## How the art direction was applied
 
-- **Bright, composed surfaces:** white and frost backgrounds, deep-ink type, cyan used for emphasis, marks and the product only. One dark-ink section carries the satire.
+- **Bright, composed surfaces:** white and frost backgrounds, deep-ink type, cyan used for emphasis, marks and the product only. Two dark-ink sections, Reserves and the satire, are separated by light sections.
 - **Issuer-grade hierarchy:** one large H1, controlled H2 scale, Manrope only, mono reserved for addresses and diagram labels.
-- **Varied composition, few cards:** hero split (copy left, product right), idea split (object left, text right), product demonstration on a shared route, three-part benefits divided by fine rules, monumental dark satire, specification-sheet token facts, posters, FAQ list, centred close.
-- **Humour in the product details:** "Location: updated / Temperature: unchanged", the travelling block, "In transit", and the Fictional Proof of Cold receipt carry the joke while the interface stays serious.
-- **Motion:** one understated 14-second loop inside the artwork (travel, hop, shadow), a native-checkbox pause switch, automatic pause off-screen, no motion for reduced-motion users.
+- **Varied composition, few cards:** hero split (copy left, orbit right), dark Reserves statement with a ruled three-part fact row, idea split (object left, text right), product demonstration on a shared route, three-part benefits divided by fine rules, monumental dark satire, specification-sheet token facts, posters, FAQ list, centred close.
+- **Humour in the product details:** the ice-cube peg and Strategic Ice Reserve, "In transit", and the Fictional Proof of Cold receipt carry the joke while the interface stays serious.
+- **Motion:** the hero orbit uses a Tether-inspired mechanism implemented locally (no Tether graphics or code): a stationary centre cube, three cubes orbiting clockwise and eight counter-clockwise, 100 s per revolution, linear. Each cube rides a rotating carrier with an exactly opposite counter-rotation so it stays upright. Dashed guides: outer and inner rings plus three offset lobes (radius = half the outer radius) meeting at the centre. One native-checkbox pause switch; automatic pause off-screen and in hidden tabs without overriding a user pause; a static composition for reduced motion.

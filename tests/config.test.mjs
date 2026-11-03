@@ -18,9 +18,12 @@ test('the committed configuration is a truthful pre-launch configuration', () =>
   assert.equal(siteConfig.token.contractAddress, null);
   assert.equal(siteConfig.token.tradeUrl, null);
   assert.equal(siteConfig.token.explorerUrl, null);
-  assert.equal(siteConfig.canonicalOrigin, null);
+  assert.equal(siteConfig.canonicalOrigin, 'https://frozenusd.com');
+  assert.deepEqual(siteConfig.brand, { name: 'Frozen USD', ticker: '$FUSD', slogan: 'Frozen. Still moving.' });
   const site = resolveSiteConfig(siteConfig, { vercelEnv: 'production' });
   assert.deepEqual(site.token, { status: 'prelaunch', networkLabel: null });
+  // The domain is configured, but nothing is indexable until launch.
+  assert.equal(site.canonicalOrigin, 'https://frozenusd.com');
   assert.equal(site.indexable, false);
   assert.deepEqual(site.social, { xUrl: null, communityUrl: null });
 });

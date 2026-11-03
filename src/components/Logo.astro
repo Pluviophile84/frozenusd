@@ -1,4 +1,6 @@
 ---
+import { site } from '../config/index.ts';
+
 interface Props {
   href?: string;
   /** 'light' surfaces use the master emblem; 'dark' uses the reversed variant. */
@@ -11,7 +13,7 @@ const src = tone === 'dark' ? '/brand/frozen-usd-reversed.svg' : '/brand/frozen-
 
 <a class:list={['logo', `logo--${tone}`]} href={href}>
   <img src={src} width={size} height={size} alt="" />
-  <span class="logo-text">FROZEN USD</span>
+  <span class="logo-text">{site.brand.name}</span>
 </a>
 
 <style>
@@ -35,9 +37,9 @@ const src = tone === 'dark' ? '/brand/frozen-usd-reversed.svg' : '/brand/frozen-
   }
 
   .logo-text {
-    font-size: 1.0625rem;
+    font-size: 1.125rem;
     font-weight: 800;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.015em;
     white-space: nowrap;
   }
 </style>

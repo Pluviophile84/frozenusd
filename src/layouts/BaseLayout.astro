@@ -18,13 +18,16 @@ const { title = seo.title, description = seo.description, noindex = false, path 
 const indexable = site.indexable && !noindex;
 const canonical = indexable && site.canonicalOrigin ? `${site.canonicalOrigin}${path}` : null;
 
-// Absolute URLs for social previews: the verified origin, otherwise the URL
-// Vercel assigned to this very deployment. Nothing is guessed.
+// Absolute URLs for social previews. Vercel previews point at their own
+// deployment URL; production and local builds use the configured domain.
+// Nothing is guessed.
+const vercelEnv = process.env.VERCEL_ENV;
 const vercelHost =
-  process.env.VERCEL_ENV === 'production'
+  vercelEnv === 'production'
     ? process.env.VERCEL_PROJECT_PRODUCTION_URL
     : process.env.VERCEL_BRANCH_URL ?? process.env.VERCEL_URL;
-const shareOrigin = site.canonicalOrigin ?? (vercelHost ? `https://${vercelHost}` : null);
+const previewOrigin = vercelEnv && vercelEnv !== 'production' && vercelHost ? `https://${vercelHost}` : null;
+const shareOrigin = previewOrigin ?? site.canonicalOrigin ?? (vercelHost ? `https://${vercelHost}` : null);
 const ogImage = shareOrigin ? `${shareOrigin}/media/og-frozen-usd.png` : null;
 const ogUrl = shareOrigin ? `${shareOrigin}${path}` : null;
 
@@ -61,7 +64,7 @@ const fontFace = `@font-face{font-family:'Manrope';font-style:normal;font-displa
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <meta property="og:image:width" content="1200" />}
     {ogImage && <meta property="og:image:height" content="630" />}
-    {ogImage && <meta property="og:image:alt" content="FROZEN USD — The dollar that trades frozen. Frozen. Still moving." />}
+    {ogImage && <meta property="og:image:alt" content="Frozen USD — The dollar that trades frozen. Frozen. Still moving." />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

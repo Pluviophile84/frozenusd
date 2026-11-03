@@ -1,0 +1,55 @@
+---
+/**
+ * The approved ice-cube artwork as a responsive image. Decorative by default
+ * (empty alt); pass `alt` when the cube carries meaning on its own.
+ */
+import { CUBE_NATIVE_SIZE, CUBE_WIDTHS, cubeSrc, cubeSrcset, type CubeWidth } from '../lib/cube.ts';
+
+interface Props {
+  /** The `sizes` attribute: how wide the image renders. */
+  sizes: string;
+  /** Limit the candidate exports (e.g. small orbiting copies). */
+  widths?: readonly CubeWidth[];
+  alt?: string;
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+  style?: string;
+}
+
+const {
+  sizes,
+  widths = CUBE_WIDTHS,
+  alt = '',
+  loading = 'lazy',
+  fetchpriority,
+  class: className,
+  style,
+} = Astro.props;
+const fallback = widths.includes(320) ? 320 : widths[widths.length - 1]!;
+---
+
+<img
+  class:list={['cube', className]}
+  src={cubeSrc(fallback)}
+  srcset={cubeSrcset(widths)}
+  sizes={sizes}
+  width={CUBE_NATIVE_SIZE}
+  height={CUBE_NATIVE_SIZE}
+  alt={alt}
+  loading={loading}
+  decoding={loading === 'eager' ? 'sync' : 'async'}
+  fetchpriority={fetchpriority}
+  draggable="false"
+  style={style}
+/>
+
+<style>
+  .cube {
+    display: block;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    user-select: none;
+  }
+</style>

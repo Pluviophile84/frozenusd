@@ -1,17 +1,22 @@
-// Generates the committed poster and social-preview assets:
+// Generates the committed image assets:
+//   public/media/cube/frozen-usd-ice-cube-<w>.webp  (sized exports of the approved cube master)
 //   public/media/posters/*.svg  (text converted to outlines: no font needed)
 //   public/media/posters/*.png  (1080×1350, for sharing on X and elsewhere)
+//   public/media/posters/*-preview.webp  (lightweight thumbnails shown on the page)
 //   public/media/og-frozen-usd.png (1200×630 Open Graph image)
 //
-// Run with `npm run assets` after changing poster copy or the product art.
-// Rasterising uses Playwright's Chromium. Vercel never runs this script:
-// the finished files are committed.
+// Run with `npm run assets` after changing poster copy or the cube master.
+// Resizing uses sharp; rasterising uses Playwright's Chromium. Vercel never
+// runs this script: the finished files are committed.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import opentype from 'opentype.js';
-import { iceBlockSvg, iceShadowSvg, emblemDisc } from '../src/lib/ice-block.ts';
-import { EMBLEM_PATH } from '../src/lib/emblem.ts';
-import { memes, hero, product } from '../src/content/home.ts';
+import sharp from 'sharp';
+import { contactShadowSvg } from '../src/lib/shadow.ts';
+import { EMBLEM_PATH, emblemDisc } from '../src/lib/emblem.ts';
+import { CUBE_MASTER, CUBE_WIDTHS, CUBE_CONTENT } from '../src/lib/cube.ts';
+import { memes, product } from '../src/content/home.ts';
+import { siteConfig } from '../src/config/site.ts';
 
 const root = new URL('../', import.meta.url);
 const out = (path) => fileURLToPath(new URL(path, root));
@@ -24,6 +29,30 @@ async function loadFont(weight) {
 }
 
 const fonts = { 800: await loadFont(800), 700: await loadFont(700), 600: await loadFont(600) };
+
+const { name: BRAND_NAME, ticker: TICKER } = siteConfig.brand;
+
+// The approved cube: sized WebP exports for the site (alpha preserved, never
+// upscaled), and a PNG copy embedded in posters and the social image.
+const master = sharp(out(CUBE_MASTER));
+const { width: masterWidth } = await master.metadata();
+await mkdir(out('public/media/cube'), { recursive: true });
+for (const width of CUBE_WIDTHS) {
+  if (width > masterWidth) throw new Error(`Refusing to upscale the cube master to ${width}px`);
+  await sharp(out(CUBE_MASTER))
+    .resize(width, width, { kernel: 'lanczos3' })
+    .webp({ quality: 90, alphaQuality: 100, effort: 6, smartSubsample: true })
+    .toFile(out(`public/media/cube/frozen-usd-ice-cube-${width}.webp`));
+}
+const cubePng = await sharp(out(CUBE_MASTER)).resize(440, 440, { kernel: "lanczos3" }).png({ compressionLevel: 9 }).toBuffer();
+const cubeHref = `data:image/png;base64,${cubePng.toString('base64')}`;
+
+/** The cube image, centred on cx with its visible base resting at baseY. */
+function cubeImage(cx, baseY, size) {
+  const x = cx - size / 2;
+  const y = baseY - CUBE_CONTENT.bottom * size;
+  return `<image x="${x}" y="${y}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet" href="${cubeHref}"/>`;
+}
 
 /**
  * Lays out text glyph by glyph (kerning + tracking in em) and returns it as
@@ -63,8 +92,8 @@ function fitSize(lines, maxWidth, max, weight = 800, tracking = -0.035) {
 }
 
 function brandRow({ W, fg, emblem }) {
-  const name = text('FROZEN USD', { size: 30, weight: 800, x: 84 + 64 + 20, y: 132, tracking: 0.04 });
-  const ticker = text('$FRZUSD', { size: 28, weight: 700, x: W - 84, y: 132, anchor: 'end', tracking: 0.02 });
+  const name = text(BRAND_NAME, { size: 32, weight: 800, x: 84 + 64 + 20, y: 132, tracking: 0 });
+  const ticker = text(TICKER, { size: 28, weight: 700, x: W - 84, y: 132, anchor: 'end', tracking: 0.02 });
   const disc =
     emblem === 'master'
       ? emblemDisc(84 + 32, 121, 32)
@@ -118,11 +147,8 @@ function posterStillMoving() {
     `<pattern id="p1grid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="#FFFFFF" stroke-width="2"/></pattern></defs>` +
     `<rect width="${W}" height="${H}" fill="url(#p1bg)"/><rect y="640" width="${W}" height="570" fill="url(#p1grid)" opacity="0.9"/>`;
   const head = headline(['FROZEN.', 'STILL', 'MOVING.'], { x: 80, top: 224, maxWidth: W - 168, max: 196, colors: [C.ink, C.blue, C.blue] });
-  const s = 1.3;
   const padX = 760;
   const padY = 1128;
-  const bx = padX - 121 * s;
-  const by = padY - 30 - 200 * s;
   return (
     svgOpen(W, H, bg) +
     brandRow({ W, fg: C.ink, emblem: 'master' }) +
@@ -130,10 +156,10 @@ function posterStillMoving() {
     head.svg +
     `<ellipse cx="${padX}" cy="${padY}" rx="170" ry="34" fill="#FFFFFF" stroke="#A3CDE0" stroke-width="2"/>` +
     `<ellipse cx="${padX}" cy="${padY}" rx="122" ry="23" fill="none" stroke="${C.blue}" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="5 7"/>` +
-    iceShadowSvg('p1s', padX, padY + 2, 320) +
-    `<g transform="translate(${bx} ${by}) scale(${s})">${iceBlockSvg('p1', 'full')}</g>` +
-    chip(hero.art.location, 84, 952, { dot: 'loc' }) +
-    chip(hero.art.temperature, 84, 1026, { dot: 'temp' }) +
+    contactShadowSvg('p1s', padX, padY + 2, 320) +
+    cubeImage(padX, padY - 18, 372) +
+    chip('Location: updated', 84, 952, { dot: 'loc' }) +
+    chip('Temperature: unchanged', 84, 1026, { dot: 'temp' }) +
     footerRow({ W, H, fg: C.ink, rule: C.ink }) +
     `</svg>`
   );
@@ -211,13 +237,11 @@ function ogImage() {
     `<rect width="${OW}" height="${OH}" fill="url(#ogbg)"/>` +
     `<rect x="700" y="40" width="460" height="550" rx="28" fill="url(#ogpanel)" stroke="#D3E6F0" stroke-width="2"/>` +
     `<rect x="700" y="40" width="460" height="550" rx="28" fill="url(#oggrid)" opacity="0.8"/>`;
-  const name = text('FROZEN USD', { size: 26, weight: 800, x: 72 + 48 + 16, y: 104, tracking: 0.04 });
+  const name = text(BRAND_NAME, { size: 28, weight: 800, x: 72 + 48 + 16, y: 104 });
   const l1 = text('The dollar that', { size: 76, weight: 800, x: 68, y: 262, tracking: -0.038 });
   const l2 = text('trades frozen.', { size: 76, weight: 800, x: 68, y: 342, tracking: -0.038 });
   const sig = text('Frozen. Still moving.', { size: 32, weight: 800, x: 116, y: 428 });
-  const meta = text('$FRZUSD  ·  MEMECOIN PARODY', { size: 18, weight: 700, x: 68, y: 548, tracking: 0.12 });
-  const s = 1.25;
-  const bx = 930 - 121 * s;
+  const meta = text(`${TICKER}  ·  MEMECOIN PARODY`, { size: 18, weight: 700, x: 68, y: 548, tracking: 0.12 });
   const padY = 486;
   return (
     svgOpen(OW, OH, bg) +
@@ -231,8 +255,8 @@ function ogImage() {
     path(meta, C.muted) +
     `<ellipse cx="930" cy="${padY}" rx="150" ry="32" fill="#FFFFFF" stroke="#A3CDE0" stroke-width="1.5"/>` +
     `<ellipse cx="930" cy="${padY}" rx="108" ry="21" fill="none" stroke="${C.blue}" stroke-opacity="0.35" stroke-dasharray="4 5" stroke-width="1.5"/>` +
-    iceShadowSvg('ogs', 930, padY + 2, 290) +
-    `<g transform="translate(${bx} ${padY - 40 - 200 * s}) scale(${s})">${iceBlockSvg('og', 'full')}</g>` +
+    contactShadowSvg('ogs', 930, padY + 2, 290) +
+    cubeImage(930, padY - 22, 372) +
     `</svg>`
   );
 }
@@ -263,6 +287,10 @@ async function rasterise(svg, width, height, file) {
 }
 for (const [slug, svg] of Object.entries(posters)) {
   await rasterise(svg, W, H, `public/media/posters/${slug}.png`);
+  await sharp(out(`public/media/posters/${slug}.png`))
+    .resize(720)
+    .webp({ quality: 86, effort: 6 })
+    .toFile(out(`public/media/posters/${slug}-preview.webp`));
 }
 await rasterise(ogImage(), 1200, 630, 'public/media/og-frozen-usd.png');
 await browser.close();

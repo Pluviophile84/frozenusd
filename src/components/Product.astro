@@ -1,12 +1,27 @@
 ---
 /**
- * Product demonstration: the same simplified frozen object at three stages.
+ * Product demonstration: the same frozen cube at three stages.
  * Stage art is decorative; every claim is in the HTML text beside it.
  */
 import { product } from '../content/home.ts';
-import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
-import { emblemDisc } from '../lib/ice-block.ts';
+import { contactShadowSvg } from '../lib/shadow.ts';
+import { emblemDisc } from '../lib/emblem.ts';
+import { CUBE_CONTENT } from '../lib/cube.ts';
 import { sentences } from '../lib/text.ts';
+import Cube from './Cube.astro';
+
+// Stage artwork coordinates: viewBox 0 -24 320 264. The cube rests above the pad.
+const VB = { x: 0, y: -24, w: 320, h: 264 };
+const CUBE_W = 172;
+const cubeStyle = (lift: number) => {
+  const base = 178 - lift;
+  const top = base - CUBE_CONTENT.bottom * CUBE_W;
+  return [
+    `left: ${(((160 - CUBE_W / 2 - VB.x) / VB.w) * 100).toFixed(3)}%`,
+    `top: ${(((top - VB.y) / VB.h) * 100).toFixed(3)}%`,
+    `width: ${((CUBE_W / VB.w) * 100).toFixed(3)}%`,
+  ].join('; ');
+};
 
 const stageArt = [
   { tag: 'Wallet A', lift: 0, pad: true, trail: false },
@@ -25,11 +40,11 @@ const stageArt = [
       {
         product.stages.map((stage, index) => {
           const art = stageArt[index]!;
-          const blockY = 196 - 22 - 150 - art.lift;
           return (
             <li class="stage">
               <div class="stage-art" aria-hidden="true">
-                <svg viewBox="0 -24 320 264" width="320" height="264" focusable="false">
+                <div class="stage-figure">
+                <svg viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`} width={VB.w} height={VB.h} focusable="false">
                   {art.pad ? (
                     <g>
                       <path d="M 70 196 v 8 a 90 20 0 0 0 180 0 v -8" fill="#CFE8F4" stroke="#A3CDE0" />
@@ -46,11 +61,10 @@ const stageArt = [
                       <line x1="30" y1="140" x2="62" y2="140" stroke-opacity="0.18" stroke-width="2" />
                     </g>
                   )}
-                  <Fragment set:html={iceShadowSvg(`stage-shadow-${index}`, 160, 198, art.lift ? 150 : 178)} />
-                  <g transform={`translate(${160 - 121 * 0.75} ${blockY}) scale(0.75)`}>
-                    <Fragment set:html={iceBlockSvg(`stage-ice-${index}`, 'simple')} />
-                  </g>
+                  <Fragment set:html={contactShadowSvg(`stage-shadow-${index}`, 160, 198, art.lift ? 150 : 178)} />
                 </svg>
+                <Cube class="stage-cube" sizes="(min-width: 900px) 140px, 26vw" widths={[160, 320]} style={cubeStyle(art.lift)} />
+                </div>
                 <span class="stage-tag">{art.tag}</span>
               </div>
               <div class="stage-copy">
@@ -137,10 +151,22 @@ const stageArt = [
     justify-content: center;
   }
 
-  .stage-art svg {
+  .stage-figure {
+    position: relative;
     height: 100%;
-    width: auto;
     max-width: 100%;
+    aspect-ratio: 320 / 264;
+  }
+
+  .stage-figure svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .stage-figure :global(.stage-cube) {
+    position: absolute;
   }
 
   .stage-tag {

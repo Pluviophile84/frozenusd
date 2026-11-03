@@ -1,32 +1,47 @@
 ---
 import { idea } from '../content/home.ts';
-import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
+import { contactShadowSvg } from '../lib/shadow.ts';
+import { CUBE_CONTENT } from '../lib/cube.ts';
+import Cube from './Cube.astro';
+
+// Artwork coordinates (520 × 480). The cube's visible base rests above the shadow.
+const VB_W = 520;
+const VB_H = 480;
+const CUBE_W = 320;
+const cubeX = 260 - CUBE_W / 2;
+const cubeY = 364 - CUBE_CONTENT.bottom * CUBE_W;
+const pct = (value: number, total: number) => `${((value / total) * 100).toFixed(3)}%`;
 ---
 
 <section class="section idea" id="idea" aria-labelledby="idea-title">
   <div class="container idea-grid">
     <div class="idea-object" aria-hidden="true">
-      <svg viewBox="0 0 520 480" width="520" height="480" focusable="false">
-        <defs>
-          <linearGradient id="orbit-fade" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#005570" stop-opacity="0.15"></stop>
-            <stop offset="0.5" stop-color="#005570" stop-opacity="0.6"></stop>
-            <stop offset="1" stop-color="#005570" stop-opacity="0.15"></stop>
-          </linearGradient>
-          <marker id="orbit-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="10" markerHeight="10" orient="auto">
-            <path d="M1 1 L7 5 L1 9" fill="none" stroke="#005570" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-          </marker>
-        </defs>
-        <!-- Circulation orbit: behind the block on top, in front at the bottom. -->
-        <path d="M 40 345 A 220 60 0 0 1 480 345" fill="none" stroke="url(#orbit-fade)" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
-        <Fragment set:html={iceShadowSvg('idea-shadow', 260, 392, 260)} />
-        <g transform="translate(127 136) scale(1.1)">
-          <Fragment set:html={iceBlockSvg('idea-ice', 'full')} />
-        </g>
-        <path d="M 480 345 A 220 60 0 0 1 40 345" fill="none" stroke="#005570" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
-        <path d="M 150 397 l -1 -0.3" fill="none" stroke="none" marker-end="url(#orbit-arrow)"></path>
-        <path d="M 430 307 l 1 0.6" fill="none" stroke="none" marker-end="url(#orbit-arrow)"></path>
-      </svg>
+      <div class="idea-figure" style={`--cube-left: ${pct(cubeX, VB_W)}; --cube-top: ${pct(cubeY, VB_H)}; --cube-width: ${pct(CUBE_W, VB_W)}`}>
+        <svg class="layer" viewBox={`0 0 ${VB_W} ${VB_H}`} width={VB_W} height={VB_H} focusable="false">
+          <defs>
+            <linearGradient id="orbit-fade" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#005570" stop-opacity="0.15"></stop>
+              <stop offset="0.5" stop-color="#005570" stop-opacity="0.6"></stop>
+              <stop offset="1" stop-color="#005570" stop-opacity="0.15"></stop>
+            </linearGradient>
+          </defs>
+          <!-- Circulation orbit: the back half sits behind the cube. -->
+          <path d="M 40 345 A 220 60 0 0 1 480 345" fill="none" stroke="url(#orbit-fade)" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
+          <Fragment set:html={contactShadowSvg('idea-shadow', 260, 394, 270)} />
+        </svg>
+        <Cube class="idea-cube" sizes="(min-width: 900px) 320px, 60vw" widths={[320, 640, 960]} />
+        <svg class="layer layer--front" viewBox={`0 0 ${VB_W} ${VB_H}`} width={VB_W} height={VB_H} focusable="false">
+          <defs>
+            <marker id="orbit-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="10" markerHeight="10" orient="auto">
+              <path d="M1 1 L7 5 L1 9" fill="none" stroke="#005570" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </marker>
+          </defs>
+          <!-- The front half passes in front of the cube. -->
+          <path d="M 480 345 A 220 60 0 0 1 40 345" fill="none" stroke="#005570" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"></path>
+          <path d="M 150 397 l -1 -0.3" fill="none" stroke="none" marker-end="url(#orbit-arrow)"></path>
+          <path d="M 445 318 l 1 0.6" fill="none" stroke="none" marker-end="url(#orbit-arrow)"></path>
+        </svg>
+      </div>
     </div>
 
     <div class="idea-copy">
@@ -71,9 +86,24 @@ import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
     background: radial-gradient(closest-side, var(--frost-deep) 0%, var(--frost) 62%, rgb(242 248 252 / 0) 100%);
   }
 
-  .idea-object svg {
+  .idea-figure {
+    position: relative;
     width: 100%;
-    height: auto;
+    aspect-ratio: 520 / 480;
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .idea-figure :global(.idea-cube) {
+    position: absolute;
+    left: var(--cube-left);
+    top: var(--cube-top);
+    width: var(--cube-width);
   }
 
   .idea-copy h2 {

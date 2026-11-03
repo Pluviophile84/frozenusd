@@ -1,5 +1,5 @@
 /**
- * Official FROZEN USD emblem geometry, copied verbatim from
+ * Official Frozen USD emblem geometry, copied verbatim from
  * brand-source/Frozen-USD-Logo-Master-v1.1/SVG/Frozen-USD-Master.svg (v1.1).
  * tests/brand.test.mjs verifies this string still matches the official file.
  * Do not edit, simplify or re-draw this path.
@@ -14,3 +14,12 @@ export const BRAND_COLORS = {
   cyan: '#79DAFF',
   ink: '#071827',
 } as const;
+
+/** Official circle + emblem, scaled to radius `r` around (cx, cy). SVG markup. */
+export function emblemDisc(cx: number, cy: number, r: number): string {
+  const scale = (r * 2) / EMBLEM_VIEWBOX;
+  return (
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${BRAND_COLORS.cyan}"/>` +
+    `<path transform="translate(${cx - r} ${cy - r}) scale(${scale})" fill="${BRAND_COLORS.ink}" fill-rule="evenodd" d="${EMBLEM_PATH}"/>`
+  );
+}

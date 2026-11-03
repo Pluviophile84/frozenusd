@@ -1,5 +1,5 @@
 /**
- * FROZEN USD — launch configuration.
+ * Frozen USD — launch configuration.
  *
  * This is the only file that needs to change when the token launches.
  * See docs/launch-checklist.md for the exact steps. The site is static:
@@ -12,13 +12,17 @@ import type { SiteConfigInput } from './schema.ts';
 
 export const siteConfig: SiteConfigInput = {
   brand: {
-    name: 'FROZEN USD',
-    ticker: '$FRZUSD',
+    name: 'Frozen USD',
+    ticker: '$FUSD',
     slogan: 'Frozen. Still moving.',
   },
 
-  /** Verified public HTTPS origin, e.g. the final production domain. No path. */
-  canonicalOrigin: null,
+  /**
+   * The purchased production domain. No path. Canonical URLs and the sitemap
+   * are only emitted for a live production build (see schema.ts `indexable`);
+   * pre-launch builds and previews stay noindex.
+   */
+  canonicalOrigin: 'https://frozenusd.com',
 
   token: {
     /** 'prelaunch' until every live value below is real and verified. */

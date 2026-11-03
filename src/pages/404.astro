@@ -2,7 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Logo from '../components/Logo.astro';
 import { notFound, seo } from '../content/home.ts';
-import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
+import Cube from '../components/Cube.astro';
+import { contactShadowSvg } from '../lib/shadow.ts';
+import { CUBE_CONTENT } from '../lib/cube.ts';
+
+// Artwork 400 × 340: the cube has moved on from its empty slot.
+const CUBE_W = 168;
+const cubeLeft = ((296 - CUBE_W / 2) / 400) * 100;
+const cubeTop = ((282 - CUBE_W * CUBE_CONTENT.bottom) / 340) * 100;
 ---
 
 <BaseLayout title={`Page not found — ${seo.title}`} noindex path="/404">
@@ -23,11 +30,15 @@ import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
         <svg viewBox="0 0 400 340" width="400" height="340" focusable="false">
           <ellipse cx="120" cy="290" rx="96" ry="20" fill="none" stroke="#005570" stroke-opacity="0.35" stroke-dasharray="4 5"></ellipse>
           <path d="M 150 250 Q 230 150 300 120" fill="none" stroke="#005570" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round"></path>
-          <Fragment set:html={iceShadowSvg('nf-shadow', 296, 300, 150)} />
-          <g transform="translate(224 34) scale(0.62)">
-            <Fragment set:html={iceBlockSvg('nf-ice', 'simple')} />
-          </g>
+          <Fragment set:html={contactShadowSvg('nf-shadow', 296, 300, 150)} />
         </svg>
+        <Cube
+          class="nf-cube"
+          sizes="(min-width: 768px) 170px, 40vw"
+          widths={[320, 640]}
+          loading="eager"
+          style={`left: ${cubeLeft.toFixed(3)}%; top: ${cubeTop.toFixed(3)}%; width: ${((CUBE_W / 400) * 100).toFixed(3)}%`}
+        />
       </div>
     </div>
   </main>
@@ -65,9 +76,20 @@ import { iceBlockSvg, iceShadowSvg } from '../lib/ice-block.ts';
     max-width: 30rem;
   }
 
+  .nf-art {
+    position: relative;
+    aspect-ratio: 400 / 340;
+  }
+
   .nf-art svg {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+  }
+
+  .nf-art :global(.nf-cube) {
+    position: absolute;
   }
 
   @media (max-width: 767px) {

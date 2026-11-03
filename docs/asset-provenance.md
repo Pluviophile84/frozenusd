@@ -19,13 +19,21 @@ Colours confirmed from the SVGs: glacial cyan `#79DAFF`, ink `#071827`.
 
 `tests/brand.test.mjs` verifies the package checksums, the byte-identical copies and the inline path.
 
-No wordmark was supplied, so the site sets "FROZEN USD" in Manrope beside the unchanged emblem. The earlier snowflake direction is not used.
+No wordmark was supplied, so the site sets "Frozen USD" in Manrope beside the unchanged emblem. The earlier snowflake direction is not used.
 
-## Product art (original)
+## Ice-cube artwork (approved, unchanged)
 
-`src/lib/ice-block.ts` draws the hero object as native SVG: the official emblem on a coin with a rim, suspended in a beveled ice block with depth faces, refraction offsets in the bevel facets, internal reflection bands, specular streaks, edge highlights, bubbles, a restrained turbulence-based frost texture, and a contact shadow with a cyan caustic. It is an illustration, not a photographic render. No image generation, stock imagery or WebGL is used.
+The approved ice cube — the cyan Frozen USD coin embedded in clear ice, with a transparent exterior — is the only cube depiction on the site and in generated assets.
 
-The same function renders the hero, the idea section, the three product stages (simplified detail), the 404 page, poster 1 and the Open Graph image.
+| File | Notes |
+|---|---|
+| `brand-source/ice-cube/frozen-usd-ice-cube-as-received.webp` | the artwork exactly as delivered to this build (1254×1254 WebP with alpha, from the chat upload) |
+| `brand-source/ice-cube/frozen-usd-ice-cube-master.png` | lossless PNG decode of those pixels and alpha; the master for all exports |
+| `public/media/cube/frozen-usd-ice-cube-{160,320,640,960}.webp` | downscaled exports (Lanczos, alpha preserved, never upscaled) written by `npm run assets` |
+
+The original PNG file was not available to this build. If it differs from the received image, replace the master with it and run `npm run assets`; a test checks that the master still matches the received file, so update that check deliberately.
+
+Every placement uses `src/components/Cube.astro` (or, inside SVG line drawings and generated assets, the same exports): the hero orbit (1 + 3 + 8), Reserves, the idea section, the three How it works stages, two small benefit drawings and the 404 page. The image is never cropped, stretched, recoloured, blurred, faded or overlaid with a second logo. Contact shadows beneath it are separate SVG shapes (`src/lib/shadow.ts`). The earlier procedural SVG cube (`src/lib/ice-block.ts`) has been removed.
 
 ## Generated files
 
@@ -33,12 +41,13 @@ The same function renders the hero, the idea section, the three product stages (
 
 | File | Size | Notes |
 |---|---|---|
-| `public/media/posters/frozen-still-moving.svg` / `.png` | 1080×1350 | light poster with the product object |
+| `public/media/posters/frozen-still-moving.svg` / `.png` | 1080×1350 | light poster with the approved cube (embedded as a 440 px PNG in the SVG) |
 | `public/media/posters/your-keys-our-freezer.svg` / `.png` | 1080×1350 | ink poster |
 | `public/media/posters/no-thawing-required.svg` / `.png` | 1080×1350 | cyan poster with the Fictional Proof of Cold |
-| `public/media/og-frozen-usd.png` | 1200×630 | Open Graph / X card |
+| `public/media/posters/*-preview.webp` | 720×900 | lightweight thumbnails shown on the page |
+| `public/media/og-frozen-usd.png` | 1200×630 | Open Graph / X card with the approved cube |
 
-Poster text is converted to outlines from Manrope (`@fontsource/manrope` WOFF files, OFL 1.1) with opentype.js, so the SVGs render the same without any installed font. PNGs are rasterised with Playwright's Chromium. All outputs are committed; Vercel never runs this script.
+Poster text (including the Frozen USD name and $FUSD ticker) is converted to outlines from Manrope (`@fontsource/manrope` WOFF files, OFL 1.1) with opentype.js, so the SVGs render the same without any installed font. PNGs are rasterised with Playwright's Chromium. All outputs are committed; Vercel never runs this script.
 
 ## Fonts
 
