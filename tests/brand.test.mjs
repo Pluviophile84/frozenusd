@@ -49,6 +49,7 @@ test('posters embed the official emblem path and need no external font or file',
     assert.ok(svg.includes(EMBLEM_PATH), slug);
     assert.doesNotMatch(svg, /<text|font-family|@font-face|href="(?!data:image\/png;base64,)/, slug);
     assert.doesNotMatch(svg, /FRZUSD|FROZEN USD/, slug);
+    assert.ok(svg.includes('<path'), slug);
   }
 });
 
@@ -91,6 +92,6 @@ test('the old procedural cube renderer and old ticker are gone from source and p
     .filter((f) => f && /\.(astro|ts|mjs|svg|css|json|txt)$/.test(f));
   for (const file of files) {
     const text = (await read(file)).toString();
-    assert.doesNotMatch(text, /FRZUSD|iceBlockSvg|ice-block\.ts/, file);
+    assert.doesNotMatch(text, /FRZUSD|\bFUSD\b|iceBlockSvg|ice-block\.ts/, file);
   }
 });

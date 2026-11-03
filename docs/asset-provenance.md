@@ -52,7 +52,7 @@ Every placement uses `src/components/Cube.astro`, the hero's `HeroArt.astro`, or
 | `public/media/posters/*-preview.webp` | 720×900 | lightweight thumbnails shown on the page |
 | `public/media/og-frozen-usd.png` | 1200×630 | Open Graph / X card with the approved cube |
 
-Poster text (including the Frozen USD name and $FUSD ticker) is converted to outlines from Manrope (`@fontsource/manrope` WOFF files, OFL 1.1) with opentype.js, so the SVGs render the same without any installed font. PNGs are rasterised with Playwright's Chromium. All outputs are committed; Vercel never runs this script.
+Poster text (including the Frozen USD name and $USDF ticker) is converted to outlines from Manrope (`@fontsource/manrope` WOFF files, OFL 1.1) with opentype.js, so the SVGs render the same without any installed font. PNGs are rasterised with Playwright's Chromium. All outputs are committed; Vercel never runs this script.
 
 ## Fonts
 

@@ -77,11 +77,11 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal((await page.locator('h1').innerText()).trim(), 'The dollar that trades frozen.');
     assert.ok(html.includes('Contract address not available yet.'));
     assert.equal(await page.locator('[data-copy-button]').count(), 0);
-    // Before launch, "Buy $FUSD" exists only as the header action pointing at the token facts.
-    assert.equal(await page.getByText('Buy $FUSD').count(), 1);
+    // Before launch, "Buy $USDF" exists only as the header action pointing at the token facts.
+    assert.equal(await page.getByText('Buy $USDF').count(), 1);
     assert.equal(await page.getByText('Follow on X').count(), 0);
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), '#token');
-    assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Buy $FUSD');
+    assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Buy $USDF');
     // Lazy images: scroll through the page, then confirm every image decoded.
     for (let y = 0; y < (await page.evaluate(() => document.body.scrollHeight)); y += 700) {
       await page.evaluate((top) => window.scrollTo(0, top), y);
@@ -190,8 +190,8 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal(await page.locator('.site-header .logo-text').innerText(), 'Frozen USD');
     assert.equal(await page.locator('.site-header .logo-text').evaluate((el) => getComputedStyle(el).textTransform), 'none');
     const text = await page.locator('body').innerText();
-    assert.doesNotMatch(text, /FRZUSD/);
-    assert.match(text, /\$FUSD/);
+    assert.doesNotMatch(text, /FRZUSD|\bFUSD\b/);
+    assert.match(text, /\$USDF/);
     // The backing line was removed from the hero; Reserves carries it.
     assert.equal(await page.locator('.hero a[href="#reserves"], .hero-backing').count(), 0);
     assert.doesNotMatch(await page.locator('.hero-copy').innerText(), /Pegged 1:1/);
@@ -205,8 +205,8 @@ describe('pre-launch build (committed configuration)', () => {
     for (const line of [
       'THE COLD STANDARD',
       '100% backed by cold, hard reserves.',
-      'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
-      'One FUSD. One ice cube.',
+      'Every USDF is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+      'One USDF. One ice cube.',
       'Fully reserved. Deeply refrigerated.',
       'Cold storage. Literally.',
       'Fully backed. Mostly transparent.',
@@ -234,9 +234,9 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('hero shows the $FUSD ticker directly below the headline; closing sits on the logo cyan', async () => {
+  test('hero shows the $USDF ticker directly below the headline; closing sits on the logo cyan', async () => {
     const { context, page } = await open(origin);
-    assert.equal((await page.locator('.hero-ticker').innerText()).trim(), '$FUSD');
+    assert.equal((await page.locator('.hero-ticker').innerText()).trim(), '$USDF');
     assert.equal(await page.locator('h1 + .hero-ticker').count(), 1);
     const [h1Box, tickerBox] = [await page.locator('h1').boundingBox(), await page.locator('.hero-ticker').boundingBox()];
     assert.ok(h1Box && tickerBox && tickerBox.y >= h1Box.y + h1Box.height);
@@ -254,7 +254,7 @@ describe('pre-launch build (committed configuration)', () => {
   test('FAQ carries the parody peg and reserve answers', async () => {
     const { context, page } = await open(origin);
     const questions = await page.$$eval('#faq summary .q', (els) => els.map((el) => el.textContent));
-    const pegged = questions.indexOf('What is FUSD pegged to?');
+    const pegged = questions.indexOf('What is USDF pegged to?');
     assert.ok(pegged >= 0);
     assert.equal(questions[pegged + 1], 'What backs it?');
     const answer = (q) =>
@@ -263,13 +263,13 @@ describe('pre-launch build (committed configuration)', () => {
         .locator('.answer p')
         .evaluateAll((ps) => ps.map((p) => p.textContent?.trim()).join(' '));
     assert.equal(
-      await answer('What is FUSD pegged to?'),
-      'One FUSD. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough. This is our parody peg. FUSD is a memecoin with no dollar peg or redemption promise.',
+      await answer('What is USDF pegged to?'),
+      'One USDF. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough. This is our parody peg. USDF is a memecoin with no dollar peg or redemption promise.',
     );
-    assert.equal(await answer('What backs it?'), 'Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per FUSD. Cold storage. Literally.');
+    assert.equal(await answer('What backs it?'), 'Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per USDF. Cold storage. Literally.');
     assert.equal(
       await answer('Is Frozen USD a stablecoin?'),
-      'It has the brochure confidence of one. $FUSD is a memecoin with no dollar peg or redemption promise.',
+      'It has the brochure confidence of one. $USDF is a memecoin with no dollar peg or redemption promise.',
     );
     await context.close();
   });
@@ -491,7 +491,7 @@ describe('live build (test fixture)', () => {
   test('enables trading, explorer and social controls', async () => {
     const { context, page, errors } = await open(origin);
     const cta = page.locator('.site-header .header-cta');
-    assert.match(await cta.innerText(), /Buy \$FUSD/);
+    assert.match(await cta.innerText(), /Buy \$USDF/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
     assert.equal(await page.locator('.hero-actions a').first().getAttribute('href'), fixture.token.tradeUrl);
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);

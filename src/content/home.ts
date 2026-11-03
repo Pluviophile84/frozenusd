@@ -14,7 +14,7 @@ export const nav = [
 ] as const;
 
 export const hero = {
-  ticker: '$FUSD',
+  ticker: '$USDF',
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
   signature: 'Frozen. Still moving.',
@@ -27,9 +27,9 @@ export const hero = {
 export const reserves = {
   eyebrow: 'THE COLD STANDARD',
   title: '100% backed by cold, hard reserves.',
-  body: 'Every FUSD is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+  body: 'Every USDF is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
   facts: [
-    { value: '1:1', label: 'Ice-cube peg', line: 'One FUSD. One ice cube.' },
+    { value: '1:1', label: 'Ice-cube peg', line: 'One USDF. One ice cube.' },
     { value: '100%', label: 'Cold, hard backing', line: 'Fully reserved. Deeply refrigerated.' },
     { value: 'Antarctica', label: 'Reserve location', line: 'Cold storage. Literally.' },
   ],
@@ -102,7 +102,7 @@ export const token = {
 
 export const memes = {
   title: ['Some people hold dollars.', 'Some people hold opinions about dollars.'],
-  body: ['$FUSD is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
+  body: ['$USDF is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
   posters: [
     { slug: 'frozen-still-moving', line: 'FROZEN. STILL MOVING.' },
     { slug: 'your-keys-our-freezer', line: 'YOUR KEYS. OUR FREEZER.' },
@@ -114,7 +114,7 @@ export const memes = {
 export const faq = [
   {
     q: 'Is Frozen USD a stablecoin?',
-    a: ['It has the brochure confidence of one. $FUSD is a memecoin with no dollar peg or redemption promise.'],
+    a: ['It has the brochure confidence of one. $USDF is a memecoin with no dollar peg or redemption promise.'],
   },
   {
     q: 'How can it be frozen and still move?',
@@ -129,19 +129,19 @@ export const faq = [
     a: ["No. We do not have access to another issuer's controls or provide an unfreezing service."],
   },
   {
-    q: 'Why hold $FUSD?',
+    q: 'Why hold $USDF?',
     a: ['Because you enjoy the premise and want to take part in it. No financial return or dollar safety is attached to the punchline.'],
   },
   {
-    q: 'What is FUSD pegged to?',
+    q: 'What is USDF pegged to?',
     a: [
-      "One FUSD. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough.",
-      'This is our parody peg. FUSD is a memecoin with no dollar peg or redemption promise.',
+      "One USDF. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough.",
+      'This is our parody peg. USDF is a memecoin with no dollar peg or redemption promise.',
     ],
   },
   {
     q: 'What backs it?',
-    a: ['Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per FUSD. Cold storage. Literally.'],
+    a: ['Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per USDF. Cold storage. Literally.'],
   },
 ];
 
@@ -166,13 +166,13 @@ export const notFound = {
 export const seo = {
   title: 'Frozen USD — Frozen. Still moving.',
   description:
-    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $FUSD is a memecoin parody of stablecoins and the freeze button.',
+    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $USDF is a memecoin parody of stablecoins and the freeze button.',
 };
 
 export const actions = {
   explore: 'Explore frozen finance',
   tokenDetails: 'Token details',
-  buy: 'Buy $FUSD',
+  buy: 'Buy $USDF',
   coldFacts: 'The cold facts',
   followX: 'Follow on X',
   community: 'Join the community',

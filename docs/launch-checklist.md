@@ -31,7 +31,7 @@ Leave every unknown value as `null`. Never type a placeholder.
 
 1. Optional local check: `npm run build`. An invalid live configuration fails with a list of the problems.
 2. Commit and push (or open a pull request). Vercel builds a preview; open it and confirm:
-   - the header and hero say **Buy $FUSD** and link to the trading page;
+   - the header and hero say **Buy $USDF** and link to the trading page;
    - the hero and **The cold facts** show the full address, and **Copy** puts that exact address on the clipboard;
    - **Explorer** opens the correct token page;
    - **Follow on X** appears only if you set `xUrl`.
@@ -39,11 +39,11 @@ Leave every unknown value as `null`. Never type a placeholder.
 
 ## What changes in live mode
 
-- Header action: *Buy $FUSD* now opens the trading page instead of the token facts.
-- Hero actions: *Buy $FUSD* + *Explore frozen finance*.
+- Header action: *Buy $USDF* now opens the trading page instead of the token facts.
+- Hero actions: *Buy $USDF* + *Explore frozen finance*.
 - Contract strip and token facts: real address with Copy and Explorer.
 - Token facts: network label, status *Live*, Buy action.
-- Closing action: *Buy $FUSD*.
+- Closing action: *Buy $USDF*.
 - Footer: Trade and Explorer links (and X/community when set).
 - Indexing: only when `status` is `'live'`, `canonicalOrigin` is set, and the deployment is Vercel production. Then the page gets `index, follow`, a canonical URL, and `sitemap.xml`.
 
