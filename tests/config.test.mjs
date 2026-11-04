@@ -21,7 +21,8 @@ test('the committed configuration is a truthful pre-launch configuration', () =>
   assert.equal(siteConfig.canonicalOrigin, 'https://frozenusd.com');
   assert.deepEqual(siteConfig.brand, { name: 'Frozen USD', ticker: '$USDF', slogan: 'Frozen. Still moving.' });
   const site = resolveSiteConfig(siteConfig, { vercelEnv: 'production' });
-  assert.deepEqual(site.token, { status: 'prelaunch', networkLabel: null });
+  assert.deepEqual(site.token, { status: 'prelaunch', networkLabel: null, freezeAuthorityVerified: false });
+  assert.equal(siteConfig.token.freezeAuthorityVerified, false);
   // The domain is configured, but nothing is indexable until launch.
   assert.equal(site.canonicalOrigin, 'https://frozenusd.com');
   assert.equal(site.indexable, false);
@@ -59,6 +60,12 @@ const invalidLive = {
   'unknown network': (c) => (c.token.network = 'dogechain'),
   'invalid social link': (c) => (c.social.xUrl = 'x.com/frozenusd'),
   'origin with a path': (c) => (c.canonicalOrigin = 'https://frozen-usd-fixture.vercel.app/home'),
+  'freeze authority verified on a non-Solana network': (c) => {
+    c.token.network = 'base';
+    c.token.contractAddress = FIXTURE_EVM_ADDRESS;
+    c.token.explorerUrl = `https://basescan.org/token/${FIXTURE_EVM_ADDRESS}`;
+  },
+  'freeze authority flag missing': (c) => delete c.token.freezeAuthorityVerified,
 };
 
 for (const [name, mutate] of Object.entries(invalidLive)) {
@@ -68,6 +75,16 @@ for (const [name, mutate] of Object.entries(invalidLive)) {
     assert.throws(() => resolveSiteConfig(config), SiteConfigError);
   });
 }
+
+test('freeze authority can only be marked verified for a live Solana mint', () => {
+  const config = clone(siteConfig);
+  config.token.freezeAuthorityVerified = true;
+  assert.throws(() => resolveSiteConfig(config), SiteConfigError);
+  const live = liveFixture();
+  live.token.freezeAuthorityVerified = false;
+  assert.equal(resolveSiteConfig(live).token.freezeAuthorityVerified, false);
+  assert.equal(resolveSiteConfig(liveFixture()).token.freezeAuthorityVerified, true);
+});
 
 test('pre-launch rejects half-configured launch values', () => {
   for (const field of ['contractAddress', 'tradeUrl', 'explorerUrl']) {
@@ -80,7 +97,7 @@ test('pre-launch rejects half-configured launch values', () => {
 test('pre-launch may announce a network without enabling anything live', () => {
   const config = clone(siteConfig);
   config.token.network = 'solana';
-  assert.deepEqual(resolveSiteConfig(config).token, { status: 'prelaunch', networkLabel: 'Solana' });
+  assert.deepEqual(resolveSiteConfig(config).token, { status: 'prelaunch', networkLabel: 'Solana', freezeAuthorityVerified: false });
 });
 
 test('optional social links render only when they are real HTTPS URLs', () => {

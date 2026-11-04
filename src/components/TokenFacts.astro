@@ -11,7 +11,9 @@ const networkLabel = site.token.networkLabel ?? copy.networkPending;
   <div class="container token-grid">
     <div class="token-intro">
       <h2 id="token-title">{copy.title}</h2>
-      <p class="lead">{copy.body}</p>
+      <div class="token-body">
+        {copy.body.map((line) => <p class="lead">{line}</p>)}
+      </div>
     </div>
 
     <div class="sheet">
@@ -33,6 +35,21 @@ const networkLabel = site.token.networkLabel ?? copy.networkPending;
           <dd class:list={{ pending: !live }}>
             {live ? <AddressActions token={live} id="token-address" /> : copy.contractPending}
           </dd>
+        </div>
+        <div class="fact fact--freeze">
+          <dt>{copy.freezeAuthority.label}</dt>
+          {
+            live && live.freezeAuthorityVerified ? (
+              <dd>
+                <a href={live.explorerUrl} target="_blank" rel="noopener">
+                  {copy.freezeAuthority.verified}
+                  <span class="visually-hidden"> (verify on the explorer, opens in a new tab)</span>
+                </a>
+              </dd>
+            ) : (
+              <dd class="pending">{copy.freezeAuthority.planned}</dd>
+            )
+          }
         </div>
         <div class="fact">
           <dt>Status</dt>
@@ -66,9 +83,16 @@ const networkLabel = site.token.networkLabel ?? copy.networkPending;
     align-items: start;
   }
 
-  .token-intro .lead {
+  .token-body {
+    display: grid;
+    gap: 12px;
     margin-top: 24px;
     max-width: 30rem;
+  }
+
+  .token-body .lead:first-child {
+    color: var(--ink);
+    font-weight: 600;
   }
 
   .sheet {

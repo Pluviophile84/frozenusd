@@ -115,7 +115,10 @@ describe('pre-launch build (committed configuration)', () => {
     const { context, page } = await open(origin);
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex, nofollow');
     assert.equal(await page.locator('link[rel="canonical"]').count(), 0);
-    assert.equal(await page.title(), 'Frozen USD — Frozen. Still moving.');
+    assert.equal(await page.title(), 'USDF - Frozen USD');
+    assert.equal((await page.locator('title').count()), 1);
+    // Sharing metadata keeps the established title.
+    assert.equal(await page.locator('meta[property="og:title"]').getAttribute('content'), 'Frozen USD — Frozen. Still moving.');
     assert.equal(await exists(join(dist, 'sitemap.xml')), false);
     assert.ok(await exists(join(dist, 'robots.txt')));
     assert.doesNotMatch(await readFile(join(dist, 'robots.txt'), 'utf8'), /Sitemap/);
@@ -226,6 +229,18 @@ describe('pre-launch build (committed configuration)', () => {
     assert.doesNotMatch(text, /Greenland|Alaska|Siberia/);
     // The verified token table stays factual.
     assert.doesNotMatch(await page.locator('#token .facts').innerText(), /ice|reserve|Antarctica|Siberia/i);
+    // The cold facts separate the fiction from the real transfers.
+    const coldFacts = await page.locator('#token .token-body').innerText();
+    assert.match(coldFacts, /The dollar backing is fictional\. The refrigeration is fictional\. The transfers are real\./);
+    assert.match(coldFacts, /\$USDF is a memecoin parody, not a dollar-backed stablecoin\. No dollar peg\. No redemption promise\./);
+    assert.doesNotMatch(coldFacts, /technology is the joke/);
+    const freeze = page.locator('#token .fact--freeze');
+    assert.equal((await freeze.locator('dt').textContent())?.trim(), 'Freeze authority');
+    assert.equal((await freeze.locator('dd').innerText()).trim(), 'None (planned)');
+    assert.equal(await freeze.locator('a').count(), 0);
+    // The satire ends on the freeze-authority punchline.
+    const punch = await page.locator('.satire-punchline').innerText();
+    assert.match(punch, /Some digital dollars have a freeze authority\.\s+We have a Strategic Ice Reserve\.\s+Only one of those can stop a transfer\./);
     // Navigation lists Reserves right after The idea, in the header and footer.
     for (const nav of ['#primary-menu', '.footer-nav']) {
       const labels = await page.$$eval(`${nav} a`, (as) => as.map((a) => a.textContent?.trim()));
@@ -270,6 +285,10 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal(
       await answer('Is Frozen USD a stablecoin?'),
       'It has the brochure confidence of one. $USDF is a memecoin with no dollar peg or redemption promise.',
+    );
+    assert.equal(
+      await answer('How can it be frozen and still move?'),
+      "The freezing is conceptual. The movement is real. $USDF is designed to circulate without an issuer freeze authority. No thawing, no permission from the refrigeration department. The ice is a metaphor. The transfers aren't.",
     );
     await context.close();
   });
@@ -502,6 +521,9 @@ describe('live build (test fixture)', () => {
     assert.equal(await page.locator('.contract-head .status').innerText(), 'Live');
     assert.ok((await page.locator('.fact dd').nth(2).innerText()).includes('Solana'));
     assert.deepEqual(errors, []);
+    const freeze = page.locator('#token .fact--freeze dd a');
+    assert.equal((await freeze.innerText()).replace(/\s*\(verify.*$/, '').trim(), 'None');
+    assert.equal(await freeze.getAttribute('href'), fixture.token.explorerUrl);
     await context.close();
   });
 

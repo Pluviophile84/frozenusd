@@ -33,6 +33,12 @@ export interface SiteConfigInput {
     contractAddress: string | null;
     tradeUrl: string | null;
     explorerUrl: string | null;
+    /**
+     * True only after someone has independently checked on-chain that the
+     * live Solana mint has no freeze authority. Until then the site shows
+     * "None (planned)".
+     */
+    freezeAuthorityVerified: boolean;
   };
   social: {
     xUrl: string | null;
@@ -49,12 +55,15 @@ export interface LiveToken {
   contractAddress: string;
   tradeUrl: string;
   explorerUrl: string;
+  /** The absence of a freeze authority has been verified on-chain. */
+  freezeAuthorityVerified: boolean;
 }
 
 export interface PrelaunchToken {
   status: 'prelaunch';
   /** A network may be announced before launch; null shows "To be announced". */
   networkLabel: string | null;
+  freezeAuthorityVerified: false;
 }
 
 export type ResolvedToken = LiveToken | PrelaunchToken;
@@ -226,6 +235,12 @@ export function resolveSiteConfig(
     if (!tradeUrl) {
       problems.push(`Live mode requires token.tradeUrl to be a real HTTPS URL (got ${JSON.stringify(token.tradeUrl)}).`);
     }
+    if (token.freezeAuthorityVerified !== true && token.freezeAuthorityVerified !== false) {
+      problems.push('token.freezeAuthorityVerified must be true or false.');
+    }
+    if (token.freezeAuthorityVerified === true && network !== 'solana') {
+      problems.push('token.freezeAuthorityVerified applies to a Solana mint; set token.network to solana.');
+    }
     const explorerUrl = validateHttpsUrl(token.explorerUrl);
     if (!explorerUrl) {
       problems.push(
@@ -245,6 +260,7 @@ export function resolveSiteConfig(
       contractAddress: token.contractAddress ?? '',
       tradeUrl: tradeUrl ?? '',
       explorerUrl: explorerUrl ?? '',
+      freezeAuthorityVerified: token.freezeAuthorityVerified === true,
     };
   } else {
     // Pre-launch: launch-only values must stay empty so nothing half-configured renders.
@@ -253,7 +269,14 @@ export function resolveSiteConfig(
     }
     if (token.tradeUrl !== null) problems.push('token.tradeUrl must stay null while status is prelaunch.');
     if (token.explorerUrl !== null) problems.push('token.explorerUrl must stay null while status is prelaunch.');
-    resolvedToken = { status: 'prelaunch', networkLabel: network ? NETWORKS[network].label : null };
+    if (token.freezeAuthorityVerified !== false) {
+      problems.push('token.freezeAuthorityVerified must stay false until the live mint is verified on-chain.');
+    }
+    resolvedToken = {
+      status: 'prelaunch',
+      networkLabel: network ? NETWORKS[network].label : null,
+      freezeAuthorityVerified: false,
+    };
   }
 
   if (problems.length > 0) throw new SiteConfigError(problems);

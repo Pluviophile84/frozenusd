@@ -30,6 +30,7 @@ export function liveFixture() {
       contractAddress: FIXTURE_SOLANA_ADDRESS,
       tradeUrl: `https://pump.fun/coin/${FIXTURE_SOLANA_ADDRESS}`,
       explorerUrl: `https://solscan.io/token/${FIXTURE_SOLANA_ADDRESS}`,
+      freezeAuthorityVerified: true,
     },
     social: { xUrl: 'https://x.com/frozenusd_fixture', communityUrl: null },
     features: { datedNews: true },

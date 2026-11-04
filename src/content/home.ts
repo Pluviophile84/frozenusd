@@ -80,6 +80,12 @@ export const satire = {
   body: ['The network is open.', 'The wallet is yours.', 'The token may still have an issuer with instructions.'],
   coda: 'Frozen USD takes that contradiction and gives it a product launch.',
   closing: 'Your keys. Our freezer.',
+  /** The punchline after the closing statement: the freezer is the fiction. */
+  punchline: [
+    'Some digital dollars have a freeze authority.',
+    'We have a Strategic Ice Reserve.',
+    'Only one of those can stop a transfer.',
+  ],
   note: {
     label: 'OCTOBER 2026',
     dateTime: '2026-10-30',
@@ -93,9 +99,13 @@ export const satire = {
 
 export const token = {
   title: 'The cold facts.',
-  body: 'Frozen USD is a memecoin parody. No dollar peg. No dollar redemption. The frozen-dollar technology is the joke.',
+  body: [
+    'The dollar backing is fictional. The refrigeration is fictional. The transfers are real.',
+    '$USDF is a memecoin parody, not a dollar-backed stablecoin. No dollar peg. No redemption promise.',
+  ],
   networkPending: 'To be announced',
   contractPending: 'Not available yet',
+  freezeAuthority: { label: 'Freeze authority', planned: 'None (planned)', verified: 'None' },
   statusLabels: { prelaunch: 'Pre-launch', live: 'Live' },
   prelaunchNote: 'Official token links will appear here when available.',
 };
@@ -118,7 +128,11 @@ export const faq = [
   },
   {
     q: 'How can it be frozen and still move?',
-    a: ['That is our fictional breakthrough. We put the cold in the metaphor and left the movement in the story.'],
+    a: [
+      'The freezing is conceptual. The movement is real.',
+      '$USDF is designed to circulate without an issuer freeze authority. No thawing, no permission from the refrigeration department.',
+      "The ice is a metaphor. The transfers aren't.",
+    ],
   },
   {
     q: 'Does frozen mean locked?',
@@ -164,7 +178,10 @@ export const notFound = {
 };
 
 export const seo = {
-  title: 'Frozen USD — Frozen. Still moving.',
+  /** Browser tab title. */
+  title: 'USDF - Frozen USD',
+  /** Title used when the page is shared (Open Graph / X), unchanged. */
+  shareTitle: 'Frozen USD — Frozen. Still moving.',
   description:
     'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $USDF is a memecoin parody of stablecoins and the freeze button.',
 };

@@ -12,13 +12,13 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 | C | The idea (`#idea`) | `Idea.astro` | `idea` | Closing line: *Hot wallet. Cold dollars.* |
 | D | The product (`#how-it-works`) | `Product.astro` | `product` | Three stages, *No thawing required.*, Fictional Proof of Cold |
 | E | Product benefits | `Benefits.astro` | `benefits` | Three parts with line illustrations |
-| F | The satire | `Satire.astro` | `satire` | Dark-ink section. Dated note shown when `features.datedNews` is true |
-| G | Token information (`#token`) | `TokenFacts.astro` | `token` | No price, chart, supply, holders, tax or audit claims |
+| F | The satire | `Satire.astro` | `satire` | Dark-ink section. After *Your keys. Our freezer.*: *Some digital dollars have a freeze authority. / We have a Strategic Ice Reserve. / Only one of those can stop a transfer.* Dated note shown when `features.datedNews` is true |
+| G | Token information (`#token`) | `TokenFacts.astro` | `token` | *The dollar backing is fictional. The refrigeration is fictional. The transfers are real.* Freeze authority row: *None (planned)* until verified on-chain. No price, chart, supply, holders, tax or audit claims |
 | H | Community (`#memes`) | `Memes.astro` | `memes` | Three posters with Download (PNG) and SVG links; social actions only when configured |
 | I | FAQ (`#faq`) | `Faq.astro` | `faq` | Native `<details>`/`<summary>`; heading *Frequently asked questions*; *What is USDF pegged to?* precedes *What backs it?* |
 | J | Final CTA and footer | `Closing.astro`, `Footer.astro` | `closing`, `footer` | Closing section on the logo cyan (#79DAFF). Build year is set at build time |
 | K | 404 | `src/pages/404.astro` | `notFound` | Always `noindex` |
-| — | SEO | `BaseLayout.astro` | `seo` | Title and description from the build prompt |
+| — | SEO | `BaseLayout.astro` | `seo` | Browser tab title *USDF - Frozen USD*; share (Open Graph / X) title stays *Frozen USD — Frozen. Still moving.*; description unchanged |
 
 ## Fixed hierarchy
 

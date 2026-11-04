@@ -35,6 +35,11 @@ export const siteConfig: SiteConfigInput = {
     tradeUrl: null,
     /** HTTPS block-explorer page for this exact contract address. */
     explorerUrl: null,
+    /**
+     * Set to true only after independently checking on the explorer that the
+     * live mint's freeze authority is empty. Shows "None (planned)" until then.
+     */
+    freezeAuthorityVerified: false,
   },
 
   social: {

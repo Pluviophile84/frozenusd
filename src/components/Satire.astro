@@ -24,6 +24,10 @@ import Decor from './Decor.astro';
 
     <p class="satire-closing">{satire.closing}</p>
 
+    <p class="satire-lines satire-punchline">
+      {satire.punchline.map((line, i) => (i === satire.punchline.length - 1 ? <em>{line}</em> : <span>{line}</span>))}
+    </p>
+
     {
       site.features.datedNews && (
         <aside class="note" aria-labelledby="note-title">
@@ -96,6 +100,16 @@ import Decor from './Decor.astro';
     font-size: var(--text-body);
     color: var(--on-ink-muted);
     max-width: 34ch;
+  }
+
+  .satire-punchline {
+    margin-top: clamp(24px, 3vw, 36px);
+    max-width: 34rem;
+  }
+
+  .satire-punchline em {
+    font-style: normal;
+    color: var(--cyan);
   }
 
   .satire-closing {

@@ -5,7 +5,10 @@ import { site } from '../config/index.ts';
 import { seo } from '../content/home.ts';
 
 interface Props {
+  /** Browser tab title. */
   title?: string;
+  /** Title for social previews; defaults to the site's share title. */
+  shareTitle?: string;
   description?: string;
   /** Force noindex regardless of launch state (e.g. the 404 page). */
   noindex?: boolean;
@@ -13,7 +16,7 @@ interface Props {
   path?: string;
 }
 
-const { title = seo.title, description = seo.description, noindex = false, path = '/' } = Astro.props;
+const { title = seo.title, shareTitle = seo.shareTitle, description = seo.description, noindex = false, path = '/' } = Astro.props;
 
 const indexable = site.indexable && !noindex;
 const canonical = indexable && site.canonicalOrigin ? `${site.canonicalOrigin}${path}` : null;
@@ -58,7 +61,7 @@ const fontFace = `@font-face{font-family:'Manrope';font-style:normal;font-displa
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.brand.name} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={shareTitle} />
     <meta property="og:description" content={description} />
     {ogUrl && <meta property="og:url" content={ogUrl} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
@@ -66,7 +69,7 @@ const fontFace = `@font-face{font-family:'Manrope';font-style:normal;font-displa
     {ogImage && <meta property="og:image:height" content="630" />}
     {ogImage && <meta property="og:image:alt" content="Frozen USD — The dollar that trades frozen. Frozen. Still moving." />}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={shareTitle} />
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={ogImage} />}
   </head>

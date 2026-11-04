@@ -9,6 +9,7 @@ Verify these yourself on-chain and on the trading platform. The website cannot c
 - [ ] The token is created and the **mint/contract address** is final.
 - [ ] The **trading page URL** (e.g. the pump.fun coin page) is for that exact address.
 - [ ] The **explorer URL** (e.g. Solscan) is for that exact address.
+- [ ] On that explorer page, the mint's **freeze authority** is empty (none). Only then set `freezeAuthorityVerified: true`.
 - [ ] Any **X** or **community** links are the official accounts.
 - [ ] `frozenusd.com` is attached to the Vercel project and resolves (Vercel → Project → Settings → Domains).
 
@@ -21,6 +22,7 @@ Verify these yourself on-chain and on the trading platform. The website cannot c
 | `token.contractAddress` | `null` | the real address, exactly as shown on the explorer |
 | `token.tradeUrl` | `null` | `https://…` trading page |
 | `token.explorerUrl` | `null` | `https://…` explorer page containing the address |
+| `token.freezeAuthorityVerified` | `false` (shows *None (planned)*) | `true` only after the on-chain check above (shows *None*, linked to the explorer) |
 | `social.xUrl` | `null` | `https://x.com/…` or keep `null` |
 | `social.communityUrl` | `null` | `https://…` or keep `null` |
 | `canonicalOrigin` | `'https://frozenusd.com'` | keep (already the purchased domain) |
@@ -42,7 +44,7 @@ Leave every unknown value as `null`. Never type a placeholder.
 - Header action: *Buy $USDF* now opens the trading page instead of the token facts.
 - Hero actions: *Buy $USDF* + *Explore frozen finance*.
 - Contract strip and token facts: real address with Copy and Explorer.
-- Token facts: network label, status *Live*, Buy action.
+- Token facts: network label, status *Live*, Buy action; *Freeze authority: None* linked to the explorer once verified.
 - Closing action: *Buy $USDF*.
 - Footer: Trade and Explorer links (and X/community when set).
 - Indexing: only when `status` is `'live'`, `canonicalOrigin` is set, and the deployment is Vercel production. Then the page gets `index, follow`, a canonical URL, and `sitemap.xml`.
