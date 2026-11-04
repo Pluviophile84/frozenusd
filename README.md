@@ -72,6 +72,7 @@ token: {
   contractAddress: '<real mint address>',
   tradeUrl: 'https://<real trading page>',
   explorerUrl: 'https://<explorer page for that exact address>',
+  freezeAuthorityVerified: true,     // only after checking on the explorer that the mint has no freeze authority
 },
 social: {
   xUrl: 'https://x.com/<official handle>',          // or keep null
