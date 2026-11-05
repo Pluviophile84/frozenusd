@@ -1,6 +1,6 @@
-29e51e600c57b6c7bcfd1a838d165013876a3bce5c7c1c5651b958db94e80498  frozen-usd-ice-cube-as-received.webp
-c299c2175a42c4081c3696441b67fa309635c42d72517e83493feb2c20e9c5ef  frozen-usd-ice-cube-master.png
-9f4314fddeec78c6f0a1d26fc6968c164d9e7cac4daccf256d48fb9f23b6129f  ../../public/media/cube/frozen-usd-ice-cube-1024.webp
-9ed98f44b61b3017601ff71209480c3987d26ce91be04b325a7f6b8ae0cedae1  ../../public/media/cube/frozen-usd-ice-cube-128.webp
-33aec0274232e1a252aafa9b117f40ab2a308d2c783d0eebffaa42bf8d69f4a3  ../../public/media/cube/frozen-usd-ice-cube-256.webp
-9d7963c147a976142a04b6cf52c43011d3ea56f716bf2436e374fc514ff463d1  ../../public/media/cube/frozen-usd-ice-cube-512.webp
+3e340aa8a0c8be95c191acd3fafcbf4093c2be7fbccd7ae8804ac12fd3483649  frozen-usd-ice-cube-as-received.webp
+bd53a87ca81ab06645f671d5fc68b0eeaf6b61afd639269bca0324537c425532  frozen-usd-ice-cube-master.png
+ce47b5aa12da214c36a31ace3b89792fb41fe87654d8eedb6514826de5472bb4  ../../public/media/cube/frozen-usd-ice-cube-1024.webp
+04e2feef969af163f53cce730f92c29458162d676e2037c1a570f56c5783a085  ../../public/media/cube/frozen-usd-ice-cube-128.webp
+72f11a1acd16c4f12fe96d70ace1f7c93bc6cfa2c5b57801d47879dbd2a1e5fd  ../../public/media/cube/frozen-usd-ice-cube-256.webp
+a151abb7e53b3e4c3d964589666cdf2da3b1efdc90b236dae00a088cfa0edddd  ../../public/media/cube/frozen-usd-ice-cube-512.webp

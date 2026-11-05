@@ -1,8 +1,8 @@
-Frozen USD — approved ice cube (refined, chat-supplied revision)
+Frozen USD — approved ice cube (hexagon-logo revision, chat-supplied)
 
 frozen-usd-ice-cube-as-received.webp
   The image exactly as attached by the owner: 1254 x 1254, RGBA. Translucent
-  ice (about 63% of pixels partially transparent), opaque cyan coin with the
+  ice (about 67% of pixels partially transparent), opaque cyan hexagon plate with the
   emblem, transparent exterior (edge alpha 0–8 of 255).
 
 frozen-usd-ice-cube-master.png

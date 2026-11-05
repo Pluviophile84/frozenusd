@@ -5,16 +5,16 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
-import { EMBLEM_PATH, BRAND_COLORS } from '../src/lib/emblem.ts';
+import { EMBLEM_PATH, BRAND_COLORS, LOGO_RIM_POINTS, LOGO_FACE_POINTS } from '../src/lib/emblem.ts';
 import { CUBE_MASTER, CUBE_NATIVE_SIZE, CUBE_WIDTHS, cubeSrc } from '../src/lib/cube.ts';
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root));
-const source = 'brand-source/Frozen-USD-Logo-Master-v1.1/';
+const source = 'brand-source/FrozenUSD-B-Rim/';
 
-test('the official logo package matches its own SHA256SUMS', async () => {
+test('the official logo package matches the checksums recorded on receipt', async () => {
   const sums = (await read(`${source}SHA256SUMS.txt`)).toString().trim().split('\n');
-  assert.ok(sums.length > 10);
+  assert.equal(sums.length, 32);
   for (const line of sums) {
     const [hash, file] = line.trim().split(/\s+/);
     const actual = createHash('sha256').update(await read(source + file)).digest('hex');
@@ -22,31 +22,43 @@ test('the official logo package matches its own SHA256SUMS', async () => {
   }
 });
 
-test('shipped logo exports are byte-identical to the official SVGs', async () => {
+test('shipped logo files and favicons are byte-identical to the official package', async () => {
   const pairs = {
-    'public/brand/frozen-usd-master.svg': 'SVG/Frozen-USD-Master.svg',
-    'public/brand/frozen-usd-reversed.svg': 'SVG/Frozen-USD-Reversed.svg',
-    'public/brand/frozen-usd-symbol-ink.svg': 'SVG/Frozen-USD-Symbol-Ink.svg',
-    'public/brand/frozen-usd-symbol-white.svg': 'SVG/Frozen-USD-Symbol-White.svg',
-    'public/favicon.svg': 'SVG/Frozen-USD-Master.svg',
+    'public/brand/frozenusd-b-rim.svg': 'vector/FrozenUSD-B-Rim.svg',
+    'public/brand/frozenusd-b-rim-tile-512.png': 'platform/favicon/maskable-512x512.png',
+    'public/favicon.svg': 'platform/favicon/favicon.svg',
+    'public/favicon.ico': 'platform/favicon/favicon.ico',
+    'public/apple-touch-icon.png': 'platform/favicon/apple-touch-icon.png',
+    'public/android-chrome-192x192.png': 'platform/favicon/android-chrome-192x192.png',
+    'public/android-chrome-512x512.png': 'platform/favicon/android-chrome-512x512.png',
+    'public/maskable-512x512.png': 'platform/favicon/maskable-512x512.png',
   };
   for (const [shipped, official] of Object.entries(pairs)) {
     assert.deepEqual(await read(shipped), await read(source + official), shipped);
   }
+  // The supplied manifest is shipped with one correction: the old ticker in short_name.
+  const manifest = JSON.parse((await read('public/site.webmanifest')).toString());
+  const supplied = JSON.parse((await read(`${source}platform/favicon/site.webmanifest`)).toString());
+  assert.deepEqual({ ...manifest, short_name: supplied.short_name }, supplied);
+  assert.equal(manifest.short_name, 'USDF');
 });
 
-test('the inline emblem path is the official geometry', async () => {
-  const master = (await read(`${source}SVG/Frozen-USD-Master.svg`)).toString();
-  const d = master.match(/ d="([^"]+)"/)?.[1];
-  assert.equal(EMBLEM_PATH, d);
-  assert.match(master, new RegExp(`fill="${BRAND_COLORS.cyan}"`));
-  assert.match(master, new RegExp(`fill="${BRAND_COLORS.ink}"`));
+test('the inline logo geometry is the official B-Rim vector', async () => {
+  const svg = (await read(`${source}vector/FrozenUSD-B-Rim.svg`)).toString();
+  const polygons = [...svg.matchAll(/<polygon points="([^"]+)" fill="([^"]+)"/g)];
+  assert.equal(polygons[0]?.[1], LOGO_RIM_POINTS);
+  assert.equal(polygons[0]?.[2], BRAND_COLORS.rim);
+  assert.equal(polygons[1]?.[1], LOGO_FACE_POINTS);
+  assert.equal(polygons[1]?.[2], BRAND_COLORS.cyan);
+  assert.equal(svg.match(/ d="([^"]+)"/)?.[1], EMBLEM_PATH);
+  assert.match(svg, new RegExp(`fill="${BRAND_COLORS.ink}"`));
 });
 
 test('posters embed the official emblem path and need no external font or file', async () => {
   for (const slug of ['frozen-still-moving', 'your-keys-our-freezer', 'no-thawing-required']) {
     const svg = (await read(`public/media/posters/${slug}.svg`)).toString();
-    assert.ok(svg.includes(EMBLEM_PATH), slug);
+    assert.ok(svg.includes(EMBLEM_PATH) && svg.includes(LOGO_FACE_POINTS), slug);
+    assert.doesNotMatch(svg, /M479\.179636/, slug); // the previous logo's geometry
     assert.doesNotMatch(svg, /<text|font-family|@font-face|href="(?!data:image\/png;base64,)/, slug);
     assert.doesNotMatch(svg, /FRZUSD|FROZEN USD/, slug);
     assert.ok(svg.includes('<path'), slug);
@@ -89,9 +101,9 @@ test('the old procedural cube renderer and old ticker are gone from source and p
     encoding: 'utf8',
   })
     .split('\n')
-    .filter((f) => f && /\.(astro|ts|mjs|svg|css|json|txt)$/.test(f));
+    .filter((f) => f && /\.(astro|ts|mjs|svg|css|json|txt|webmanifest)$/.test(f));
   for (const file of files) {
     const text = (await read(file)).toString();
-    assert.doesNotMatch(text, /FRZUSD|\bFUSD\b|iceBlockSvg|ice-block\.ts/, file);
+    assert.doesNotMatch(text, /FRZUSD|\bFUSD\b|iceBlockSvg|ice-block\.ts|frozen-usd-(master|reversed|symbol)|M479\.179636/, file);
   }
 });

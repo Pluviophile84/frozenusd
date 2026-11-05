@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import opentype from 'opentype.js';
 import sharp from 'sharp';
 import { contactShadowSvg } from '../src/lib/shadow.ts';
-import { EMBLEM_PATH, emblemDisc } from '../src/lib/emblem.ts';
+import { logoMark, logoOnNavyTile } from '../src/lib/emblem.ts';
 import { CUBE_MASTER, CUBE_WIDTHS, CUBE_CONTENT } from '../src/lib/cube.ts';
 import { memes, product } from '../src/content/home.ts';
 import { siteConfig } from '../src/config/site.ts';
@@ -94,10 +94,9 @@ function fitSize(lines, maxWidth, max, weight = 800, tracking = -0.035) {
 function brandRow({ W, fg, emblem }) {
   const name = text(BRAND_NAME, { size: 32, weight: 800, x: 84 + 64 + 20, y: 132, tracking: 0 });
   const ticker = text(TICKER, { size: 28, weight: 700, x: W - 84, y: 132, anchor: 'end', tracking: 0.02 });
-  const disc =
-    emblem === 'master'
-      ? emblemDisc(84 + 32, 121, 32)
-      : `<circle cx="${84 + 32}" cy="121" r="32" fill="${C.ink}"/><path transform="translate(${84} ${89}) scale(${64 / 1024})" fill="${C.white}" fill-rule="evenodd" d="${EMBLEM_PATH}"/>`;
+  // The official logo; on the cyan poster it sits on its navy tile (as the
+  // supplied maskable icon does) because the hexagon face matches the background.
+  const disc = emblem === 'master' ? logoMark(84, 89, 64) : logoOnNavyTile(84, 89, 64, 12);
   return disc + path(name, fg) + path(ticker, fg);
 }
 
@@ -245,7 +244,7 @@ function ogImage() {
   const padY = 486;
   return (
     svgOpen(OW, OH, bg) +
-    emblemDisc(72 + 24, 95, 24) +
+    logoMark(72, 71, 48) +
     path(name, C.ink) +
     path(l1, C.ink) +
     path(l2, C.ink) +

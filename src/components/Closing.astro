@@ -10,7 +10,7 @@ const live = site.token.status === 'live' ? site.token : null;
 <section class="section closing decorated" aria-labelledby="closing-title">
   <Decor kind="rings" color="var(--ink)" opacity={0.16} style="width: clamp(640px, 82vw, 1180px); left: 50%; top: 50%; transform: translate(-50%, -50%)" />
   <div class="container closing-inner">
-    <img class="closing-mark" src="/brand/frozen-usd-reversed.svg" width="64" height="64" alt="" loading="lazy" />
+    <img class="closing-mark" src="/brand/frozenusd-b-rim-tile-512.png" width="512" height="512" alt="" loading="lazy" />
     <h2 id="closing-title">{closing.title}</h2>
     <p class="closing-signature">{closing.signature}</p>
     <div class="closing-actions">
@@ -56,10 +56,13 @@ const live = site.token.status === 'live' ? site.token : null;
     align-items: center;
   }
 
+  /* The official logo on its navy tile (supplied maskable icon). */
   .closing-mark {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     margin-bottom: 32px;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px -12px rgb(7 24 39 / 0.45);
   }
 
   .closing h2 {

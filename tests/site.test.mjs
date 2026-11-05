@@ -116,6 +116,15 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex, nofollow');
     assert.equal(await page.locator('link[rel="canonical"]').count(), 0);
     assert.equal(await page.title(), 'USDF - Frozen USD');
+    // Icons and manifest come from the official B-Rim package and resolve.
+    const icons = await page.$$eval('link[rel~="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]', (ls) => ls.map((l) => l.href));
+    assert.equal(icons.length, 4);
+    for (const href of icons) assert.equal((await page.request.get(href)).status(), 200, href);
+    const manifest = await (await page.request.get(origin + '/site.webmanifest')).json();
+    for (const icon of manifest.icons) assert.equal((await page.request.get(origin + icon.src)).status(), 200, icon.src);
+    // Every logo on the page is the official B-Rim file.
+    const logoSrcs = await page.$$eval('img[src^="/brand/"]', (imgs) => [...new Set(imgs.map((i) => i.getAttribute('src')))]);
+    assert.deepEqual(logoSrcs.sort(), ['/brand/frozenusd-b-rim-tile-512.png', '/brand/frozenusd-b-rim.svg']);
     assert.equal((await page.locator('title').count()), 1);
     // Sharing metadata keeps the established title.
     assert.equal(await page.locator('meta[property="og:title"]').getAttribute('content'), 'Frozen USD — Frozen. Still moving.');
@@ -319,7 +328,7 @@ describe('pre-launch build (committed configuration)', () => {
     // Logo files appear only as real brand marks: header, footer, closing mark and proof seal.
     const logos = await page.$$eval('main section img[src^="/brand/"]', (imgs) => imgs.map((i) => i.closest('section')?.className ?? ''));
     assert.ok(logos.every((cls) => /closing|product/.test(cls)), JSON.stringify(logos));
-    assert.equal(await page.locator('svg path[d^="M479.179636"]').count(), 0);
+    assert.equal(await page.locator('svg path[d^="M482.826343"], svg path[d^="M479.179636"]').count(), 0);
     await context.close();
   });
 

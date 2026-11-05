@@ -3,12 +3,12 @@ import { site } from '../config/index.ts';
 
 interface Props {
   href?: string;
-  /** 'light' surfaces use the master emblem; 'dark' uses the reversed variant. */
+  /** Text colour of the wordmark. The official logo file is the same on both. */
   tone?: 'light' | 'dark';
   size?: number;
 }
 const { href = '/', tone = 'light', size = 34 } = Astro.props;
-const src = tone === 'dark' ? '/brand/frozen-usd-reversed.svg' : '/brand/frozen-usd-master.svg';
+const src = '/brand/frozenusd-b-rim.svg';
 ---
 
 <a class:list={['logo', `logo--${tone}`]} href={href}>

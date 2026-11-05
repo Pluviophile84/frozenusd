@@ -1,25 +1,46 @@
 /**
- * Official Frozen USD emblem geometry, copied verbatim from
- * brand-source/Frozen-USD-Logo-Master-v1.1/SVG/Frozen-USD-Master.svg (v1.1).
- * tests/brand.test.mjs verifies this string still matches the official file.
- * Do not edit, simplify or re-draw this path.
+ * Official Frozen USD logo ("B-Rim": hexagon with rim, cyan face, ink symbol),
+ * copied verbatim from brand-source/FrozenUSD-B-Rim/vector/FrozenUSD-B-Rim.svg.
+ * tests/brand.test.mjs verifies these strings still match the official file.
+ * Do not edit, simplify or re-draw this geometry.
  */
-export const EMBLEM_PATH =
-  'M479.179636,143.360000 L479.179636,209.000729 L416.466229,172.793127 L383.645865,229.639665 L479.179636,284.796114 L479.179636,291.688093 L327.367224,291.688093 L261.708268,405.412740 L327.367224,519.137387 L466.853772,519.137387 L507.879228,590.195560 L647.365776,590.195560 L663.757732,618.587260 L647.365776,646.978959 L364.326587,646.978959 L335.617882,597.254023 L261.717382,639.920497 L315.059587,732.311907 L479.179636,732.311907 L479.179636,739.203886 L383.645865,794.360335 L416.466229,851.206873 L479.179636,814.999271 L479.179636,880.640000 L544.820364,880.640000 L544.820364,814.999271 L607.533771,851.206873 L640.354135,794.360335 L544.820364,739.203886 L544.820364,732.311907 L696.632776,732.311907 L762.291732,618.587260 L696.632776,504.862613 L557.146228,504.862613 L516.120772,433.804440 L376.634224,433.804440 L360.242268,405.412740 L376.634224,377.021041 L659.673413,377.021041 L688.382118,426.745977 L762.282618,384.079503 L708.940413,291.688093 L544.820364,291.688093 L544.820364,284.796114 L640.354135,229.639665 L607.533771,172.793127 L544.820364,209.000729 L544.820364,143.360000 Z';
+export const LOGO_VIEWBOX = 1024;
 
-/** The official artwork lives on a 1024-unit canvas: circle r=512, centred. */
-export const EMBLEM_VIEWBOX = 1024;
+export const LOGO_RIM_POINTS =
+  '512.000000000000,0.000000000000 955.405006737633,256.000000000000 955.405006737633,768.000000000000 512.000000000000,1024.000000000000 68.594993262367,768.000000000000 68.594993262367,256.000000000000';
+export const LOGO_FACE_POINTS =
+  '512.000000000000,14.780166891254 942.605006737633,263.390083445627 942.605006737633,760.609916554373 512.000000000000,1009.219833108746 81.394993262367,760.609916554373 81.394993262367,263.390083445627';
+export const EMBLEM_PATH =
+  'M482.826343,184.320000 L482.826343,242.667315 L427.081092,210.482780 L397.907436,261.013036 L482.826343,310.040990 L482.826343,316.167194 L347.881977,316.167194 L289.518460,417.255769 L347.881977,518.344344 L471.870020,518.344344 L508.337092,581.507164 L632.325134,581.507164 L646.895762,606.744231 L632.325134,631.981297 L380.734744,631.981297 L355.215895,587.781354 L289.526562,625.707108 L336.941855,707.832806 L482.826343,707.832806 L482.826343,713.959010 L397.907436,762.986964 L427.081092,813.517220 L482.826343,781.332685 L482.826343,839.680000 L541.173657,839.680000 L541.173657,781.332685 L596.918908,813.517220 L626.092564,762.986964 L541.173657,713.959010 L541.173657,707.832806 L676.118023,707.832806 L734.481540,606.744231 L676.118023,505.655656 L552.129980,505.655656 L515.662908,442.492836 L391.674866,442.492836 L377.104238,417.255769 L391.674866,392.018703 L643.265256,392.018703 L668.784105,436.218646 L734.473438,398.292892 L687.058145,316.167194 L541.173657,316.167194 L541.173657,310.040990 L626.092564,261.013036 L596.918908,210.482780 L541.173657,242.667315 L541.173657,184.320000 Z';
 
 export const BRAND_COLORS = {
+  rim: '#6EC7E9',
   cyan: '#79DAFF',
   ink: '#071827',
 } as const;
 
-/** Official circle + emblem, scaled to radius `r` around (cx, cy). SVG markup. */
-export function emblemDisc(cx: number, cy: number, r: number): string {
-  const scale = (r * 2) / EMBLEM_VIEWBOX;
+/** The complete official logo as SVG markup, scaled to `size` with its top-left at (x, y). */
+export function logoMark(x: number, y: number, size: number): string {
+  const scale = size / LOGO_VIEWBOX;
   return (
-    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${BRAND_COLORS.cyan}"/>` +
-    `<path transform="translate(${cx - r} ${cy - r}) scale(${scale})" fill="${BRAND_COLORS.ink}" fill-rule="evenodd" d="${EMBLEM_PATH}"/>`
+    `<g transform="translate(${x} ${y}) scale(${scale})">` +
+    `<polygon points="${LOGO_RIM_POINTS}" fill="${BRAND_COLORS.rim}"/>` +
+    `<polygon points="${LOGO_FACE_POINTS}" fill="${BRAND_COLORS.cyan}"/>` +
+    `<path fill="${BRAND_COLORS.ink}" fill-rule="evenodd" d="${EMBLEM_PATH}"/>` +
+    `</g>`
+  );
+}
+
+/**
+ * The logo on the navy tile used for cyan surfaces, matching the official
+ * maskable icon (brand-source/FrozenUSD-B-Rim/platform/favicon/maskable-512x512.png):
+ * the unchanged logo at 80% of a navy square.
+ */
+export function logoOnNavyTile(x: number, y: number, size: number, radius = size * 0.22): string {
+  const inner = size * 0.8;
+  const offset = (size - inner) / 2;
+  return (
+    `<rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${radius}" fill="${BRAND_COLORS.ink}"/>` +
+    logoMark(x + offset, y + offset, inner)
   );
 }

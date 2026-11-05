@@ -2,28 +2,25 @@
 
 ## Official logo (unchanged)
 
-`brand-source/Frozen-USD-Logo-Master-v1.1/` is the official logo package (three-prong forked-S, v1.1) exactly as supplied, including `README.md`, `MASTER-SPEC.json` and `SHA256SUMS.txt`. It is not served by the website.
+The current logo is **B-Rim**: the ink dollar symbol on a cyan hexagon face with a slightly darker hexagon rim. `brand-source/FrozenUSD-B-Rim/` is the package exactly as supplied (vector SVG/PDF/EPS, PNG sizes, solid-background versions, platform images and favicons). It was supplied without checksums, so `SHA256SUMS.txt` there was recorded on receipt. It is not served by the website. It replaces the earlier circular logo package, which has been removed from the repository.
 
-Colours confirmed from the SVGs: glacial cyan `#79DAFF`, ink `#071827`.
+Colours from the vector: rim `#6EC7E9`, face `#79DAFF`, ink `#071827`.
 
-| Shipped file | Source | Treatment |
+| Shipped file | Source in the package | Treatment |
 |---|---|---|
-| `public/brand/frozen-usd-master.svg` | `SVG/Frozen-USD-Master.svg` | byte-identical copy |
-| `public/brand/frozen-usd-reversed.svg` | `SVG/Frozen-USD-Reversed.svg` | byte-identical copy |
-| `public/brand/frozen-usd-symbol-ink.svg` | `SVG/Frozen-USD-Symbol-Ink.svg` | byte-identical copy |
-| `public/brand/frozen-usd-symbol-white.svg` | `SVG/Frozen-USD-Symbol-White.svg` | byte-identical copy |
-| `public/favicon.svg` | `SVG/Frozen-USD-Master.svg` | byte-identical copy |
-| `public/favicon.ico` | `PNG/Frozen-USD-Master-16/32/48.png` | packed into one ICO, pixels unchanged |
-| `public/apple-touch-icon.png` | `PNG/Frozen-USD-Token-Fullbleed-512.png` | resized to 180×180 |
-| `src/lib/emblem.ts` | path `d` of `SVG/Frozen-USD-Master.svg` | verbatim string, used for inline artwork |
+| `public/brand/frozenusd-b-rim.svg` | `vector/FrozenUSD-B-Rim.svg` | byte-identical; header, footer, How it works seal |
+| `public/brand/frozenusd-b-rim-tile-512.png` | `platform/favicon/maskable-512x512.png` | byte-identical; the closing-section mark on the cyan background (shown with rounded corners) |
+| `public/favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `maskable-512x512.png` | `platform/favicon/` | byte-identical |
+| `public/site.webmanifest` | `platform/favicon/site.webmanifest` | one change: `short_name` from the obsolete `FRZUSD` to `USDF` |
+| `src/lib/emblem.ts` | the two hexagon polygons and the symbol path of `vector/FrozenUSD-B-Rim.svg` | verbatim strings, used in the generated posters and social image |
 
-`tests/brand.test.mjs` verifies the package checksums, the byte-identical copies and the inline path.
+On the cyan poster, the logo sits on a navy square at 80% size, matching the supplied maskable icon, because the hexagon face is the same colour as that background. `tests/brand.test.mjs` verifies the package checksums, the byte-identical copies, the manifest and the inline geometry, and fails if the previous logo's geometry reappears.
 
-No wordmark was supplied, so the site sets "Frozen USD" in Manrope beside the unchanged emblem. The earlier snowflake direction is not used.
+No wordmark was supplied, so the site sets "Frozen USD" in Manrope beside the unchanged logo.
 
 ## Ice-cube artwork (approved, unchanged)
 
-The approved ice cube is the owner's refined artwork: an opaque cyan coin with the emblem inside translucent ice (about 63% of pixels partially transparent), with a transparent exterior. It is the only cube depiction on the site and in generated assets.
+The approved ice cube is the owner's refined artwork: an opaque cyan hexagon plate carrying the B-Rim logo inside translucent ice (about 67% of pixels partially transparent), with a transparent exterior. It is the only cube depiction on the site and in generated assets.
 
 | File | Notes |
 |---|---|
