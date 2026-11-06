@@ -18,14 +18,13 @@ import Decor from './Decor.astro';
         <p class="satire-lines">
           {satire.body.map((line) => <span>{line}</span>)}
         </p>
-        <p class="satire-coda">{satire.coda}</p>
       </div>
     </div>
 
     <p class="satire-closing">{satire.closing}</p>
 
-    <p class="satire-lines satire-punchline">
-      {satire.punchline.map((line, i) => (i === satire.punchline.length - 1 ? <em>{line}</em> : <span>{line}</span>))}
+    <p class="satire-lines satire-contrast">
+      {satire.contrast.map((line, i) => (i === satire.contrast.length - 1 ? <em>{line}</em> : <span>{line}</span>))}
     </p>
 
     {
@@ -36,18 +35,22 @@ import Decor from './Decor.astro';
           </p>
           <div class="note-body">
             <h3 id="note-title">{satire.note.title}</h3>
-            <p>{satire.note.text}</p>
-            <p class="note-aside">
-              {satire.note.aside.map((line) => <span>{line}</span>)}
-            </p>
+            {
+              satire.note.facts.map((fact) => (
+                <p>
+                  {fact.text}{' '}
+                  <a class="note-source" href={fact.href} target="_blank" rel="noopener">
+                    {fact.source}
+                    <span class="visually-hidden"> (opens in a new tab)</span>
+                    <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+                      <path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.5" />
+                    </svg>
+                  </a>
+                </p>
+              ))
+            }
+            <p class="note-closing">{satire.note.closing}</p>
           </div>
-          <a class="note-link" href={satire.note.href} target="_blank" rel="noopener">
-            {satire.note.linkLabel}
-            <span class="visually-hidden"> (opens in a new tab)</span>
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-              <path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.5" />
-            </svg>
-          </a>
         </aside>
       )
     }
@@ -93,21 +96,12 @@ import Decor from './Decor.astro';
     color: var(--white);
   }
 
-  .satire-coda {
-    margin-top: 22px;
-    padding-top: 22px;
-    border-top: 1px solid var(--ink-rule);
-    font-size: var(--text-body);
-    color: var(--on-ink-muted);
-    max-width: 34ch;
-  }
-
-  .satire-punchline {
+  .satire-contrast {
     margin-top: clamp(24px, 3vw, 36px);
     max-width: 34rem;
   }
 
-  .satire-punchline em {
+  .satire-contrast em {
     font-style: normal;
     color: var(--cyan);
   }
@@ -126,7 +120,7 @@ import Decor from './Decor.astro';
 
   .note {
     display: grid;
-    grid-template-columns: 180px minmax(0, 1fr) auto;
+    grid-template-columns: 180px minmax(0, 1fr);
     gap: 16px 48px;
     align-items: start;
     margin-top: clamp(64px, 8vw, 112px);
@@ -154,22 +148,22 @@ import Decor from './Decor.astro';
     font-size: 1rem;
   }
 
-  .note-aside {
-    display: grid;
+  .note-body p.note-closing {
+    color: var(--white);
   }
 
-  .note-link {
+  .note-source {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-height: 44px;
+    gap: 5px;
+    padding-block: 10px;
     color: var(--cyan);
+    font-size: 0.875rem;
     font-weight: 700;
-    font-size: 0.9375rem;
     white-space: nowrap;
   }
 
-  .note-link:hover {
+  .note-source:hover {
     color: #a3e6ff;
   }
 
@@ -182,8 +176,5 @@ import Decor from './Decor.astro';
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .note-link {
-      white-space: normal;
-    }
   }
 </style>

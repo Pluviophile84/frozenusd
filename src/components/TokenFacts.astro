@@ -11,9 +11,7 @@ const networkLabel = site.token.networkLabel ?? copy.networkPending;
   <div class="container token-grid">
     <div class="token-intro">
       <h2 id="token-title">{copy.title}</h2>
-      <div class="token-body">
-        {copy.body.map((line) => <p class="lead">{line}</p>)}
-      </div>
+      <p class="token-notice">{copy.notice}</p>
     </div>
 
     <div class="sheet">
@@ -47,7 +45,7 @@ const networkLabel = site.token.networkLabel ?? copy.networkPending;
                 </a>
               </dd>
             ) : (
-              <dd class="pending">{copy.freezeAuthority.planned}</dd>
+              <dd class="pending">{live ? copy.freezeAuthority.pending : copy.freezeAuthority.planned}</dd>
             )
           }
         </div>
@@ -83,16 +81,15 @@ const networkLabel = site.token.networkLabel ?? copy.networkPending;
     align-items: start;
   }
 
-  .token-body {
-    display: grid;
-    gap: 12px;
+  /* The site's single memecoin notice, beside the facts table. */
+  .token-notice {
     margin-top: 24px;
     max-width: 30rem;
-  }
-
-  .token-body .lead:first-child {
-    color: var(--ink);
-    font-weight: 600;
+    padding-left: 16px;
+    border-left: 3px solid var(--cyan);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
   }
 
   .sheet {

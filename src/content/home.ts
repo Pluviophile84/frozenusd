@@ -17,6 +17,7 @@ export const hero = {
   ticker: '$USDF',
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
+  bridge: 'Some digital dollars have an issuer freeze switch. Our freezer is reserved for ice.',
   signature: 'Frozen. Still moving.',
   contractUnavailable: 'Contract address not available yet.',
   art: {
@@ -40,18 +41,21 @@ export const reserves = {
 
 export const idea = {
   eyebrow: 'A NEW STANDARD IN FROZEN FINANCE',
-  title: 'We gave frozen dollars somewhere to go.',
-  lead: ['The industry proved digital dollars can freeze.', 'We wondered why that had to be the end of the transaction.'],
-  progression: ['Stablecoins made the dollar stable.', 'We made it solid.', 'Then we let it circulate.'],
+  title: 'We froze the reserves. Not the transfers.',
+  lead: [
+    'Some digital dollars move on open networks while their issuers retain the power to stop them.',
+    'Our freezer has a narrower mandate: keep the reserves cold.',
+  ],
+  progression: ['The dollar went on-chain.', 'The issuer kept a switch.', 'We kept the ice.'],
   closing: 'Hot wallet. Cold dollars.',
 };
 
 export const product = {
   title: 'Change hands. Keep your temperature.',
   stages: [
-    { title: 'Start frozen.', text: 'The dollar has already committed to the concept.' },
+    { title: 'Start frozen.', text: 'The reserve has already committed to the temperature.' },
     { title: 'Change wallets.', text: 'A new address. Same winter.' },
-    { title: 'Keep it cold.', text: 'The owner changes. The premise stays intact.' },
+    { title: 'Keep it cold.', text: 'The reserve stays cold. Ownership changes.' },
   ],
   under: 'No thawing required.',
   proof: [
@@ -59,17 +63,17 @@ export const product = {
     { term: 'Arrival', value: 'frozen.' },
     { term: 'Ownership', value: 'changed.' },
   ],
-  proofLabel: 'Fictional Proof of Cold.',
+  proofLabel: 'Proof of Cold.',
 };
 
 export const benefits = {
   title: 'Keep the cold. Keep the movement.',
   items: [
-    { title: 'Frozen from the start.', text: 'Why wait for a headline to discover the temperature setting?', art: 'start' },
+    { title: 'Frozen from the start.', text: 'The reserve entered service below zero.', art: 'start' },
     { title: 'No thawing required.', text: 'A change of wallet does not require a change of state.', art: 'transfer' },
     {
       title: 'Self-custodied. Centrally refrigerated.',
-      text: 'You manage the keys. Our fictional institution remains deeply invested in the temperature.',
+      text: 'In your wallet, you manage the keys. We manage the temperature.',
       art: 'custody',
     },
   ],
@@ -78,34 +82,50 @@ export const benefits = {
 export const satire = {
   title: 'Decentralized until further notice.',
   body: ['The network is open.', 'The wallet is yours.', 'The token may still have an issuer with instructions.'],
-  coda: 'Frozen USD takes that contradiction and gives it a product launch.',
   closing: 'Your keys. Our freezer.',
-  /** The punchline after the closing statement: the freezer is the fiction. */
-  punchline: [
+  /** Shown after the closing line: an issuer switch versus the reserve. */
+  contrast: [
     'Some digital dollars have a freeze authority.',
     'We have a Strategic Ice Reserve.',
     'Only one of those can stop a transfer.',
   ],
+  /** Dated evidence note, kept subordinate to the section. Each fact links to its source. */
   note: {
     label: 'OCTOBER 2026',
-    dateTime: '2026-10-30',
-    title: 'The industry found the freezer.',
-    text: "Binance's October 30, 2026 update reported approximately $3 billion in affected assets frozen after the hack.",
-    aside: ['They demonstrated the cold part.', 'Our fictional research department would like to discuss the movement part.'],
-    linkLabel: "Read Binance's dated update",
-    href: 'https://www.binance.com/en/support/announcement/detail/d3306d9dca5243548c813b605e1d1751',
+    dateTime: '2026-10',
+    title: 'The switch in plain sight.',
+    facts: [
+      {
+        text: 'Following the October 2026 Binance hack, Binance reported approximately $3 billion in affected assets frozen on-chain through coordination with law enforcement, asset issuers and industry partners.',
+        href: 'https://www.binance.com/en/support/announcement/detail/d3306d9dca5243548c813b605e1d1751',
+        source: 'Binance announcement',
+      },
+      {
+        text: 'Circle later said it froze approximately $1.1 billion in USDC connected to the incident.',
+        href: 'https://www.circle.com/blog/the-binance-incident-collective-defense-must-move-at-machine-speed',
+        source: 'Circle blog post',
+      },
+    ],
+    closing: 'In this case, freezing was part of a theft response. It also showed that an issuer can stop movement of the asset it issues.',
   },
 };
 
 export const token = {
   title: 'The cold facts.',
-  body: [
-    'The dollar backing is fictional. The refrigeration is fictional. The transfers are real.',
-    '$USDF is a memecoin parody, not a dollar-backed stablecoin. No dollar peg. No redemption promise.',
-  ],
+  /** The site's single memecoin notice. */
+  notice:
+    'Independent memecoin parody. No dollar peg, dollar backing or redemption. Not affiliated with Tether, Circle or Binance. Cryptoassets can lose all their value.',
   networkPending: 'To be announced',
   contractPending: 'Not available yet',
-  freezeAuthority: { label: 'Freeze authority', planned: 'None (planned)', verified: 'None' },
+  freezeAuthority: {
+    label: 'Freeze authority',
+    /** Before launch: there is no contract to check yet. */
+    planned: 'Planned: none; not yet verifiable',
+    /** Live, but the deployed token's permissions have not been checked yet. */
+    pending: 'Planned: none; verification pending',
+    /** Live and checked on-chain (freeze authority and token extensions). */
+    verified: 'None',
+  },
   statusLabels: { prelaunch: 'Pre-launch', live: 'Live' },
   prelaunchNote: 'Official token links will appear here when available.',
 };
@@ -121,41 +141,54 @@ export const memes = {
   below: 'Hold the meme. Question the money.',
 } as const;
 
-export const faq = [
+/**
+ * FAQ. An answer may be a list of paragraphs, or `byLaunchState` with the
+ * pre-launch / unverified wording and the wording for a verified live token.
+ * "The cold facts" inside an answer links to that section.
+ */
+export interface FaqItem {
+  q: string;
+  a?: readonly string[];
+  byLaunchState?: { designed: readonly string[]; verified: readonly string[] };
+}
+
+export const faq: readonly FaqItem[] = [
   {
     q: 'Is Frozen USD a stablecoin?',
-    a: ['It has the brochure confidence of one. $USDF is a memecoin with no dollar peg or redemption promise.'],
+    a: ['Only if stability is measured in degrees Celsius. For the token’s monetary details, see The cold facts.'],
   },
   {
     q: 'How can it be frozen and still move?',
-    a: [
-      'The freezing is conceptual. The movement is real.',
-      '$USDF is designed to circulate without an issuer freeze authority. No thawing, no permission from the refrigeration department.',
-      "The ice is a metaphor. The transfers aren't.",
-    ],
+    a: ['The reserve stays frozen. $USDF changes wallets. The freezer has no vote in the transfer.'],
   },
   {
     q: 'Does frozen mean locked?',
-    a: ['It describes the joke. Actual token permissions and trading conditions belong in the verified token details above.'],
+    a: ['No. Frozen describes the reserve, not a lock on the holder’s token account.'],
   },
   {
-    q: 'Can this unlock frozen USDT or USDC?',
-    a: ["No. We do not have access to another issuer's controls or provide an unfreezing service."],
+    q: 'Can the issuer freeze my $USDF?',
+    byLaunchState: {
+      designed: [
+        '$USDF is designed without an issuer freeze authority. The live contract and its permissions will be linked in The cold facts.',
+      ],
+      verified: ['The mint has no issuer freeze authority. Check the linked contract and permissions in The cold facts.'],
+    },
+  },
+  {
+    q: 'What if tokens are stolen?',
+    a: ['No issuer freeze switch also means no issuer rescue switch. Protect your keys.'],
   },
   {
     q: 'Why hold $USDF?',
-    a: ['Because you enjoy the premise and want to take part in it. No financial return or dollar safety is attached to the punchline.'],
+    a: ['Because some opinions about money deserve their own ticker.'],
   },
   {
     q: 'What is USDF pegged to?',
-    a: [
-      "One USDF. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough.",
-      'This is our parody peg. USDF is a memecoin with no dollar peg or redemption promise.',
-    ],
+    a: ['One USDF. One institutional-grade ice cube. The ratio has been reviewed by the refrigeration department.'],
   },
   {
     q: 'What backs it?',
-    a: ['Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per USDF. Cold storage. Literally.'],
+    a: ['Our Strategic Ice Reserve in Antarctica. We maintain it in solid form.'],
   },
 ];
 
@@ -167,8 +200,6 @@ export const closing = {
 
 export const footer = {
   tagline: 'Frozen USD — Frozen. Still moving.',
-  disclaimer:
-    'Independent memecoin parody. No dollar peg or redemption. No affiliation with Tether, Circle or Binance. Cryptoassets can lose all their value.',
 };
 
 export const notFound = {
@@ -182,8 +213,13 @@ export const seo = {
   title: 'USDF - Frozen USD',
   /** Title used when the page is shared (Open Graph / X), unchanged. */
   shareTitle: 'Frozen USD — Frozen. Still moving.',
-  description:
-    'The dollar that trades frozen. Transfer it. Trade it. No thawing required. $USDF is a memecoin parody of stablecoins and the freeze button.',
+  /** Page and share description: "designed to" until the live token is verified. */
+  description: {
+    designed:
+      'Frozen USD ($USDF) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token is designed to move without an issuer freeze authority. Frozen. Still moving.',
+    verified:
+      'Frozen USD ($USDF) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token moves without an issuer freeze authority. Frozen. Still moving.',
+  },
 };
 
 export const actions = {

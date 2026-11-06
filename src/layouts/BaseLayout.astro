@@ -16,7 +16,10 @@ interface Props {
   path?: string;
 }
 
-const { title = seo.title, shareTitle = seo.shareTitle, description = seo.description, noindex = false, path = '/' } = Astro.props;
+// "Designed to" until the live token's permissions are verified on-chain.
+const verifiedToken = site.token.status === 'live' && site.token.freezeAuthorityVerified;
+const defaultDescription = verifiedToken ? seo.description.verified : seo.description.designed;
+const { title = seo.title, shareTitle = seo.shareTitle, description = defaultDescription, noindex = false, path = '/' } = Astro.props;
 
 const indexable = site.indexable && !noindex;
 const canonical = indexable && site.canonicalOrigin ? `${site.canonicalOrigin}${path}` : null;

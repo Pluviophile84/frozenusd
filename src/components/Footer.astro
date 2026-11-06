@@ -46,7 +46,6 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-bottom">
-      <p class="disclaimer">{footer.disclaimer}</p>
       <div class="footer-meta">
         <p>© {year} {site.brand.name}</p>
         <a class="back-to-top" href="#top">
@@ -116,14 +115,10 @@ const year = new Date().getFullYear();
     padding-top: 24px;
   }
 
-  .disclaimer {
-    max-width: 62ch;
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-
   .footer-meta {
     display: flex;
+    flex: 1;
+    justify-content: space-between;
     align-items: center;
     gap: 24px;
     font-size: 0.875rem;

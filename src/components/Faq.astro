@@ -1,5 +1,18 @@
 ---
+import { site } from '../config/index.ts';
 import { faq } from '../content/home.ts';
+
+// Launch-dependent answers use the verified wording only for a live token
+// whose permissions have been checked on-chain.
+const verified = site.token.status === 'live' && site.token.freezeAuthorityVerified;
+const answers = faq.map((item) => ({
+  q: item.q,
+  lines: item.byLaunchState ? (verified ? item.byLaunchState.verified : item.byLaunchState.designed) : (item.a ?? []),
+}));
+
+// "The cold facts" inside an answer links to that section.
+const LINK_TEXT = 'The cold facts';
+const parts = (line: string) => line.split(LINK_TEXT);
 ---
 
 <section class="section faq" id="faq" aria-labelledby="faq-title">
@@ -7,15 +20,22 @@ import { faq } from '../content/home.ts';
     <h2 id="faq-title">Frequently asked questions</h2>
     <div class="faq-list">
       {
-        faq.map((item) => (
+        answers.map((item) => (
           <details>
             <summary>
               <span class="q">{item.q}</span>
               <span class="toggle" aria-hidden="true" />
             </summary>
             <div class="answer">
-              {item.a.map((line) => (
-                <p>{line}</p>
+              {item.lines.map((line) => (
+                <p>
+                  {parts(line).map((part, i) => (
+                    <>
+                      {i > 0 && <a href="#token">{LINK_TEXT}</a>}
+                      {part}
+                    </>
+                  ))}
+                </p>
               ))}
             </div>
           </details>

@@ -34,9 +34,11 @@ export interface SiteConfigInput {
     tradeUrl: string | null;
     explorerUrl: string | null;
     /**
-     * True only after someone has independently checked on-chain that the
-     * live Solana mint has no freeze authority. Until then the site shows
-     * "None (planned)".
+     * True only after someone has independently checked the exact deployed
+     * Solana mint on-chain: its freeze authority is empty AND, if it uses
+     * Token-2022, no extension lets the issuer block or claw back transfers
+     * (e.g. default frozen account state, permanent delegate, transfer hook,
+     * pausable, non-transferable). Until then the site shows "Planned: none".
      */
     freezeAuthorityVerified: boolean;
   };

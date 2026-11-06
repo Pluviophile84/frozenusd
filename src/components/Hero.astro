@@ -18,6 +18,8 @@ const live = site.token.status === 'live' ? site.token : null;
         {hero.support.map((line) => <span>{line}</span>)}
       </p>
 
+      <p class="hero-bridge">{hero.bridge}</p>
+
       <p class="hero-signature">{hero.signature}</p>
 
       <div class="hero-actions">
@@ -149,6 +151,16 @@ const live = site.token.status === 'live' ? site.token : null;
     .hero-support span + span::before {
       display: none;
     }
+  }
+
+  /* Below the headline, above interface text: one plain sentence that explains the target. */
+  .hero-bridge {
+    margin-top: 18px;
+    max-width: 31rem;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--muted);
   }
 
   .hero-signature {

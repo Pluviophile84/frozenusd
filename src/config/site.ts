@@ -36,8 +36,9 @@ export const siteConfig: SiteConfigInput = {
     /** HTTPS block-explorer page for this exact contract address. */
     explorerUrl: null,
     /**
-     * Set to true only after independently checking on the explorer that the
-     * live mint's freeze authority is empty. Shows "None (planned)" until then.
+     * Set to true only after independently checking the deployed mint on the
+     * explorer: freeze authority empty, and (for Token-2022) no extension that
+     * lets the issuer block transfers. See docs/launch-checklist.md.
      */
     freezeAuthorityVerified: false,
   },

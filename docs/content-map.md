@@ -6,19 +6,19 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 
 | Order | Section (anchor) | Component | Copy export | Notes |
 |---|---|---|---|---|
-| A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *Buy $USDF* → `#token` pre-launch (no trading link exists yet; the token facts say so); *Buy $USDF* → trading URL when live |
-| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | `$USDF` ticker directly below the H1 (the eyebrow and MEMECOIN PARODY tag were removed at the owner's request; the parody status remains in token facts, FAQ and footer). No backing line (removed at the owner's request; Reserves carries it). Orbit of 12 cubes ported from frzusd, caption *In circulation / Temperature: unchanged*. Contract strip: unavailable text pre-launch; address + Copy + Explorer when live |
-| B2 | Reserves (`#reserves`) | `Reserves.astro` | `reserves` | Dark ink section directly after the hero. Parody backing only; never in the token table |
-| C | The idea (`#idea`) | `Idea.astro` | `idea` | Closing line: *Hot wallet. Cold dollars.* |
-| D | The product (`#how-it-works`) | `Product.astro` | `product` | Three stages, *No thawing required.*, Fictional Proof of Cold |
-| E | Product benefits | `Benefits.astro` | `benefits` | Three parts with line illustrations |
-| F | The satire | `Satire.astro` | `satire` | Dark-ink section. After *Your keys. Our freezer.*: *Some digital dollars have a freeze authority. / We have a Strategic Ice Reserve. / Only one of those can stop a transfer.* Dated note shown when `features.datedNews` is true |
-| G | Token information (`#token`) | `TokenFacts.astro` | `token` | *The dollar backing is fictional. The refrigeration is fictional. The transfers are real.* Freeze authority row: *None (planned)* until verified on-chain. No price, chart, supply, holders, tax or audit claims |
+| A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *The cold facts* → `#token` pre-launch (never a purchase label without a trading link); *Buy $USDF* → verified trading URL when live |
+| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | H1, `$USDF` ticker, *Transfer it. Trade it. No thawing required.*, bridge *Some digital dollars have an issuer freeze switch. Our freezer is reserved for ice.* (smaller, muted), *Frozen. Still moving.*, actions, contract strip. Orbit of 12 cubes ported from frzusd |
+| B2 | Reserves (`#reserves`) | `Reserves.astro` | `reserves` | Dark ink section directly after the hero. Corporate satire, no explanatory labels; never in the token table |
+| C | The idea (`#idea`) | `Idea.astro` | `idea` | *We froze the reserves. Not the transfers.* Leads: issuer power to stop some digital dollars; *Our freezer has a narrower mandate: keep the reserves cold.* Steps: *The dollar went on-chain. / The issuer kept a switch. / We kept the ice.* Closing *Hot wallet. Cold dollars.* |
+| D | The product (`#how-it-works`) | `Product.astro` | `product` | Stages: *The reserve has already committed to the temperature.* / *A new address. Same winter.* / *The reserve stays cold. Ownership changes.* *No thawing required.*, *Proof of Cold.* |
+| E | Product benefits | `Benefits.astro` | `benefits` | *The reserve entered service below zero.* / unchanged / *In your wallet, you manage the keys. We manage the temperature.* |
+| F | The satire | `Satire.astro` | `satire` | Dark-ink section. *Your keys. Our freezer.* then the freeze-authority / Strategic Ice Reserve contrast. Dated note *The switch in plain sight.* (when `features.datedNews`): Binance and Circle statements, each linked to its source, and the theft-response context |
+| G | Token information (`#token`) | `TokenFacts.astro` | `token` | The site's single memecoin notice beside the facts table. Freeze authority row: *Planned: none; not yet verifiable* before launch, *Planned: none; verification pending* when live but unchecked, *None* linked to the explorer once verified. No price, chart, supply, holders, tax or audit claims |
 | H | Community (`#memes`) | `Memes.astro` | `memes` | Three posters with Download (PNG) and SVG links; social actions only when configured |
-| I | FAQ (`#faq`) | `Faq.astro` | `faq` | Native `<details>`/`<summary>`; heading *Frequently asked questions*; *What is USDF pegged to?* precedes *What backs it?* |
-| J | Final CTA and footer | `Closing.astro`, `Footer.astro` | `closing`, `footer` | Closing section on the logo cyan (#79DAFF). Build year is set at build time |
+| I | FAQ (`#faq`) | `Faq.astro` | `faq` | Native `<details>`/`<summary>`. *Can the issuer freeze my $USDF?* uses the *designed* answer until the live token is verified. *The cold facts* in answers links to `#token`. No memecoin disclaimer repeated |
+| J | Final CTA and footer | `Closing.astro`, `Footer.astro` | `closing`, `footer` | Closing section on the logo cyan (#79DAFF). Footer: branding, navigation, copyright, live links; no disclaimer (the notice lives in The cold facts) |
 | K | 404 | `src/pages/404.astro` | `notFound` | Always `noindex` |
-| — | SEO | `BaseLayout.astro` | `seo` | Browser tab title *USDF - Frozen USD*; share (Open Graph / X) title stays *Frozen USD — Frozen. Still moving.*; description unchanged |
+| — | SEO | `BaseLayout.astro` | `seo` | Browser tab title *USDF - Frozen USD*; share title *Frozen USD — Frozen. Still moving.*; description (page, Open Graph, X): *designed to move without an issuer freeze authority* until verified, then *moves without* |
 
 ## Fixed hierarchy
 
@@ -26,7 +26,7 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 |---|---|---|
 | Main slogan | Frozen. Still moving. | Hero signature, closing signature, footer, title, posters, OG image |
 | Product headline | The dollar that trades frozen. | H1, OG image |
-| Backing proposition | Pegged 1:1 to an ice cube. 100% backed by cold, hard reserves. | Reserves section; FAQ |
+| Backing proposition | 100% backed by cold, hard reserves. One USDF. One ice cube. | Reserves section; FAQ |
 | Product explanation | Transfer it. Trade it. No thawing required. | Hero support, description |
 | Institutional descriptor | A new standard in frozen finance. | Idea eyebrow |
 | Satirical signature | Decentralized until further notice. | Satire H2, poster 2 |

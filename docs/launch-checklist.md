@@ -9,7 +9,12 @@ Verify these yourself on-chain and on the trading platform. The website cannot c
 - [ ] The token is created and the **mint/contract address** is final.
 - [ ] The **trading page URL** (e.g. the pump.fun coin page) is for that exact address.
 - [ ] The **explorer URL** (e.g. Solscan) is for that exact address.
-- [ ] On that explorer page, the mint's **freeze authority** is empty (none). Only then set `freezeAuthorityVerified: true`.
+- [ ] For that exact deployed mint, check its **permissions**, not just one field:
+  - the **freeze authority** is empty (none);
+  - the **token program**: classic SPL Token, or Token-2022;
+  - if Token-2022, no extension lets the issuer block or reclaim transfers (for example a default *frozen* account state, a permanent delegate, a transfer hook, a pausable configuration or non-transferable tokens).
+
+  Only then set `freezeAuthorityVerified: true`. This verifies the issuer's on-chain controls only; it does not mean no exchange, intermediary or other party can ever restrict access.
 - [ ] Any **X** or **community** links are the official accounts.
 - [ ] `frozenusd.com` is attached to the Vercel project and resolves (Vercel → Project → Settings → Domains).
 
@@ -22,7 +27,7 @@ Verify these yourself on-chain and on the trading platform. The website cannot c
 | `token.contractAddress` | `null` | the real address, exactly as shown on the explorer |
 | `token.tradeUrl` | `null` | `https://…` trading page |
 | `token.explorerUrl` | `null` | `https://…` explorer page containing the address |
-| `token.freezeAuthorityVerified` | `false` (shows *None (planned)*) | `true` only after the on-chain check above (shows *None*, linked to the explorer) |
+| `token.freezeAuthorityVerified` | `false` (shows *Planned: none; not yet verifiable*) | `true` only after the on-chain check above (shows *None*, linked to the explorer; the FAQ and description switch to verified wording) |
 | `social.xUrl` | `null` | `https://x.com/…` or keep `null` |
 | `social.communityUrl` | `null` | `https://…` or keep `null` |
 | `canonicalOrigin` | `'https://frozenusd.com'` | keep (already the purchased domain) |

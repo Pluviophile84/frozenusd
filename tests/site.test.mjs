@@ -77,11 +77,11 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal((await page.locator('h1').innerText()).trim(), 'The dollar that trades frozen.');
     assert.ok(html.includes('Contract address not available yet.'));
     assert.equal(await page.locator('[data-copy-button]').count(), 0);
-    // Before launch, "Buy $USDF" exists only as the header action pointing at the token facts.
-    assert.equal(await page.getByText('Buy $USDF').count(), 1);
+    // Before launch there is no purchase label anywhere; the header action is "The cold facts".
+    assert.equal(await page.getByText('Buy $USDF').count(), 0);
     assert.equal(await page.getByText('Follow on X').count(), 0);
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), '#token');
-    assert.equal(await page.locator('.site-header .header-cta').innerText(), 'Buy $USDF');
+    assert.equal(await page.locator('.site-header .header-cta').innerText(), 'The cold facts');
     // Lazy images: scroll through the page, then confirm every image decoded.
     for (let y = 0; y < (await page.evaluate(() => document.body.scrollHeight)); y += 700) {
       await page.evaluate((top) => window.scrollTo(0, top), y);
@@ -107,7 +107,10 @@ describe('pre-launch build (committed configuration)', () => {
       }
     }
     const external = hrefs.filter((h) => h.startsWith('https://'));
-    assert.deepEqual(external, ['https://www.binance.com/en/support/announcement/detail/d3306d9dca5243548c813b605e1d1751']);
+    assert.deepEqual(external, [
+      'https://www.binance.com/en/support/announcement/detail/d3306d9dca5243548c813b605e1d1751',
+      'https://www.circle.com/blog/the-binance-incident-collective-defense-must-move-at-machine-speed',
+    ]);
     await context.close();
   });
 
@@ -128,6 +131,11 @@ describe('pre-launch build (committed configuration)', () => {
     assert.equal((await page.locator('title').count()), 1);
     // Sharing metadata keeps the established title.
     assert.equal(await page.locator('meta[property="og:title"]').getAttribute('content'), 'Frozen USD — Frozen. Still moving.');
+    const description =
+      'Frozen USD ($USDF) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token is designed to move without an issuer freeze authority. Frozen. Still moving.';
+    for (const sel of ['meta[name="description"]', 'meta[property="og:description"]', 'meta[name="twitter:description"]']) {
+      assert.equal(await page.locator(sel).getAttribute('content'), description, sel);
+    }
     assert.equal(await exists(join(dist, 'sitemap.xml')), false);
     assert.ok(await exists(join(dist, 'robots.txt')));
     assert.doesNotMatch(await readFile(join(dist, 'robots.txt'), 'utf8'), /Sitemap/);
@@ -238,18 +246,59 @@ describe('pre-launch build (committed configuration)', () => {
     assert.doesNotMatch(text, /Greenland|Alaska|Siberia/);
     // The verified token table stays factual.
     assert.doesNotMatch(await page.locator('#token .facts').innerText(), /ice|reserve|Antarctica|Siberia/i);
-    // The cold facts separate the fiction from the real transfers.
-    const coldFacts = await page.locator('#token .token-body').innerText();
-    assert.match(coldFacts, /The dollar backing is fictional\. The refrigeration is fictional\. The transfers are real\./);
-    assert.match(coldFacts, /\$USDF is a memecoin parody, not a dollar-backed stablecoin\. No dollar peg\. No redemption promise\./);
-    assert.doesNotMatch(coldFacts, /technology is the joke/);
+    // The cold facts carry the site's single memecoin notice.
+    const notice =
+      'Independent memecoin parody. No dollar peg, dollar backing or redemption. Not affiliated with Tether, Circle or Binance. Cryptoassets can lose all their value.';
+    assert.equal((await page.locator('#token .token-notice').innerText()).trim(), notice);
+    assert.equal((text.match(/memecoin parody/gi) ?? []).length, 1, 'the memecoin notice must appear once on the page');
+    assert.equal((text.match(/No dollar peg/gi) ?? []).length, 1);
+    assert.equal(await page.locator('.site-footer .disclaimer').count(), 0);
+    assert.doesNotMatch(await page.locator('.site-footer').innerText(), /memecoin|redemption|affiliated/i);
     const freeze = page.locator('#token .fact--freeze');
     assert.equal((await freeze.locator('dt').textContent())?.trim(), 'Freeze authority');
-    assert.equal((await freeze.locator('dd').innerText()).trim(), 'None (planned)');
+    assert.equal((await freeze.locator('dd').innerText()).trim(), 'Planned: none; not yet verifiable');
     assert.equal(await freeze.locator('a').count(), 0);
-    // The satire ends on the freeze-authority punchline.
-    const punch = await page.locator('.satire-punchline').innerText();
-    assert.match(punch, /Some digital dollars have a freeze authority\.\s+We have a Strategic Ice Reserve\.\s+Only one of those can stop a transfer\./);
+    assert.doesNotMatch(await page.locator('#token').innerText(), /verified|transfers are real/i);
+    // The satire contrasts an issuer switch with the reserve; the explanatory coda is gone.
+    const contrast = await page.locator('.satire-contrast').innerText();
+    assert.match(contrast, /Some digital dollars have a freeze authority\.\s+We have a Strategic Ice Reserve\.\s+Only one of those can stop a transfer\./);
+    assert.doesNotMatch(text, /gives it a product launch/);
+    // The dated note: two linked facts and a sober closing.
+    const note = page.locator('.satire .note');
+    assert.equal((await note.locator('h3').innerText()).trim(), 'The switch in plain sight.');
+    const noteText = await note.innerText();
+    assert.match(noteText, /Following the October 2026 Binance hack, Binance reported approximately \$3 billion in affected assets frozen on-chain through coordination with law enforcement, asset issuers and industry partners\./);
+    assert.match(noteText, /Circle later said it froze approximately \$1\.1 billion in USDC connected to the incident\./);
+    assert.match(noteText, /In this case, freezing was part of a theft response\. It also showed that an issuer can stop movement of the asset it issues\./);
+    const sources = await note.locator('a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+    assert.deepEqual(sources, [
+      'https://www.binance.com/en/support/announcement/detail/d3306d9dca5243548c813b605e1d1751',
+      'https://www.circle.com/blog/the-binance-incident-collective-defense-must-move-at-machine-speed',
+    ]);
+    // Hero bridge sits between the support rhythm and the signature, below the headline.
+    const bridge = page.locator('.hero-bridge');
+    assert.equal((await bridge.innerText()).trim(), 'Some digital dollars have an issuer freeze switch. Our freezer is reserved for ice.');
+    assert.equal(await page.locator('.hero-support + .hero-bridge + .hero-signature').count(), 1);
+    const size = (sel) => page.locator(sel).evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    assert.ok((await size('.hero-bridge')) < (await size('h1')) / 2);
+    // The idea, How it works and Benefits copy.
+    assert.equal((await page.locator('#idea h2').innerText()).trim(), 'We froze the reserves. Not the transfers.');
+    assert.deepEqual(
+      (await page.locator('#idea .progression .step-text').allInnerTexts()).map((t) => t.trim()),
+      ['The dollar went on-chain.', 'The issuer kept a switch.', 'We kept the ice.'],
+    );
+    assert.match(await page.locator('#how-it-works').innerText(), /The reserve has already committed to the temperature\.[\s\S]*The reserve stays cold\. Ownership changes\./);
+    assert.match(await page.locator('#how-it-works .proof').innerText(), /^[\s\S]*PROOF OF COLD\.\s*$/i);
+    assert.doesNotMatch(await page.locator('#how-it-works .proof').innerText(), /fictional/i);
+    assert.match(await page.locator('.benefits').innerText(), /The reserve entered service below zero\.[\s\S]*In your wallet, you manage the keys\. We manage the temperature\./);
+    // No superseded phrasing anywhere on the page.
+    for (const phrase of [
+      'We gave frozen dollars somewhere to go', 'end of the transaction', 'Stablecoins made the dollar stable', 'Why wait for a headline',
+      'The industry found the freezer', 'They demonstrated the cold part', 'fictional research department', 'The ice is a metaphor',
+      'the premise stays intact', 'parody peg', 'punchline', 'Can this unlock',
+    ]) {
+      assert.ok(!text.toLowerCase().includes(phrase.toLowerCase()), phrase);
+    }
     // Navigation lists Reserves right after The idea, in the header and footer.
     for (const nav of ['#primary-menu', '.footer-nav']) {
       const labels = await page.$$eval(`${nav} a`, (as) => as.map((a) => a.textContent?.trim()));
@@ -275,30 +324,42 @@ describe('pre-launch build (committed configuration)', () => {
     await context.close();
   });
 
-  test('FAQ carries the parody peg and reserve answers', async () => {
+  test('FAQ answers in character and links to The cold facts', async () => {
     const { context, page } = await open(origin);
     const questions = await page.$$eval('#faq summary .q', (els) => els.map((el) => el.textContent));
-    const pegged = questions.indexOf('What is USDF pegged to?');
-    assert.ok(pegged >= 0);
-    assert.equal(questions[pegged + 1], 'What backs it?');
+    assert.deepEqual(questions, [
+      'Is Frozen USD a stablecoin?',
+      'How can it be frozen and still move?',
+      'Does frozen mean locked?',
+      'Can the issuer freeze my $USDF?',
+      'What if tokens are stolen?',
+      'Why hold $USDF?',
+      'What is USDF pegged to?',
+      'What backs it?',
+    ]);
     const answer = (q) =>
       page
         .locator('#faq details', { hasText: q })
         .locator('.answer p')
         .evaluateAll((ps) => ps.map((p) => p.textContent?.trim()).join(' '));
-    assert.equal(
-      await answer('What is USDF pegged to?'),
-      'One USDF. One ice cube. We standardized the cube because ‘some ice’ did not look institutional enough. This is our parody peg. USDF is a memecoin with no dollar peg or redemption promise.',
-    );
-    assert.equal(await answer('What backs it?'), 'Our Strategic Ice Reserve in Antarctica. One institutional-grade ice cube per USDF. Cold storage. Literally.');
-    assert.equal(
-      await answer('Is Frozen USD a stablecoin?'),
-      'It has the brochure confidence of one. $USDF is a memecoin with no dollar peg or redemption promise.',
-    );
-    assert.equal(
-      await answer('How can it be frozen and still move?'),
-      "The freezing is conceptual. The movement is real. $USDF is designed to circulate without an issuer freeze authority. No thawing, no permission from the refrigeration department. The ice is a metaphor. The transfers aren't.",
-    );
+    const expected = {
+      'Is Frozen USD a stablecoin?': 'Only if stability is measured in degrees Celsius. For the token’s monetary details, see The cold facts.',
+      'How can it be frozen and still move?': 'The reserve stays frozen. $USDF changes wallets. The freezer has no vote in the transfer.',
+      'Does frozen mean locked?': 'No. Frozen describes the reserve, not a lock on the holder’s token account.',
+      'Can the issuer freeze my $USDF?':
+        '$USDF is designed without an issuer freeze authority. The live contract and its permissions will be linked in The cold facts.',
+      'What if tokens are stolen?': 'No issuer freeze switch also means no issuer rescue switch. Protect your keys.',
+      'Why hold $USDF?': 'Because some opinions about money deserve their own ticker.',
+      'What is USDF pegged to?': 'One USDF. One institutional-grade ice cube. The ratio has been reviewed by the refrigeration department.',
+      'What backs it?': 'Our Strategic Ice Reserve in Antarctica. We maintain it in solid form.',
+    };
+    for (const [q, a] of Object.entries(expected)) assert.equal(await answer(q), a, q);
+    // "The cold facts" in answers links to the section.
+    const links = await page.$$eval('#faq .answer a', (as) => as.map((a) => [a.textContent, a.getAttribute('href')]));
+    assert.deepEqual(links, [
+      ['The cold facts', '#token'],
+      ['The cold facts', '#token'],
+    ]);
     await context.close();
   });
 
@@ -489,7 +550,7 @@ describe('pre-launch build (committed configuration)', () => {
     assert.ok(await page.getByText('Decentralized until further notice.').isVisible());
     const details = page.locator('#faq details').nth(3);
     await details.locator('summary').click();
-    assert.ok(await details.getByText("We do not have access to another issuer's controls").isVisible());
+    assert.ok(await details.getByText('$USDF is designed without an issuer freeze authority.').isVisible());
     await context.close();
   });
 
@@ -533,6 +594,10 @@ describe('live build (test fixture)', () => {
     const freeze = page.locator('#token .fact--freeze dd a');
     assert.equal((await freeze.innerText()).replace(/\s*\(verify.*$/, '').trim(), 'None');
     assert.equal(await freeze.getAttribute('href'), fixture.token.explorerUrl);
+    // A verified live token switches the launch-dependent wording to fact.
+    const faqText = await page.locator('#faq details', { hasText: 'Can the issuer freeze my $USDF?' }).locator('.answer').textContent();
+    assert.match(faqText ?? '', /The mint has no issuer freeze authority\. Check the linked contract and permissions in The cold facts\./);
+    assert.match((await page.locator('meta[name="description"]').getAttribute('content')) ?? '', /The token moves without an issuer freeze authority\./);
     await context.close();
   });
 

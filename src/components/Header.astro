@@ -4,8 +4,9 @@ import { nav, actions } from '../content/home.ts';
 import Logo from './Logo.astro';
 
 const live = site.token.status === 'live' ? site.token : null;
-// Before launch no trading link exists, so "Buy $USDF" leads to the token
-// facts, which state that official links will appear there.
+// Before launch no trading link exists, so the action is "The cold facts"
+// (never a purchase label on an anchor to unavailable token details).
+// Live mode sends "Buy $USDF" to the verified trading URL.
 ---
 
 <header class="site-header" data-header>
@@ -43,7 +44,7 @@ const live = site.token.status === 'live' ? site.token : null;
         </a>
       ) : (
         <a class="btn btn--small header-cta" href="#token">
-          {actions.buy}
+          {actions.coldFacts}
         </a>
       )
     }
