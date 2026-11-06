@@ -40,7 +40,7 @@ test('shipped logo files and favicons are byte-identical to the official package
   const manifest = JSON.parse((await read('public/site.webmanifest')).toString());
   const supplied = JSON.parse((await read(`${source}platform/favicon/site.webmanifest`)).toString());
   assert.deepEqual({ ...manifest, short_name: supplied.short_name }, supplied);
-  assert.equal(manifest.short_name, 'USDF');
+  assert.equal(manifest.short_name, 'USDFU');
 });
 
 test('the inline logo geometry is the official B-Rim vector', async () => {
@@ -104,6 +104,6 @@ test('the old procedural cube renderer and old ticker are gone from source and p
     .filter((f) => f && /\.(astro|ts|mjs|svg|css|json|txt|webmanifest)$/.test(f));
   for (const file of files) {
     const text = (await read(file)).toString();
-    assert.doesNotMatch(text, /FRZUSD|\bFUSD\b|iceBlockSvg|ice-block\.ts|frozen-usd-(master|reversed|symbol)|M479\.179636/, file);
+    assert.doesNotMatch(text, /FRZUSD|\bFUSD\b|\bUSDF\b|iceBlockSvg|ice-block\.ts|frozen-usd-(master|reversed|symbol)|M479\.179636/, file);
   }
 });

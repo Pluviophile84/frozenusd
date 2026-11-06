@@ -13,7 +13,7 @@ import type { SiteConfigInput } from './schema.ts';
 export const siteConfig: SiteConfigInput = {
   brand: {
     name: 'Frozen USD',
-    ticker: '$USDF',
+    ticker: '$USDFU',
     slogan: 'Frozen. Still moving.',
   },
 

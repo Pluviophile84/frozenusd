@@ -14,7 +14,7 @@ export const nav = [
 ] as const;
 
 export const hero = {
-  ticker: '$USDF',
+  ticker: '$USDFU',
   title: 'The dollar that trades frozen.',
   support: ['Transfer it.', 'Trade it.', 'No thawing required.'],
   bridge: 'Some digital dollars have an issuer freeze switch. Our freezer is reserved for ice.',
@@ -28,9 +28,9 @@ export const hero = {
 export const reserves = {
   eyebrow: 'THE COLD STANDARD',
   title: '100% backed by cold, hard reserves.',
-  body: 'Every USDF is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
+  body: 'Every USDFU is pegged 1:1 to an institutional-grade ice cube, held in our Strategic Ice Reserve in Antarctica. Our reserves are maintained in solid form. Unlike conventional financial institutions, we consider liquidity a temperature problem.',
   facts: [
-    { value: '1:1', label: 'Ice-cube peg', line: 'One USDF. One ice cube.' },
+    { value: '1:1', label: 'Ice-cube peg', line: 'One USDFU. One ice cube.' },
     { value: '100%', label: 'Cold, hard backing', line: 'Fully reserved. Deeply refrigerated.' },
     { value: 'Antarctica', label: 'Reserve location', line: 'Cold storage. Literally.' },
   ],
@@ -132,7 +132,7 @@ export const token = {
 
 export const memes = {
   title: ['Some people hold dollars.', 'Some people hold opinions about dollars.'],
-  body: ['$USDF is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
+  body: ['$USDFU is for the second group.', 'Make the image. Pass the line around. Keep it cold.'],
   posters: [
     { slug: 'frozen-still-moving', line: 'FROZEN. STILL MOVING.' },
     { slug: 'your-keys-our-freezer', line: 'YOUR KEYS. OUR FREEZER.' },
@@ -159,17 +159,17 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: 'How can it be frozen and still move?',
-    a: ['The reserve stays frozen. $USDF changes wallets. The freezer has no vote in the transfer.'],
+    a: ['The reserve stays frozen. $USDFU changes wallets. The freezer has no vote in the transfer.'],
   },
   {
     q: 'Does frozen mean locked?',
     a: ['No. Frozen describes the reserve, not a lock on the holder’s token account.'],
   },
   {
-    q: 'Can the issuer freeze my $USDF?',
+    q: 'Can the issuer freeze my $USDFU?',
     byLaunchState: {
       designed: [
-        '$USDF is designed without an issuer freeze authority. The live contract and its permissions will be linked in The cold facts.',
+        '$USDFU is designed without an issuer freeze authority. The live contract and its permissions will be linked in The cold facts.',
       ],
       verified: ['The mint has no issuer freeze authority. Check the linked contract and permissions in The cold facts.'],
     },
@@ -179,12 +179,12 @@ export const faq: readonly FaqItem[] = [
     a: ['No issuer freeze switch also means no issuer rescue switch. Protect your keys.'],
   },
   {
-    q: 'Why hold $USDF?',
+    q: 'Why hold $USDFU?',
     a: ['Because some opinions about money deserve their own ticker.'],
   },
   {
-    q: 'What is USDF pegged to?',
-    a: ['One USDF. One institutional-grade ice cube. The ratio has been reviewed by the refrigeration department.'],
+    q: 'What is USDFU pegged to?',
+    a: ['One USDFU. One institutional-grade ice cube. The ratio has been reviewed by the refrigeration department.'],
   },
   {
     q: 'What backs it?',
@@ -210,22 +210,22 @@ export const notFound = {
 
 export const seo = {
   /** Browser tab title. */
-  title: 'USDF - Frozen USD',
+  title: 'USDFU - Frozen USD',
   /** Title used when the page is shared (Open Graph / X), unchanged. */
   shareTitle: 'Frozen USD — Frozen. Still moving.',
   /** Page and share description: "designed to" until the live token is verified. */
   description: {
     designed:
-      'Frozen USD ($USDF) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token is designed to move without an issuer freeze authority. Frozen. Still moving.',
+      'Frozen USD ($USDFU) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token is designed to move without an issuer freeze authority. Frozen. Still moving.',
     verified:
-      'Frozen USD ($USDF) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token moves without an issuer freeze authority. Frozen. Still moving.',
+      'Frozen USD ($USDFU) is a memecoin parody of issuer-controlled digital dollars. The reserves are ice. The token moves without an issuer freeze authority. Frozen. Still moving.',
   },
 };
 
 export const actions = {
   explore: 'Explore frozen finance',
   tokenDetails: 'Token details',
-  buy: 'Buy $USDF',
+  buy: 'Buy $USDFU',
   coldFacts: 'The cold facts',
   followX: 'Follow on X',
   community: 'Join the community',
