@@ -9,22 +9,31 @@ import {
   SiteConfigError,
 } from '../src/config/schema.ts';
 import { siteConfig } from '../src/config/site.ts';
-import { liveFixture, FIXTURE_SOLANA_ADDRESS, FIXTURE_EVM_ADDRESS } from './helpers/fixtures.mjs';
+import { liveFixture, prelaunchFixture, FIXTURE_SOLANA_ADDRESS, FIXTURE_EVM_ADDRESS } from './helpers/fixtures.mjs';
 
 const clone = (value) => structuredClone(value);
 
-test('the committed configuration is a truthful pre-launch configuration', () => {
-  assert.equal(siteConfig.token.status, 'prelaunch');
-  assert.equal(siteConfig.token.contractAddress, null);
-  assert.equal(siteConfig.token.tradeUrl, null);
-  assert.equal(siteConfig.token.explorerUrl, null);
-  assert.equal(siteConfig.canonicalOrigin, 'https://frozenusd.com');
+test('the committed configuration is the launch configuration supplied by the owner', () => {
   assert.deepEqual(siteConfig.brand, { name: 'Frozen USD', ticker: '$USDFU', slogan: 'Frozen. Still moving.' });
+  assert.equal(siteConfig.canonicalOrigin, 'https://frozenusd.com');
   const site = resolveSiteConfig(siteConfig, { vercelEnv: 'production' });
+  assert.deepEqual(site.token, {
+    status: 'live',
+    networkLabel: 'Solana',
+    contractAddress: '6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
+    tradeUrl: 'https://pump.fun/coin/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
+    explorerUrl: 'https://solscan.io/account/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
+    // Not yet confirmed on-chain: the site must keep "verification pending".
+    freezeAuthorityVerified: false,
+  });
+  assert.deepEqual(site.social, { xUrl: 'https://x.com/FrozenUSDFU', communityUrl: null });
+  assert.equal(site.indexable, true);
+  assert.equal(resolveSiteConfig(siteConfig, { vercelEnv: 'preview' }).indexable, false);
+});
+
+test('the pre-launch state stays truthful and noindex', () => {
+  const site = resolveSiteConfig(prelaunchFixture(), { vercelEnv: 'production' });
   assert.deepEqual(site.token, { status: 'prelaunch', networkLabel: null, freezeAuthorityVerified: false });
-  assert.equal(siteConfig.token.freezeAuthorityVerified, false);
-  // The domain is configured, but nothing is indexable until launch.
-  assert.equal(site.canonicalOrigin, 'https://frozenusd.com');
   assert.equal(site.indexable, false);
   assert.deepEqual(site.social, { xUrl: null, communityUrl: null });
 });
@@ -77,7 +86,7 @@ for (const [name, mutate] of Object.entries(invalidLive)) {
 }
 
 test('freeze authority can only be marked verified for a live Solana mint', () => {
-  const config = clone(siteConfig);
+  const config = prelaunchFixture();
   config.token.freezeAuthorityVerified = true;
   assert.throws(() => resolveSiteConfig(config), SiteConfigError);
   const live = liveFixture();
@@ -88,20 +97,20 @@ test('freeze authority can only be marked verified for a live Solana mint', () =
 
 test('pre-launch rejects half-configured launch values', () => {
   for (const field of ['contractAddress', 'tradeUrl', 'explorerUrl']) {
-    const config = clone(siteConfig);
+    const config = prelaunchFixture();
     config.token[field] = field === 'contractAddress' ? FIXTURE_SOLANA_ADDRESS : 'https://pump.fun/';
     assert.throws(() => resolveSiteConfig(config), SiteConfigError, field);
   }
 });
 
 test('pre-launch may announce a network without enabling anything live', () => {
-  const config = clone(siteConfig);
+  const config = prelaunchFixture();
   config.token.network = 'solana';
   assert.deepEqual(resolveSiteConfig(config).token, { status: 'prelaunch', networkLabel: 'Solana', freezeAuthorityVerified: false });
 });
 
 test('optional social links render only when they are real HTTPS URLs', () => {
-  const config = clone(siteConfig);
+  const config = prelaunchFixture();
   config.social.xUrl = 'https://x.com/frozenusd_fixture';
   const site = resolveSiteConfig(config);
   assert.equal(site.social.xUrl, 'https://x.com/frozenusd_fixture');

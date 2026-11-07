@@ -20,6 +20,17 @@ function base58(bytes) {
 export const FIXTURE_SOLANA_ADDRESS = base58(Uint8Array.from({ length: 32 }, (_, i) => (i * 37 + 11) % 256));
 export const FIXTURE_EVM_ADDRESS = '0x' + 'ab12'.repeat(10);
 
+/** The pre-launch state: no token, no links. */
+export function prelaunchFixture() {
+  return {
+    brand: { name: 'Frozen USD', ticker: '$USDFU', slogan: 'Frozen. Still moving.' },
+    canonicalOrigin: 'https://frozenusd.com',
+    token: { status: 'prelaunch', network: null, contractAddress: null, tradeUrl: null, explorerUrl: null, freezeAuthorityVerified: false },
+    social: { xUrl: null, communityUrl: null },
+    features: { datedNews: true },
+  };
+}
+
 export function liveFixture() {
   return {
     brand: { name: 'Frozen USD', ticker: '$USDFU', slogan: 'Frozen. Still moving.' },

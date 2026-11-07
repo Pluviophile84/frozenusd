@@ -26,26 +26,27 @@ export const siteConfig: SiteConfigInput = {
 
   token: {
     /** 'prelaunch' until every live value below is real and verified. */
-    status: 'prelaunch',
+    status: 'live',
     /** One of the networks in schema.ts (`NETWORKS`), e.g. 'solana' for pump.fun. */
-    network: null,
+    network: 'solana',
     /** The token's real contract / mint address on that network. */
-    contractAddress: null,
+    contractAddress: '6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
     /** HTTPS page where the token trades. */
-    tradeUrl: null,
+    tradeUrl: 'https://pump.fun/coin/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
     /** HTTPS block-explorer page for this exact contract address. */
-    explorerUrl: null,
+    explorerUrl: 'https://solscan.io/account/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
     /**
      * Set to true only after independently checking the deployed mint on the
      * explorer: freeze authority empty, and (for Token-2022) no extension that
      * lets the issuer block transfers. See docs/launch-checklist.md.
+     * Not yet confirmed: the site shows "Planned: none; verification pending".
      */
     freezeAuthorityVerified: false,
   },
 
   social: {
     /** Official X profile, HTTPS. Hidden while null. */
-    xUrl: null,
+    xUrl: 'https://x.com/FrozenUSDFU',
     /** Official community link (e.g. Telegram), HTTPS. Hidden while null. */
     communityUrl: null,
   },

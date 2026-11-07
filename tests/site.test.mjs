@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { startStaticServer } from './helpers/static-server.mjs';
-import { liveFixture, FIXTURE_SOLANA_ADDRESS } from './helpers/fixtures.mjs';
+import { liveFixture, prelaunchFixture, FIXTURE_SOLANA_ADDRESS } from './helpers/fixtures.mjs';
 
 const run = promisify(execFile);
 const buildScript = fileURLToPath(new URL('./helpers/build-site.mjs', import.meta.url));
@@ -59,12 +59,12 @@ async function open(origin, { width = 1440, height = 1000, ...options } = {}) {
   return { context, page, errors, failed };
 }
 
-describe('pre-launch build (committed configuration)', () => {
+describe('pre-launch build (pre-launch fixture)', () => {
   let dist;
   let origin;
 
   before(async () => {
-    dist = await buildSite('prelaunch', null, { VERCEL_ENV: 'production' });
+    dist = await buildSite('prelaunch', prelaunchFixture(), { VERCEL_ENV: 'production' });
     const server = await startStaticServer(dist);
     servers.push(server);
     origin = server.origin;
@@ -639,6 +639,50 @@ describe('live build (test fixture)', () => {
     const sitemap = await readFile(join(dist, 'sitemap.xml'), 'utf8');
     assert.ok(sitemap.includes(`<loc>${fixture.canonicalOrigin}/</loc>`));
     assert.doesNotMatch(sitemap, /localhost|127\.0\.0\.1|example/);
+    await context.close();
+  });
+});
+
+describe('committed launch configuration', () => {
+  const ADDRESS = '6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump';
+  const TRADE = 'https://pump.fun/coin/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump';
+  const EXPLORER = 'https://solscan.io/account/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump';
+  let origin;
+
+  before(async () => {
+    const dist = await buildSite('committed', null, { VERCEL_ENV: 'production' });
+    const server = await startStaticServer(dist);
+    servers.push(server);
+    origin = server.origin;
+  });
+
+  test('every buy action goes to the pump.fun page; address, explorer and X are live', async () => {
+    const { context, page, errors, failed } = await open(origin);
+    const buys = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Buy $USDFU')).map((a) => a.getAttribute('href')));
+    assert.ok(buys.length >= 3, `expected header, hero and closing buy buttons, got ${buys.length}`);
+    assert.ok(buys.every((href) => href === TRADE), JSON.stringify(buys));
+    assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), TRADE);
+    assert.equal(await page.locator('#hero-address-value').innerText(), ADDRESS);
+    assert.equal(await page.locator('#token-address-value').innerText(), ADDRESS);
+    const explorers = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Explorer')).map((a) => a.getAttribute('href')));
+    assert.ok(explorers.length >= 2 && explorers.every((h) => h === EXPLORER));
+    assert.equal(await page.getByRole('link', { name: /Follow on X/ }).first().getAttribute('href'), 'https://x.com/FrozenUSDFU');
+    assert.equal((await page.locator('.contract-head .status').innerText()).trim(), 'Live');
+    assert.ok((await page.locator('#token .fact dd').nth(2).innerText()).includes('Solana'));
+    assert.deepEqual(errors, []);
+    assert.deepEqual(failed.filter((u) => u.startsWith(origin)), []);
+    await context.close();
+  });
+
+  test('freeze authority is not claimed as verified', async () => {
+    const { context, page } = await open(origin);
+    const freeze = page.locator('#token .fact--freeze dd');
+    assert.equal((await freeze.innerText()).trim(), 'Planned: none; verification pending');
+    assert.equal(await freeze.locator('a').count(), 0);
+    const faq = await page.locator('#faq details', { hasText: 'Can the issuer freeze my $USDFU?' }).locator('.answer').textContent();
+    assert.match(faq ?? '', /designed without an issuer freeze authority/);
+    assert.match((await page.locator('meta[name="description"]').getAttribute('content')) ?? '', /designed to move/);
+    assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), 'https://frozenusd.com/');
     await context.close();
   });
 });

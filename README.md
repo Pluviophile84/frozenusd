@@ -60,7 +60,7 @@ Previews are always `noindex`. `canonicalOrigin` is set to the purchased domain,
 
 ## Launch: pre-launch → live
 
-All launch values live in **`src/config/site.ts`**. The committed state is pre-launch: no contract address, no trading link, no social links, `noindex`.
+All launch values live in **`src/config/site.ts`**. The committed state is **live**: Solana mint `6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump`, trading on its pump.fun page, Solscan explorer link and the official X account. `freezeAuthorityVerified` is still `false` (shows *Planned: none; verification pending*) until the mint's permissions are confirmed on-chain. The steps below describe how these values are set.
 
 At launch, edit these fields with real, verified values:
 
@@ -120,8 +120,8 @@ Measured with Lighthouse 13.6 against the local production build (simulated thro
 
 ## Not yet connected
 
-- **Token launch values:** the contract, network, trading and explorer links do not exist yet. They stay `null` until launch.
-- **Official social accounts:** `xUrl` and `communityUrl` are `null`; the related actions stay hidden until they are set.
+- **Freeze-authority verification:** the mint's freeze authority, token program and any Token-2022 extensions have not yet been confirmed on-chain (this environment cannot reach Solana or Solscan). Once confirmed, set `freezeAuthorityVerified: true`.
+- **Community link:** `communityUrl` is `null`; that action stays hidden until it is set. X is configured.
 - **Production domain:** `https://frozenusd.com` is configured as `canonicalOrigin`. Pointing the domain at the Vercel project (DNS and Vercel's Domains settings) is outside this repository. Canonical URL and sitemap appear only in a live production build; previews use their own deployment URL for Open Graph tags.
 - **Hero orbit source:** the orbit is a port of `HeroArt.astro` and its motion script from `Pluviophile84/frzusd` (commit `f741598`), with this site's approved ice cube as the only image. One styling change: the scene's background gradient ends transparent instead of white so it blends into this site's pale hero.
 - **Vercel project:** this repository was prepared for Vercel's Git integration; connect it in the Vercel dashboard with the settings above.
