@@ -4,7 +4,6 @@ import { closing, actions } from '../content/home.ts';
 
 import Decor from './Decor.astro';
 
-const live = site.token.status === 'live' ? site.token : null;
 ---
 
 <section class="section closing decorated" aria-labelledby="closing-title">
@@ -14,18 +13,9 @@ const live = site.token.status === 'live' ? site.token : null;
     <h2 id="closing-title">{closing.title}</h2>
     <p class="closing-signature">{closing.signature}</p>
     <div class="closing-actions">
-      {
-        live ? (
-          <a class="btn" href={live.tradeUrl} target="_blank" rel="noopener">
-            {actions.buy}
-            <span class="visually-hidden"> (opens in a new tab)</span>
-          </a>
-        ) : (
-          <a class="btn" href="#token">
-            {actions.coldFacts}
-          </a>
-        )
-      }
+      <a class="btn" href="#token">
+        {actions.coldFacts}
+      </a>
       {
         site.social.xUrl && (
           <a class="btn btn--secondary" href={site.social.xUrl} target="_blank" rel="noopener">

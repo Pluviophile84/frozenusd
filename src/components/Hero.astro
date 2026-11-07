@@ -23,31 +23,16 @@ const live = site.token.status === 'live' ? site.token : null;
       <p class="hero-signature">{hero.signature}</p>
 
       <div class="hero-actions">
-        {
-          live ? (
-            <>
-              <a class="btn" href={live.tradeUrl} target="_blank" rel="noopener">
-                {actions.buy}
-                <span class="visually-hidden"> (opens in a new tab)</span>
-              </a>
-              <a class="btn btn--secondary" href="#idea">
-                {actions.explore}
-              </a>
-            </>
-          ) : (
-            <>
-              <a class="btn" href="#idea">
-                {actions.explore}
-                <span class="arrow" aria-hidden="true">
-                  →
-                </span>
-              </a>
-              <a class="btn btn--secondary" href="#token">
-                {actions.tokenDetails}
-              </a>
-            </>
-          )
-        }
+        {/* Buying lives in the sticky header and in The cold facts; the hero leads there. */}
+        <a class="btn" href="#idea">
+          {actions.explore}
+          <span class="arrow" aria-hidden="true">
+            →
+          </span>
+        </a>
+        <a class="btn btn--secondary" href="#token">
+          {actions.tokenDetails}
+        </a>
       </div>
 
       <div class="contract-strip">

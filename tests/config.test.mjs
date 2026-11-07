@@ -23,8 +23,8 @@ test('the committed configuration is the launch configuration supplied by the ow
     contractAddress: '6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
     tradeUrl: 'https://pump.fun/coin/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
     explorerUrl: 'https://solscan.io/account/6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump',
-    // Not yet confirmed on-chain: the site must keep "verification pending".
-    freezeAuthorityVerified: false,
+    // Confirmed by the owner (pump.fun launches tokens without a freeze authority).
+    freezeAuthorityVerified: true,
   });
   assert.deepEqual(site.social, { xUrl: 'https://x.com/FrozenUSDFU', communityUrl: null });
   assert.equal(site.indexable, true);

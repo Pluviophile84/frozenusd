@@ -582,7 +582,8 @@ describe('live build (test fixture)', () => {
     const cta = page.locator('.site-header .header-cta');
     assert.match(await cta.innerText(), /Buy \$USDFU/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
-    assert.equal(await page.locator('.hero-actions a').first().getAttribute('href'), fixture.token.tradeUrl);
+    // The hero leads to The cold facts; only the header and The cold facts carry Buy.
+    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => a.getAttribute('href'))), ['#idea', '#token']);
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     assert.equal(await page.locator('#hero-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     const explorers = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Explorer')).map((a) => a.getAttribute('href')));
@@ -659,7 +660,15 @@ describe('committed launch configuration', () => {
   test('every buy action goes to the pump.fun page; address, explorer and X are live', async () => {
     const { context, page, errors, failed } = await open(origin);
     const buys = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Buy $USDFU')).map((a) => a.getAttribute('href')));
-    assert.ok(buys.length >= 3, `expected header, hero and closing buy buttons, got ${buys.length}`);
+    // Exactly two Buy buttons: the sticky header and The cold facts.
+    assert.equal(buys.length, 2, JSON.stringify(buys));
+    assert.equal(await page.locator('.site-header a', { hasText: 'Buy $USDFU' }).count(), 1);
+    assert.equal(await page.locator('#token a', { hasText: 'Buy $USDFU' }).count(), 1);
+    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => [a.textContent?.replace('→', '').trim(), a.getAttribute('href')])), [
+      ['Explore frozen finance', '#idea'],
+      ['Token details', '#token'],
+    ]);
+    assert.equal(await page.locator('section.closing .closing-actions a').first().getAttribute('href'), '#token');
     assert.ok(buys.every((href) => href === TRADE), JSON.stringify(buys));
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), TRADE);
     assert.equal(await page.locator('#hero-address-value').innerText(), ADDRESS);
@@ -674,14 +683,15 @@ describe('committed launch configuration', () => {
     await context.close();
   });
 
-  test('freeze authority is not claimed as verified', async () => {
+  test('freeze authority shows None, linked to Solscan, with verified wording', async () => {
     const { context, page } = await open(origin);
     const freeze = page.locator('#token .fact--freeze dd');
-    assert.equal((await freeze.innerText()).trim(), 'Planned: none; verification pending');
-    assert.equal(await freeze.locator('a').count(), 0);
+    assert.equal((await freeze.innerText()).replace(/\s*\(verify.*$/, '').trim(), 'None');
+    assert.equal(await freeze.locator('a').getAttribute('href'), EXPLORER);
+    assert.doesNotMatch(await page.locator('body').innerText(), /verification pending|not yet verifiable/i);
     const faq = await page.locator('#faq details', { hasText: 'Can the issuer freeze my $USDFU?' }).locator('.answer').textContent();
-    assert.match(faq ?? '', /designed without an issuer freeze authority/);
-    assert.match((await page.locator('meta[name="description"]').getAttribute('content')) ?? '', /designed to move/);
+    assert.match(faq ?? '', /The mint has no issuer freeze authority\./);
+    assert.match((await page.locator('meta[name="description"]').getAttribute('content')) ?? '', /The token moves without an issuer freeze authority\./);
     assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), 'https://frozenusd.com/');
     await context.close();
   });

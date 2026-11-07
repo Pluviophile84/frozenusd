@@ -39,9 +39,9 @@ export const siteConfig: SiteConfigInput = {
      * Set to true only after independently checking the deployed mint on the
      * explorer: freeze authority empty, and (for Token-2022) no extension that
      * lets the issuer block transfers. See docs/launch-checklist.md.
-     * Not yet confirmed: the site shows "Planned: none; verification pending".
+     * Confirmed by the owner: pump.fun launches tokens without a freeze authority.
      */
-    freezeAuthorityVerified: false,
+    freezeAuthorityVerified: true,
   },
 
   social: {

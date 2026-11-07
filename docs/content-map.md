@@ -6,8 +6,8 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 
 | Order | Section (anchor) | Component | Copy export | Notes |
 |---|---|---|---|---|
-| A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *The cold facts* → `#token` pre-launch (never a purchase label without a trading link); *Buy $USDFU* → verified trading URL when live |
-| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | H1, `$USDFU` ticker, *Transfer it. Trade it. No thawing required.*, bridge *Some digital dollars have an issuer freeze switch. Our freezer is reserved for ice.* (smaller, muted), *Frozen. Still moving.*, actions, contract strip. Orbit of 12 cubes ported from frzusd |
+| A | Header | `Header.astro` | `nav`, `actions` | Nav: The idea, Reserves, How it works, The cold facts, Memes. Action: *The cold facts* → `#token` pre-launch (never a purchase label without a trading link); *Buy $USDFU* → trading URL when live |
+| B | Hero (`#top`) | `Hero.astro`, `HeroArt.astro` | `hero` | H1, `$USDFU` ticker, *Transfer it. Trade it. No thawing required.*, bridge *Some digital dollars have an issuer freeze switch. Our freezer is reserved for ice.* (smaller, muted), *Frozen. Still moving.*, actions (*Explore frozen finance* → `#idea`, *Token details* → `#token`, in every launch state), contract strip. Orbit of 12 cubes ported from frzusd |
 | B2 | Reserves (`#reserves`) | `Reserves.astro` | `reserves` | Dark ink section directly after the hero. Corporate satire, no explanatory labels; never in the token table |
 | C | The idea (`#idea`) | `Idea.astro` | `idea` | *We froze the reserves. Not the transfers.* Leads: issuer power to stop some digital dollars; *Our freezer has a narrower mandate: keep the reserves cold.* Steps: *The dollar went on-chain. / The issuer kept a switch. / We kept the ice.* Closing *Hot wallet. Cold dollars.* |
 | D | The product (`#how-it-works`) | `Product.astro` | `product` | Stages: *The reserve has already committed to the temperature.* / *A new address. Same winter.* / *The reserve stays cold. Ownership changes.* *No thawing required.*, *Proof of Cold.* |
@@ -16,7 +16,7 @@ Copy follows the website build prompt's selected copy (section 8) plus the later
 | G | Token information (`#token`) | `TokenFacts.astro` | `token` | The site's single memecoin notice beside the facts table. Freeze authority row: *Planned: none; not yet verifiable* before launch, *Planned: none; verification pending* when live but unchecked, *None* linked to the explorer once verified. No price, chart, supply, holders, tax or audit claims |
 | H | Community (`#memes`) | `Memes.astro` | `memes` | Three posters with Download (PNG) and SVG links; social actions only when configured |
 | I | FAQ (`#faq`) | `Faq.astro` | `faq` | Native `<details>`/`<summary>`. *Can the issuer freeze my $USDFU?* uses the *designed* answer until the live token is verified. *The cold facts* in answers links to `#token`. No memecoin disclaimer repeated |
-| J | Final CTA and footer | `Closing.astro`, `Footer.astro` | `closing`, `footer` | Closing section on the logo cyan (#79DAFF). Footer: branding, navigation, copyright, live links; no disclaimer (the notice lives in The cold facts) |
+| J | Final CTA and footer | `Closing.astro`, `Footer.astro` | `closing`, `footer` | Closing section on the logo cyan (#79DAFF). Closing action *The cold facts* → `#token` in every state. Footer: branding, navigation, copyright, live links; no disclaimer (the notice lives in The cold facts) |
 | K | 404 | `src/pages/404.astro` | `notFound` | Always `noindex` |
 | — | SEO | `BaseLayout.astro` | `seo` | Browser tab title *USDFU - Frozen USD*; share title *Frozen USD — Frozen. Still moving.*; description (page, Open Graph, X): *designed to move without an issuer freeze authority* until verified, then *moves without* |
 
