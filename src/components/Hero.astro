@@ -37,9 +37,6 @@ const live = site.token.status === 'live' ? site.token : null;
             →
           </span>
         </a>
-        <a class="btn btn--secondary" href="#token">
-          {actions.tokenDetails}
-        </a>
       </div>
 
       <div class="contract-strip">
@@ -54,6 +51,10 @@ const live = site.token.status === 'live' ? site.token : null;
             <p class="contract-pending">{hero.contractUnavailable}</p>
           )
         }
+        <a class="contract-details" href="#token">
+          {actions.tokenDetails}
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
 
@@ -196,6 +197,23 @@ const live = site.token.status === 'live' ? site.token : null;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 6px;
+  }
+
+  /* A quiet route to The cold facts, beside the contract address. */
+  .contract-details {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    margin-bottom: -10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--interactive);
+    text-decoration: none;
+  }
+
+  .contract-details:hover {
+    text-decoration: underline;
   }
 
   .contract-pending {

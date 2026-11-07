@@ -583,8 +583,9 @@ describe('live build (test fixture)', () => {
     const cta = page.locator('.site-header .header-cta');
     assert.match(await cta.innerText(), /Buy \$USDFU/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
-    // Live hero: "Buy on pump.fun", then the existing two actions.
-    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => a.getAttribute('href'))), [fixture.token.tradeUrl, '#idea', '#token']);
+    // Live hero: two buttons; "Token details" is a text link in the contract box.
+    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => a.getAttribute('href'))), [fixture.token.tradeUrl, '#idea']);
+    assert.equal(await page.locator('.contract-strip a.contract-details').getAttribute('href'), '#token');
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     assert.equal(await page.locator('#hero-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     const explorers = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Explorer')).map((a) => a.getAttribute('href')));
@@ -673,9 +674,13 @@ describe('committed launch configuration', () => {
       [
         ['Buy on pump.fun', TRADE],
         ['Explore frozen finance', '#idea'],
-        ['Token details', '#token'],
       ],
     );
+    assert.equal(await page.locator('.hero-actions .btn').first().evaluate((el) => el.classList.contains('btn--secondary')), false);
+    assert.equal(await page.locator('.hero-actions .btn').nth(1).evaluate((el) => el.classList.contains('btn--secondary')), true);
+    const details = page.locator('.contract-strip a.contract-details');
+    assert.equal((await details.innerText()).replace('→', '').trim(), 'Token details');
+    assert.equal(await details.getAttribute('href'), '#token');
     assert.equal(await page.locator('section.closing .closing-actions a').first().getAttribute('href'), TRADE);
     assert.ok(buys.every((href) => href === TRADE), JSON.stringify(buys));
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), TRADE);
