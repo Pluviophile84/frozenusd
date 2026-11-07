@@ -23,8 +23,15 @@ const live = site.token.status === 'live' ? site.token : null;
       <p class="hero-signature">{hero.signature}</p>
 
       <div class="hero-actions">
-        {/* Buying lives in the sticky header and in The cold facts; the hero leads there. */}
-        <a class="btn" href="#idea">
+        {
+          live && (
+            <a class="btn" href={live.tradeUrl} target="_blank" rel="noopener">
+              {actions.buyOnPump}
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          )
+        }
+        <a class:list={['btn', { 'btn--secondary': live }]} href="#idea">
           {actions.explore}
           <span class="arrow" aria-hidden="true">
             →

@@ -226,6 +226,8 @@ export const actions = {
   explore: 'Explore frozen finance',
   tokenDetails: 'Token details',
   buy: 'Buy $USDFU',
+  /** Hero purchase button (live only). */
+  buyOnPump: 'Buy on pump.fun',
   coldFacts: 'The cold facts',
   followX: 'Follow on X',
   community: 'Join the community',

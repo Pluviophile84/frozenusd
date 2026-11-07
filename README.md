@@ -60,7 +60,7 @@ Previews are always `noindex`. `canonicalOrigin` is set to the purchased domain,
 
 ## Launch: pre-launch → live
 
-All launch values live in **`src/config/site.ts`**. The committed state is **live**: Solana mint `6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump`, trading on its pump.fun page, Solscan explorer link and the official X account. `freezeAuthorityVerified` is `true` on the owner's confirmation that pump.fun launches tokens without a freeze authority (shows *Freeze authority: None*, linked to Solscan). Buy buttons appear only in the sticky header and the closing section; the hero's *Token details* links to The cold facts. The steps below describe how these values are set.
+All launch values live in **`src/config/site.ts`**. The committed state is **live**: Solana mint `6YRmgjwutn9TApv7WMBFWWmJBB9ZhKWmu6nMYuvgpump`, trading on its pump.fun page, Solscan explorer link and the official X account. `freezeAuthorityVerified` is `true` on the owner's confirmation that pump.fun launches tokens without a freeze authority (shows *Freeze authority: None*, linked to Solscan). Buy buttons: *Buy $USDFU* in the sticky header and the closing section, and *Buy on pump.fun* in the hero (before *Explore frozen finance* and *Token details*). The cold facts has none. The steps below describe how these values are set.
 
 At launch, edit these fields with real, verified values:
 

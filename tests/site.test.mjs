@@ -79,6 +79,7 @@ describe('pre-launch build (pre-launch fixture)', () => {
     assert.equal(await page.locator('[data-copy-button]').count(), 0);
     // Before launch there is no purchase label anywhere; the header action is "The cold facts".
     assert.equal(await page.getByText('Buy $USDFU').count(), 0);
+    assert.equal(await page.getByText('Buy on pump.fun').count(), 0);
     assert.equal(await page.getByText('Follow on X').count(), 0);
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), '#token');
     assert.equal(await page.locator('.site-header .header-cta').innerText(), 'The cold facts');
@@ -582,8 +583,8 @@ describe('live build (test fixture)', () => {
     const cta = page.locator('.site-header .header-cta');
     assert.match(await cta.innerText(), /Buy \$USDFU/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
-    // The hero leads to The cold facts; only the header and the closing section carry Buy.
-    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => a.getAttribute('href'))), ['#idea', '#token']);
+    // Live hero: "Buy on pump.fun", then the existing two actions.
+    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => a.getAttribute('href'))), [fixture.token.tradeUrl, '#idea', '#token']);
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     assert.equal(await page.locator('#hero-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     const explorers = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Explorer')).map((a) => a.getAttribute('href')));
@@ -665,10 +666,16 @@ describe('committed launch configuration', () => {
     assert.equal(await page.locator('.site-header a', { hasText: 'Buy $USDFU' }).count(), 1);
     assert.equal(await page.locator('section.closing a', { hasText: 'Buy $USDFU' }).count(), 1);
     assert.equal(await page.locator('#token a', { hasText: 'Buy $USDFU' }).count(), 0);
-    assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => [a.textContent?.replace('→', '').trim(), a.getAttribute('href')])), [
-      ['Explore frozen finance', '#idea'],
-      ['Token details', '#token'],
-    ]);
+    assert.deepEqual(
+      await page.$$eval('.hero-actions a', (as) =>
+        as.map((a) => [a.textContent?.replace('→', '').replace('(opens in a new tab)', '').trim(), a.getAttribute('href')]),
+      ),
+      [
+        ['Buy on pump.fun', TRADE],
+        ['Explore frozen finance', '#idea'],
+        ['Token details', '#token'],
+      ],
+    );
     assert.equal(await page.locator('section.closing .closing-actions a').first().getAttribute('href'), TRADE);
     assert.ok(buys.every((href) => href === TRADE), JSON.stringify(buys));
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), TRADE);
