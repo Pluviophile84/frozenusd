@@ -582,7 +582,7 @@ describe('live build (test fixture)', () => {
     const cta = page.locator('.site-header .header-cta');
     assert.match(await cta.innerText(), /Buy \$USDFU/);
     assert.equal(await cta.getAttribute('href'), fixture.token.tradeUrl);
-    // The hero leads to The cold facts; only the header and The cold facts carry Buy.
+    // The hero leads to The cold facts; only the header and the closing section carry Buy.
     assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => a.getAttribute('href'))), ['#idea', '#token']);
     assert.equal(await page.locator('#token-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
     assert.equal(await page.locator('#hero-address-value').innerText(), FIXTURE_SOLANA_ADDRESS);
@@ -660,15 +660,16 @@ describe('committed launch configuration', () => {
   test('every buy action goes to the pump.fun page; address, explorer and X are live', async () => {
     const { context, page, errors, failed } = await open(origin);
     const buys = await page.$$eval('a', (as) => as.filter((a) => a.textContent?.includes('Buy $USDFU')).map((a) => a.getAttribute('href')));
-    // Exactly two Buy buttons: the sticky header and The cold facts.
+    // Exactly two Buy buttons: the sticky header and the closing section.
     assert.equal(buys.length, 2, JSON.stringify(buys));
     assert.equal(await page.locator('.site-header a', { hasText: 'Buy $USDFU' }).count(), 1);
-    assert.equal(await page.locator('#token a', { hasText: 'Buy $USDFU' }).count(), 1);
+    assert.equal(await page.locator('section.closing a', { hasText: 'Buy $USDFU' }).count(), 1);
+    assert.equal(await page.locator('#token a', { hasText: 'Buy $USDFU' }).count(), 0);
     assert.deepEqual(await page.$$eval('.hero-actions a', (as) => as.map((a) => [a.textContent?.replace('→', '').trim(), a.getAttribute('href')])), [
       ['Explore frozen finance', '#idea'],
       ['Token details', '#token'],
     ]);
-    assert.equal(await page.locator('section.closing .closing-actions a').first().getAttribute('href'), '#token');
+    assert.equal(await page.locator('section.closing .closing-actions a').first().getAttribute('href'), TRADE);
     assert.ok(buys.every((href) => href === TRADE), JSON.stringify(buys));
     assert.equal(await page.locator('.site-header .header-cta').getAttribute('href'), TRADE);
     assert.equal(await page.locator('#hero-address-value').innerText(), ADDRESS);
